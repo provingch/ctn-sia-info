@@ -23,11 +23,11 @@ public class conexion {
     private Connection con;
 
     public conexion() {
-        this.base = "ctndb";
+        this.base = config("CTN_DB_NAME", "ctn.db.name", "ctndb");
         /* name of the database */
-        this.host = "186.17.106.181:3100";
-        this.usuario = "Alumnos";
-        this.contra = "Info024";
+        this.host = config("CTN_DB_HOST", "ctn.db.host", "localhost:3306");
+        this.usuario = config("CTN_DB_USER", "ctn.db.user", "testadmin");
+        this.contra = config("CTN_DB_PASSWORD", "ctn.db.password", "");
     }
 
     static {
@@ -41,7 +41,7 @@ public class conexion {
 
     public Connection getCon() {
         try {
-            String url = "jdbc:mysql://" + host + "/" + base;
+            String url = "jdbc:mysql://" + host + "/" + base + "?useUnicode=true&characterEncoding=UTF-8";
             con = DriverManager.getConnection(url, this.usuario, this.contra);
             System.out.println("Conectado");
         } catch (SQLException ex) {
@@ -50,6 +50,14 @@ public class conexion {
         }
 
         return con;// FIXME redesign exception handling
+    }
+
+    private static String config(String envName, String propertyName, String defaultValue) {
+        String value = System.getenv(envName);
+        if (value == null || value.isBlank()) {
+            value = System.getProperty(propertyName);
+        }
+        return value == null || value.isBlank() ? defaultValue : value;
     }
 
     public conexion(String base, String host, String usuario, String contra, Connection con) {
