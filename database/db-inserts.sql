@@ -59,7 +59,7 @@ INSERT INTO curso (id, especialidad_id, promocion, seccion) VALUES
 (25, 1, 2025, 'B')
 ;
 
-INSERT INTO `alumno` (`nombre`, `apellido`, `curso_id`, `ci`, `correo_encargado`, `correo_encargado2`) VALUES
+INSERT INTO 'alumno' (`nombre`, `apellido`, `curso_id`, `ci`, `correo_encargado`, `correo_encargado2`) VALUES
 ('LUCAS MATHIAS', 'ALCARAZ PEREIRA', 5, 6041149, 'diegoalcarazm@hotmail.com', ''),
 ('AMIRA ABIGAIL', 'BALBUENA AYALA', 5, 6020173, 'juan05.balbuena@gmail.com', ''),
 ('CRISTIAN ARIEL DAVID', 'BENITEZ MORALES', 5, 6194716, 'JABENITEZ76@gmail.com', ''),
