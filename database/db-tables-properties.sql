@@ -114,7 +114,7 @@ CREATE TABLE registro (
 );
 
 CREATE TABLE puntaje (
-    registro_id INT,
+    registro_id CHAR,
     tarea_id INT,
     puntos SMALLINT UNSIGNED,
     PRIMARY KEY (registro_id , tarea_id),
