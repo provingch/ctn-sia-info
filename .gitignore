@@ -10,3 +10,5 @@ target/
 Thumbs.db
 
 *.log
+
+**/WEB-INF/config.properties
