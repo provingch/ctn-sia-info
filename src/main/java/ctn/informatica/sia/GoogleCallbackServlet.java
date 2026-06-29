@@ -33,7 +33,7 @@ public class GoogleCallbackServlet extends HttpServlet {
         String error = req.getParameter("error");
 
         if (error != null) {
-            resp.sendRedirect("/login?error=oauth_denied");
+            resp.sendRedirect(req.getContextPath() + "/index.jsp?error=oauth_denied");
             return;
         }
 
@@ -78,7 +78,7 @@ public class GoogleCallbackServlet extends HttpServlet {
             Profesor profesor = profesorDao.findByGoogleEmail(googleEmail);
 
             if (profesor == null) {
-                resp.sendRedirect("/login?error=profesor_no_encontrado");
+                resp.sendRedirect(req.getContextPath() + "/index.jsp?error=profesor_no_encontrado");
                 return;
             }
 
@@ -97,11 +97,11 @@ public class GoogleCallbackServlet extends HttpServlet {
             session.setAttribute("googleAccessToken", accessToken);
             session.setMaxInactiveInterval(60 * 60);
 
-            resp.sendRedirect("/portal/dashboard");
+            resp.sendRedirect(req.getContextPath() + "/HomeServlet");
 
         } catch (IOException e) {
             e.printStackTrace();
-            resp.sendRedirect("/login?error=token_exchange_failed");
+            resp.sendRedirect(req.getContextPath() + "/index.jsp?error=token_exchange_failed");
         }
     }
 }
