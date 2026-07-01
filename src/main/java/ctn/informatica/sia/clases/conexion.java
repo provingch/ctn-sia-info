@@ -39,17 +39,16 @@ public class conexion {
         }
     }
 
-    public Connection getCon() {
+    public Connection getCon() throws SQLException {
+        String url = "jdbc:mysql://" + host + "/" + base + "?useUnicode=true&characterEncoding=UTF-8";
         try {
-            String url = "jdbc:mysql://" + host + "/" + base + "?useUnicode=true&characterEncoding=UTF-8";
             con = DriverManager.getConnection(url, this.usuario, this.contra);
-            System.out.println("Conectado");
+            Logger.getLogger(conexion.class.getName()).log(Level.INFO, "DB connected to {0}/{1}", new Object[]{host, base});
+            return con;
         } catch (SQLException ex) {
-            Logger.getLogger(conexion.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("No Conectado");
+            Logger.getLogger(conexion.class.getName()).log(Level.SEVERE, "DB connection failed: {0}", ex.getMessage());
+            throw ex; // propagate so callers can handle the error instead of getting null
         }
-
-        return con;// FIXME redesign exception handling
     }
 
     private static String config(String envName, String propertyName, String defaultValue) {

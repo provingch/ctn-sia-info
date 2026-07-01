@@ -5,6 +5,12 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato se basa en [Mantener un Registro de Cambios](https://keepachangelog.com/es/1.0.0/),
 y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
+## [v0.0.2.1] - 2026-07-01
+
+### Modificado
+- **Mejor manejo de errores**: Se mejoro conexion.java para que se registre correctamente el error y mejorar la trazabilidad [conexion.java (Lineas 42-52)](./src/main/java/ctn/informatica/sia/clases/conexion.java#L42-52)
+- **Evitar NPE**: Se modifico UserDao.java para capturar la excepcion SQL y envolverlo en un mensaje correcto y claro [UserDao.java (Lineas 36-37)](./src/main/java/ctn/informatica/sia/dao/UserDao.java#L36-37)
+
 ## [v0.0.2] - 2026-07-01
 
 ### Añadido

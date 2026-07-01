@@ -33,6 +33,8 @@ public class UserDao {
                     return new User(id, user, fullName, level);
                 }
             }
+        } catch (java.sql.SQLException ex) {
+            throw new Exception("DB connection/query error", ex);
         }
         return null;
     }
