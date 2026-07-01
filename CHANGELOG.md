@@ -1,16 +1,36 @@
-# Changelog
+# Registro de Cambios
 
-All notable changes to this project will be documented in this file.
+Todos los cambios notables de este proyecto serán documentados en este archivo.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+El formato se basa en [Mantener un Registro de Cambios](https://keepachangelog.com/es/1.0.0/),
+y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
+
+## [v0.0.2] - 2026-07-01
+
+### Añadido
+- **Interfaz de Conexión Google Classroom**: Sección en perfil de profesor para conectar/reconectar cuenta de Google Classroom [Profile.jsp (Líneas 144-160)](./src/main/webapp/Profile.jsp#L144-L160)
+- **Esquema de Base de Datos para Google OAuth**: Columnas `google_email`, `google_access_token`, `google_refresh_token`, `google_token_expiry` en tabla profesor [db-tables-properties.sql (Líneas 49-52)](./database/db-tables-properties.sql#L49-L52)
+- **Métodos de Gestión de Tokens Google**: Métodos `updateGoogleTokens()` y `findByGoogleEmail()` en ProfesorDao para gestionar credenciales OAuth [ProfesorDao.java (Líneas 61-77, 82-95)](./src/main/java/ctn/informatica/sia/dao/ProfesorDao.java#L61-L95)
+- **Extracción de Columnas Google OAuth**: Mapeo de columnas Google en método `map()` de ProfesorDao [ProfesorDao.java (Líneas 22-27)](./src/main/java/ctn/informatica/sia/dao/ProfesorDao.java#L22-L27)
+- **Preservación de Sesión en Flujo OAuth**: GoogleCallbackServlet preserva la sesión de usuario existente durante el flujo OAuth [GoogleCallbackServlet.java (Líneas 90-110)](./src/main/java/ctn/informatica/sia/GoogleCallbackServlet.java#L90-L110)
+
+### Modificado
+- **Resolución Dinámica de Redirect URI**: GoogleLoginServlet ahora resuelve dinámicamente el redirect_uri desde AppConfig o construcción basada en request, eliminando placeholder hardcodeado [GoogleLoginServlet.java (Líneas 52-61)](./src/main/java/ctn/informatica/sia/GoogleLoginServlet.java#L52-L61)
+- **Redirects de Callback OAuth**: GoogleCallbackServlet redirige a rutas válidas de la aplicación (ProfileServlet) en lugar de endpoints no-existentes [GoogleCallbackServlet.java (Línea 41)](./src/main/java/ctn/informatica/sia/GoogleCallbackServlet.java#L41)
+- **API de Autenticación Google**: Implementada autenticación OAuth2 usando GoogleCredential con access token para obtener información de usuario [GoogleCallbackServlet.java (Líneas 71-77)](./src/main/java/ctn/informatica/sia/GoogleCallbackServlet.java#L71-L77)
+- **Consultas SELECT en ProfesorDao**: Todas las queries incluyen las columnas Google OAuth en SELECT [ProfesorDao.java (Líneas 42-44)](./src/main/java/ctn/informatica/sia/dao/ProfesorDao.java#L42-L44)
+- **Cambio en CHANGELOG.md**: Reformatado de CHANGELOG.md en español.
+
+### Eliminado
+- Placeholder redirect_uri hardcodeado en GoogleLoginServlet
+- Inicialización manual de `HttpCredentialsAdapter` que no está disponible en dependencias actuales
 
 ## [v0.0.1] - 2026-06-29
 
-### Added
+### Añadido
 - Implementada la integración de autenticación con Google (GoogleAuth).
 
-### Changed
+### Modificado
 - Renombrado el paquete principal.
 - Excluidos datos personales sensibles del repositorio Git.
 - Eliminado el archivo/registro de `dbinsert`.

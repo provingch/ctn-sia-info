@@ -41,11 +41,15 @@ CREATE TABLE profesor (
     nombre VARCHAR(45),
     apellido VARCHAR(45),
     usuario VARCHAR(45) NOT NULL UNIQUE,
-    contrasenia VARCHAR(45) DEFAULT 'ctn123' NOT NULL,
+    contrasenia VARCHAR(45) DEFAULT 'password' NOT NULL,
     ci int UNIQUE,
     telefono int,
     celular int,
     correo VARCHAR(45),
+    google_email VARCHAR(255),
+    google_access_token TEXT NULL,
+    google_refresh_token TEXT NULL,
+    google_token_expiry BIGINT NULL,
     nivel TINYINT NOT NULL,
     PRIMARY KEY (id)
 );

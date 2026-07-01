@@ -29,13 +29,19 @@ public class ProfesorDao extends conexion {
         if (!rs.wasNull()) p.setCelular(cel);
 
         p.setCorreo(rs.getString("correo"));
+        p.setGoogleEmail(rs.getString("google_email"));
+        p.setGcAccessToken(rs.getString("google_access_token"));
+        p.setGcRefreshToken(rs.getString("google_refresh_token"));
+        long expiry = rs.getLong("google_token_expiry");
+        if (!rs.wasNull()) p.setGcTokenExpiry(expiry);
         return p;
     }
 
     // ── findById ─────────────────────────────────────────────────────────────
     public Profesor findById(int id) {
         final String sql = "SELECT id, nombre, apellido, usuario, contrasenia, "
-                         + "ci, telefono, celular, correo "
+                         + "ci, telefono, celular, correo, google_email, "
+                         + "google_access_token, google_refresh_token, google_token_expiry "
                          + "FROM profesor WHERE id = ?";
         try (Connection c = getCon();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -54,11 +60,13 @@ public class ProfesorDao extends conexion {
     // Ajusta el nombre de columna si en tu tabla se llama distinto.
     public Profesor findByGoogleEmail(String email) {
         final String sql = "SELECT id, nombre, apellido, usuario, contrasenia, "
-                         + "ci, telefono, celular, correo "
-                         + "FROM profesor WHERE correo = ?";
+                         + "ci, telefono, celular, correo, google_email, "
+                         + "google_access_token, google_refresh_token, google_token_expiry "
+                         + "FROM profesor WHERE google_email = ? OR correo = ?";
         try (Connection c = getCon();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, email);
+            ps.setString(2, email);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return map(rs);
             }
@@ -70,26 +78,33 @@ public class ProfesorDao extends conexion {
 
     // ── updateGoogleTokens ────────────────────────────────────────────────────
     // Guarda los tokens OAuth en la BD.
-    // Requiere que la tabla tenga columnas: google_access_token, google_refresh_token, google_token_expiry
+    // Requiere que la tabla tenga columnas: google_email, google_access_token, google_refresh_token, google_token_expiry
     public boolean updateGoogleTokens(int profesorId,
                                       String accessToken,
                                       String refreshToken,
-                                      long expiryEpochSeconds) {
+                                      long expiryEpochSeconds,
+                                      String googleEmail) {
         final String sql = "UPDATE profesor "
-                         + "SET google_access_token = ?, "
+                         + "SET google_email = ?, "
+                         + "    google_access_token = ?, "
                          + "    google_refresh_token = ?, "
                          + "    google_token_expiry  = ? "
                          + "WHERE id = ?";
         try (Connection c = getCon();
              PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setString(1, accessToken);
-            if (refreshToken != null) {
-                ps.setString(2, refreshToken);
+            if (googleEmail != null) {
+                ps.setString(1, googleEmail);
             } else {
-                ps.setNull(2, Types.VARCHAR);
+                ps.setNull(1, Types.VARCHAR);
             }
-            ps.setLong(3, expiryEpochSeconds);
-            ps.setInt(4, profesorId);
+            ps.setString(2, accessToken);
+            if (refreshToken != null) {
+                ps.setString(3, refreshToken);
+            } else {
+                ps.setNull(3, Types.VARCHAR);
+            }
+            ps.setLong(4, expiryEpochSeconds);
+            ps.setInt(5, profesorId);
             return ps.executeUpdate() == 1;
         } catch (SQLException ex) {
             ex.printStackTrace();

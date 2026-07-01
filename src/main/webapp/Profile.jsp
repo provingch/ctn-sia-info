@@ -141,6 +141,28 @@
             <input type="text" name="usuario" value="${profesor.usuario}" />
           </div>
 
+          <div class="table-header">Google Classroom</div>
+          <div class="cell">
+            <c:url var="googleConnectUrl" value="/GoogleLoginServlet" />
+            <c:choose>
+              <c:when test="${not empty profesor.googleEmail}">
+                <div class="google-connected">
+                  Conectado como <strong><c:out value="${profesor.googleEmail}"/></strong>
+                </div>
+                <div class="google-help">Para reconectar, haga clic en el botón de abajo.</div>
+                <a class="google-connect-button" href="${pageContext.request.contextPath}${googleConnectUrl}">
+                  Reconectar Google Classroom
+                </a>
+              </c:when>
+              <c:otherwise>
+                <div class="google-disconnected">No conectado a Google Classroom.</div>
+                <a class="google-connect-button" href="${pageContext.request.contextPath}${googleConnectUrl}">
+                  Conectar con Google Classroom
+                </a>
+              </c:otherwise>
+            </c:choose>
+          </div>
+
           <div class="buttons-row table-header">
 
             <c:url var="HomeUrl" value="/HomeServlet" />

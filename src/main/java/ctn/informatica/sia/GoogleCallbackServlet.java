@@ -13,6 +13,7 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.oauth2.Oauth2;
@@ -21,6 +22,7 @@ import com.google.api.services.oauth2.model.Userinfo;
 import ctn.informatica.sia.config.AppConfig;
 import ctn.informatica.sia.dao.ProfesorDao;
 import ctn.informatica.sia.model.Profesor;
+import ctn.informatica.sia.model.User;
 
 @WebServlet("/GoogleCallbackServlet")
 public class GoogleCallbackServlet extends HttpServlet {
@@ -63,8 +65,9 @@ public class GoogleCallbackServlet extends HttpServlet {
             long expiresInSeconds = tokenResponse.getExpiresInSeconds();
 
             // --- Paso 2: obtener el email del profesor ---
+            // Usar GoogleCredential con HttpRequestInitializer para inyectar Bearer token
             Credential credential = new GoogleCredential().setAccessToken(accessToken);
-
+            
             Oauth2 oauth2 = new Oauth2.Builder(
                     new NetHttpTransport(), GsonFactory.getDefaultInstance(), credential)
                 .setApplicationName("CTN-SIA")
@@ -74,8 +77,17 @@ public class GoogleCallbackServlet extends HttpServlet {
             String googleEmail = userInfo.getEmail();
 
             // --- Paso 3: vincular email → profesor en la BD ---
+            HttpSession session = req.getSession(false);
+            User user = session == null ? null : (User) session.getAttribute("user");
+
             ProfesorDao profesorDao = new ProfesorDao();
-            Profesor profesor = profesorDao.findByGoogleEmail(googleEmail);
+            Profesor profesor = null;
+            if (user != null) {
+                profesor = profesorDao.findById(user.getId());
+            }
+            if (profesor == null) {
+                profesor = profesorDao.findByGoogleEmail(googleEmail);
+            }
 
             if (profesor == null) {
                 resp.sendRedirect(req.getContextPath() + "/index.jsp?error=profesor_no_encontrado");
@@ -88,16 +100,16 @@ public class GoogleCallbackServlet extends HttpServlet {
                 profesor.getId(),
                 accessToken,
                 refreshToken,
-                expiry
+                expiry,
+                googleEmail
             );
 
-            // --- Paso 4: crear la HttpSession ---
-            HttpSession session = req.getSession(true);
-            session.setAttribute("user", profesor);
-            session.setAttribute("googleAccessToken", accessToken);
-            session.setMaxInactiveInterval(60 * 60);
+            // --- Paso 4: actualizar sesión sin reemplazar el User existente ---
+            if (session != null && user != null) {
+                session.setAttribute("googleAccessToken", accessToken);
+            }
 
-            resp.sendRedirect(req.getContextPath() + "/HomeServlet");
+            resp.sendRedirect(req.getContextPath() + "/ProfileServlet");
 
         } catch (IOException e) {
             e.printStackTrace();
