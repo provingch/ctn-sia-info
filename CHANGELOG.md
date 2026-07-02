@@ -5,6 +5,22 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato se basa en [Mantener un Registro de Cambios](https://keepachangelog.com/es/1.0.0/),
 y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
+## [v0.0.3] - 2026-07-02
+
+### Añadido
+- **Utilidades de Parseo de Google Classroom**: Clase `GoogleClassroomUtils` para extraer nivel (Primero/Segundo/Tercero) y sección (A/B/C) del nombre de cursos de Classroom [GoogleClassroomUtils.java](./src/main/java/ctn/informatica/sia/google/GoogleClassroomUtils.java)
+- **Servicio de Sincronización Google Classroom**: Clase `GoogleClassroomService` para conectarse a Google Classroom API, listar cursos del profesor y filtrar solo aquellos que coinciden con los cursos locales [GoogleClassroomService.java](./src/main/java/ctn/informatica/sia/google/GoogleClassroomService.java)
+- **Métodos de Mapeo de Curso**: Métodos `matchesCourseKey()`, `getNivel()` y `getCourseKey()` en modelo `Curso` para validar si un curso de Classroom corresponde a un curso local [Curso.java (Líneas 29-47)](./src/main/java/ctn/informatica/sia/model/Curso.java#L29-L47)
+
+### Modificado
+- **Estructura del Modelo Curso**: Se agregó soporte para validar nivel y sección contra claves de curso de Classroom, permitiendo filtrado bidireccional [Curso.java](./src/main/java/ctn/informatica/sia/model/Curso.java)
+
+### Plan de Implementación Futuro
+- Integración de sincronización en `HomeServlet` al inicio de sesión
+- Botón de sincronización manual en `PlanillaServlet`
+- DAOs para importar cursos y tareas desde Google Classroom
+- Almacenamiento de IDs de Google (`google_course_id`, `google_coursework_id`) en base de datos
+
 ## [v0.0.2.1] - 2026-07-01
 
 ### Modificado

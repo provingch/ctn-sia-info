@@ -26,6 +26,10 @@ public class Curso {
     public int getCurso() {
         return period - promocion + 3;
     }
+
+    public int getNivel() {
+        return getCurso();
+    }
     
     public String getCursoOrdinal() {
         int cursoInt = period - promocion + 3;
@@ -35,6 +39,19 @@ public class Curso {
             case 3 -> "Tercero";
             default -> "Desconocido";
         };
+    }
+
+    public boolean matchesCourseKey(ctn.informatica.sia.google.GoogleClassroomUtils.CourseKey courseKey) {
+        if (courseKey == null) {
+            return false;
+        }
+        return this.getNivel() == courseKey.getNivel()
+                && this.seccion != null
+                && this.seccion.equalsIgnoreCase(courseKey.getSeccion());
+    }
+
+    public String getCourseKey() {
+        return getNivel() + "-" + (seccion == null ? "" : seccion.toUpperCase());
     }
 
     @Override
