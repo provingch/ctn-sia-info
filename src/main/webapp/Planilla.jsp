@@ -199,7 +199,7 @@
                         </a>
                       </c:otherwise>
                     </c:choose>
-                    <div class="task-meta" style="font-size:.8rem; color:#64748b; margin-top:.25rem;">
+                    <div class="task-meta">
                       <c:if test="${not empty t.fechaInicio}">Inicio: <c:out value="${t.fechaInicio}" /></c:if>
                     </div>
                   </div>

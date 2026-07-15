@@ -215,12 +215,10 @@
 
 
 
-    <div class="footer">
+    <footer class="footer">
       <hr>
-      <p>
-        Colegio Tecnico Nacional
-      </p>
-    </div>
+      <p>Colegio Técnico Nacional</p>
+    </footer>
 
 
   </main>
