@@ -224,6 +224,55 @@ button, .btn-primary, .btn-secondary, .btn-danger, .save-button, .back-button, .
   border: 1px solid var(--red);
 }
 
+.back-icon, .download-icon, .save-icon, .delete-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.dropdown-icon {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.five-highlight, .four-highlight {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  background: color-mix(in srgb, var(--green) 15%, var(--paper));
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+.three-highlight, .two-highlight {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  background: color-mix(in srgb, var(--amber) 15%, var(--paper));
+  color: var(--amber);
+  border: 1px solid var(--amber);
+}
+.one-highlight {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  background: color-mix(in srgb, var(--red) 15%, var(--paper));
+  color: var(--red);
+  border: 1px solid var(--red);
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -303,7 +352,8 @@ input.no-spinner::-webkit-inner-spin-button, input.no-spinner::-webkit-outer-spi
 .planilla-subtitle { margin: 0; color: var(--muted); }
 .menu-container { margin-top: 12px; display: grid; gap: 8px; }
 .grid-container, .profile-layout { display: grid; gap: 16px; }
-.profile-layout { grid-template-columns: 240px 1fr; }
+.profile-layout { grid-template-columns: 240px minmax(0, 1fr); align-items: start; }
+.profile-sidebar { position: sticky; top: 1rem; align-self: start; }
 .profile-tabs { display: grid; gap: 8px; }
 .profile-tab {
   border: 1px solid var(--line);
@@ -314,6 +364,9 @@ input.no-spinner::-webkit-inner-spin-button, input.no-spinner::-webkit-outer-spi
   cursor: pointer;
 }
 .profile-tab.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--paper)); }
+.profile-panel { display: none; }
+.profile-panel.active { display: block; }
+.profile-content { min-width: 0; }
 
 .subject-list, .subject-form-grid, .checkbox-grid { display: grid; gap: 10px; }
 .checkbox-item { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 8px 10px; background: var(--paper); }

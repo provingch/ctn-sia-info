@@ -147,13 +147,13 @@
                         <div class="google-connected">Conectado como <strong><c:out value="${profesor.googleEmail}"/></strong></div>
                         <div class="google-help selection-hint">Puedes reconectar o desconectar tu cuenta.</div>
                         <div class="action-row">
-                          <a class="google-connect-button" href="${pageContext.request.contextPath}${googleConnectUrl}">Reconectar Classroom</a>
-                          <button class="google-disconnect-button" type="submit" form="googleDisconnectForm">Desconectar</button>
+                          <a class="btn-primary google-connect-button" href="${pageContext.request.contextPath}${googleConnectUrl}">Reconectar Classroom</a>
+                          <button class="btn-danger google-disconnect-button" type="submit" form="googleDisconnectForm">Desconectar</button>
                         </div>
                       </c:when>
                       <c:otherwise>
                         <div class="google-disconnected selection-hint">No conectado a Google Classroom.</div>
-                        <a class="google-connect-button" href="${pageContext.request.contextPath}${googleConnectUrl}">Conectar Classroom</a>
+                        <a class="btn-primary google-connect-button" href="${pageContext.request.contextPath}${googleConnectUrl}">Conectar Classroom</a>
                       </c:otherwise>
                     </c:choose>
                   </div>
@@ -280,6 +280,11 @@
 
 
     </section>
+
+    <footer class="footer">
+      <hr>
+      <p>Colegio Técnico Nacional</p>
+    </footer>
   </main>
 
 <script>
@@ -558,146 +563,6 @@
 
 <script src="${pageContext.request.contextPath}/scripts/sia-theme.js"></script>
 
-<style>
-.profile-layout {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 1.5rem;
-  align-items: start;
-}
-.profile-sidebar {
-  position: sticky;
-  top: calc(var(--header-height) + 1.25rem);
-  align-self: start;
-}
-.profile-tabs {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin: 0;
-}
-.profile-tab {
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-elevated);
-  color: var(--color-text);
-  padding: 1rem 1rem;
-  cursor: pointer;
-  font-weight: 600;
-  font-family: var(--font-family);
-  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
-  text-align: left;
-  width: 100%;
-}
-.profile-tab + .profile-tab {
-  border-top: none;
-}
-.profile-tab:first-child {
-  border-top-left-radius: var(--radius-sm);
-  border-top-right-radius: var(--radius-sm);
-}
-.profile-tab:last-child {
-  border-bottom-left-radius: var(--radius-sm);
-  border-bottom-right-radius: var(--radius-sm);
-}
-.profile-tab:hover,
-.profile-tab:focus-visible {
-  background: var(--color-bg-muted);
-}
-.profile-tab.active {
-  background: var(--color-tab-active);
-  color: #ffffff;
-  border-color: var(--color-tab-active);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
-}
-.profile-panel {
-  display: none;
-}
-.profile-panel.active {
-  display: block;
-}
-.profile-content {
-  min-width: 0;
-}
-.profile-top-section {
-  margin-bottom: 1.5rem;
-}
-.subject-form {
-  margin-bottom: 1rem;
-}
-
-.google-connect-button,
-.google-disconnect-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  color: #ffffff;
-  text-decoration: none;
-  border: 1px solid transparent;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
-}
-.google-connect-button {
-  background: linear-gradient(135deg, #16a34a, #22c55e);
-}
-.google-disconnect-button {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-}
-.google-connect-button:hover,
-.google-disconnect-button:hover {
-  opacity: 0.95;
-  transform: translateY(-1px);
-}
-.secondary-button {
-  border: 1px solid var(--color-border-strong);
-  background: #d1fae5;
-  color: #064e3b;
-  padding: 0.6rem 0.9rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-family: var(--font-family);
-}
-.secondary-button:hover {
-  background: #bbf7d0;
-}
-
-@media (max-width: 900px) {
-  .profile-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-sidebar {
-    position: static;
-  }
-
-  .profile-tabs {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
-
-  .profile-tab {
-    flex: 1 0 auto;
-    border-radius: var(--radius-pill);
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-    border-left: 1px solid var(--color-border);
-    border-right: 1px solid var(--color-border);
-  }
-
-  .profile-tab + .profile-tab {
-    border-top: 1px solid var(--color-border);
-  }
-}
-*** End Patch.subject-input-row {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-top: 0.5rem;
-}
-.subject-input-row input,
 .subject-input-row select {
   flex: 1 1 240px;
   min-width: 240px;

@@ -123,6 +123,11 @@
             </div>
         </c:if>
     </section>
+
+    <footer class="footer">
+        <hr>
+        <p>Colegio Técnico Nacional</p>
+    </footer>
 </main>
 <script>
 (function () {

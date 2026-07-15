@@ -237,6 +237,11 @@
 
     </section>
 
+    <footer class="footer">
+      <hr>
+      <p>Colegio Técnico Nacional</p>
+    </footer>
+
     <section class="container">
       <table class="grade-table">
         <thead>
@@ -285,13 +290,6 @@
     </section>
 
     </div>
-
-  <div class="footer">
-    <hr>
-    <p>
-      Colegio Tecnico Nacional
-    </p>
-  </div>
 
   </main>
 

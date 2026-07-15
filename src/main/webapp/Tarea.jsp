@@ -209,6 +209,11 @@
 
 
     </section>
+
+    <footer class="footer">
+      <hr>
+      <p>Colegio Técnico Nacional</p>
+    </footer>
   </main>
 
 <script>
@@ -399,8 +404,6 @@ function confirmDelete() {
 
 })();
 </script>
-
-<script src="${pageContext.request.contextPath}/scripts/dark-mode.js"></script>
 </body>
 
 </html>
