@@ -57,4 +57,12 @@ public class User extends conexion {
         this.level = level;
     }
 
+    public String getSpecialtyName() {
+        return "";
+    }
+
+    public void setSpecialtyName(String specialtyName) {
+        // no-op: kept for JSP EL compatibility with older views
+    }
+
 }

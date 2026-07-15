@@ -71,8 +71,8 @@
         </div>
         <div class="tb-right">
           <div class="tb-cell"><b>Usuario</b>${sessionScope.user.fullName}</div>
-          <div class="tb-cell"><b>Especialidad</b><span>${sessionScope.user.specialtyName}</span></div>
-          <div class="tb-cell"><b>Rol</b>${sessionScope.user.role}</div>
+          <div class="tb-cell"><b>Especialidad</b><span>${sessionScope.siaSpecialty}</span></div>
+          <div class="tb-cell"><b>Rol</b><span>${sessionScope.user.level == 1 ? 'Profesor' : sessionScope.user.level == 2 ? 'Administrador' : sessionScope.user.level == 4 ? 'Padre' : ''}</span></div>
           <div class="tb-cell"><b>Fecha</b><c:out value="${nowFormatted}" /></div>
         </div>
       </div>
