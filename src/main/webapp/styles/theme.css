@@ -1,0 +1,150 @@
+:root {
+  --paper: #ffffff;
+  --bg: #eef3f7;
+  --ink: #14233b;
+  --muted: #5b6b7c;
+  --line: #d8e2ea;
+  --green: #2f7a4f;
+  --amber: #c9791f;
+  --red: #c1442d;
+  --radius: 2px;
+  --font-display: "Space Grotesk", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+  --accent: var(--color-brand-accent);
+  --accent-contrast: #ffffff;
+  --accent-border: 1px solid var(--accent);
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--paper);
+  --color-bg-muted: #f7f9fc;
+  --color-bg-subtle: #f3f6fa;
+  --color-text: var(--ink);
+  --color-text-secondary: var(--muted);
+  --color-text-muted: #6b7280;
+  --color-border: #d8e2ea;
+  --color-border-strong: #c9d4df;
+  --color-border-dashed: #cfd8e3;
+
+  --color-brand: #8b1d1d;
+  --color-brand-dark: #5f0f0f;
+  --color-brand-accent: #b4262d;
+  --color-brand-hover: #6f1616;
+  --color-accent: var(--color-brand-accent);
+  --color-accent-contrast: #ffffff;
+
+  --color-bg: #f5f7fb;
+  --color-bg-elevated: #ffffff;
+  --color-bg-muted: #f8fafc;
+  --color-bg-subtle: #eff3f8;
+  --color-bg-input: #ffffff;
+
+  --color-text: #14233b;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-on-brand: rgba(255, 255, 255, 0.96);
+
+  --color-border: #e4e8ef;
+  --color-border-strong: #c9d4df;
+  --color-border-dashed: #cfd8e3;
+
+  --color-success-bg: rgba(35, 158, 35, 0.88);
+  --color-danger-bg: rgba(201, 49, 44, 0.88);
+  --color-primary-bg: rgba(41, 122, 192, 0.88);
+  --color-tab-active: #0f766e;
+
+  --color-card-header: var(--color-brand-accent);
+  --color-card-body-text: #475569;
+
+  --color-info-bg: #eef4ff;
+  --color-info-text: #1d4ed8;
+  --color-info-border: #bfdbfe;
+
+  --color-flash: #dbeafe;
+  --color-flash-text: #1e40af;
+  --color-flash-error: #dc2626;
+  --color-flash-error-text: #ffffff;
+
+  --color-session-menu-bg: #ffffff;
+  --color-session-hover: #5b6b7c;
+  --color-logout: #bb1f1f;
+
+  --header-height: 72px;
+  --content-max-width: 1240px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  --focus-ring: 0 0 0 4px rgba(139, 29, 29, 0.12);
+
+  --shadow-sm: 0 2px 8px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 10px 24px rgba(16, 24, 40, 0.085);
+  --shadow-lg: 0 20px 46px rgba(16, 24, 40, 0.12);
+  --shadow-card: 0 8px 22px rgba(16, 24, 40, 0.08);
+  --shadow-card-hover: 0 18px 40px rgba(16, 24, 40, 0.14);
+  --shadow-header: 0 8px 24px rgba(2, 6, 23, 0.16);
+
+  --font-family: "Inter", "Segoe UI", Roboto, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --transition-fast: 160ms ease;
+  --transition-theme: 200ms ease;
+}
+
+body[data-specialty="informatica"] { --accent:#7a1f2b; --accent-contrast:#ffffff; }
+body[data-specialty="construcciones"] { --accent:#c3ae7c; --accent-contrast:#14233b; }
+body[data-specialty="quimica"] { --accent:#ffffff; --accent-contrast:#14233b; --accent-border:2px solid var(--ink); }
+body[data-specialty="electronica"] { --accent:#6b7280; --accent-contrast:#ffffff; }
+body[data-specialty="mecanica-automotriz"] { --accent:#0d1b3d; --accent-contrast:#ffffff; }
+body[data-specialty="mecanica-general"] { --accent:#14432a; --accent-contrast:#ffffff; }
+body[data-specialty="electromecanica"] { --accent:#1a2ecf; --accent-contrast:#ffffff; }
+body[data-specialty="electricidad"] { --accent:#8fd6f2; --accent-contrast:#14233b; }
+body { --accent-border: 1px solid var(--accent); }
+body[data-specialty="quimica"] { --accent-border: 2px solid var(--ink); }
+
+body.dark-mode {
+  --paper: #0d1a27;
+  --bg: #0b141e;
+  --ink: #e7edf3;
+  --muted: #8496a8;
+  --line: #28394b;
+  --green: #4caf7d;
+  --amber: #f2a53f;
+  --red: #e0665a;
+  --color-brand: #9f2020;
+  --color-brand-dark: #771616;
+  --color-brand-hover: #374151;
+
+  --color-bg: #0b0f19;
+  --color-bg-elevated: #111827;
+  --color-bg-muted: #162132;
+  --color-bg-subtle: #111c2c;
+  --color-bg-input: #111c2c;
+
+  --color-text: #e5e7eb;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+
+  --color-border: #2f3b4d;
+  --color-border-strong: #3f4f62;
+  --color-border-dashed: #475569;
+
+  --color-card-body-text: #cbd5e1;
+  --color-tab-active: #2563eb;
+
+  --color-info-bg: #1e293b;
+  --color-info-text: #93c5fd;
+  --color-info-border: #334155;
+
+  --color-flash: #1f2937;
+  --color-flash-text: #d1d5db;
+  --color-flash-error: #991b1b;
+
+  --color-session-menu-bg: #111827;
+  --color-session-hover: #374151;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-header: 0 4px 12px rgba(0, 0, 0, 0.65);
+}

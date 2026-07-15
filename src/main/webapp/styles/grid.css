@@ -1,0 +1,119 @@
+.grid-container {
+  display: flex;
+  justify-content: center;
+}
+
+.planilla-grid {
+  max-width: var(--content-max-width);
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.planilla-card {
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+}
+
+.planilla-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
+.planilla-card-link:focus-visible .planilla-card {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+}
+
+.planilla-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.planilla-card:active {
+  transform: translateY(-1px);
+}
+
+.card-heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-brand-accent), var(--color-brand));
+  color: var(--color-text-on-brand);
+  font-weight: 600;
+  min-height: 52px;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.card-body {
+  color: var(--color-card-body-text);
+  padding: 1.25rem 1.5rem;
+  background: var(--color-bg-elevated);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: max-content 0.5ch 1fr;
+  gap: 0.35rem;
+}
+
+.info-grid span {
+  font-size: 1rem;
+}
+
+.info-grid .total-tareas {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.label {
+  text-align: right;
+  color: var(--color-text-secondary);
+}
+
+.value {
+  text-align: right;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.colon {
+  justify-self: center;
+  color: var(--color-text-muted);
+}
+
+.smallSize {
+  font-size: 1.125rem;
+}
+
+.mediumSize {
+  font-size: 1.2rem;
+}
+
+.largeSize {
+  font-size: 1.5rem;
+}
+
+.card-footer {
+  font-size: 0.875rem;
+  margin-bottom: 10px;
+}
+
+.section-block {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.section-block--spaced {
+  margin: 1rem 0 1.5rem;
+}

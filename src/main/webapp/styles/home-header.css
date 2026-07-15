@@ -1,0 +1,7 @@
+header {
+  background-color: var(--color-brand);
+}
+
+.header-school-name {
+  color: var(--color-text-on-brand);
+}

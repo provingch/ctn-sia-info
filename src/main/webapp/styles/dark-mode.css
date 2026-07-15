@@ -1,0 +1,256 @@
+/* Dark mode overrides — most colors come from theme.css variables */
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: var(--color-bg-input);
+  border-color: var(--color-border);
+  color: var(--color-text);
+  box-shadow: none;
+}
+
+body.dark-mode option {
+  background: var(--color-bg-input);
+  color: var(--color-text);
+}
+
+body.dark-mode .card-body {
+  background: var(--color-bg-elevated);
+}
+
+body.dark-mode .profile-tab {
+  background: var(--color-bg-muted);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+body.dark-mode .profile-tab.active {
+  background: var(--color-tab-active);
+  border-color: var(--color-tab-active);
+  color: #fff;
+}
+
+body.dark-mode .secondary-button {
+  background: #064e3b;
+  color: #d1fae5;
+  border-color: #14532d;
+}
+
+body.dark-mode .google-connect-button,
+body.dark-mode .google-disconnect-button {
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+body.dark-mode .google-connect-button {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+body.dark-mode .google-disconnect-button {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+body.dark-mode .five-highlight {
+  background-color: rgba(16, 185, 129, 0.22);
+}
+
+body.dark-mode .four-highlight {
+  background-color: rgba(56, 189, 248, 0.22);
+}
+
+body.dark-mode .three-highlight {
+  background-color: rgba(234, 179, 8, 0.18);
+}
+
+body.dark-mode .two-highlight {
+  background-color: rgba(245, 158, 11, 0.18);
+}
+
+body.dark-mode .one-highlight {
+  background-color: rgba(244, 63, 94, 0.18);
+}
+
+body.dark-mode .empty-state {
+  color: var(--color-text-muted);
+}
+
+body.dark-mode select[disabled] {
+  background: var(--color-bg-muted);
+  opacity: 0.7;
+}
+
+body.dark-mode .table-responsive,
+body.dark-mode .grade-table {
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-card);
+}
+
+body.dark-mode .table-responsive::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+body.dark-mode .table-responsive::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border: 3px solid #0f172a;
+}
+
+body.dark-mode .table-responsive::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.75);
+}
+
+body.dark-mode {
+  scrollbar-color: rgba(148, 163, 184, 0.4) #0f172a;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border: 3px solid #0f172a;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.75);
+}
+
+body.dark-mode .table-responsive {
+  scrollbar-color: rgba(148, 163, 184, 0.4) #0f172a;
+}
+
+body.dark-mode .table-row:nth-child(odd) > .cell {
+  background-color: var(--color-bg-elevated);
+}
+
+body.dark-mode .table-row:nth-child(even) > .cell {
+  background-color: var(--color-bg-muted);
+}
+
+body.dark-mode .cell,
+body.dark-mode .grade-table td,
+body.dark-mode .grade-table th {
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+body.dark-mode .grade-table tr.five-color td {
+  color: #7cc47f;
+}
+
+body.dark-mode .grade-table tr.four-color td {
+  color: #60a5fa;
+}
+
+body.dark-mode .grade-table tr.three-color td {
+  color: #facc15;
+}
+
+body.dark-mode .grade-table tr.two-color td {
+  color: #fbbf24;
+}
+
+body.dark-mode .grade-table tr.one-color td {
+  color: #f87171;
+}
+
+body.dark-mode .grade-table {
+  background-color: #111827;
+}
+
+body.dark-mode .grade-table tbody tr:hover {
+  background-color: #1f2937;
+}
+
+body.dark-mode .five-highlight {
+  background-color: rgba(34, 197, 94, 0.18);
+}
+
+body.dark-mode .four-highlight {
+  background-color: rgba(14, 165, 233, 0.18);
+}
+
+body.dark-mode .three-highlight {
+  background-color: rgba(234, 179, 8, 0.18);
+}
+
+body.dark-mode .two-highlight {
+  background-color: rgba(245, 158, 11, 0.18);
+}
+
+body.dark-mode .one-highlight {
+  background-color: rgba(239, 68, 68, 0.18);
+}
+
+body.dark-mode .five-color {
+  color: #7cc47f;
+}
+
+body.dark-mode .four-color {
+  color: #60a5fa;
+}
+
+body.dark-mode .three-color {
+  color: #facc15;
+}
+
+body.dark-mode .two-color {
+  color: #fbbf24;
+}
+
+body.dark-mode .one-color {
+  color: #f87171;
+}
+
+body.dark-mode .table-heading {
+  color: #fff;
+}
+
+body.dark-mode .tareas-grid {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text);
+  box-shadow: var(--shadow-card);
+}
+
+body.dark-mode .tareas-grid .table-header,
+body.dark-mode .tareas-grid .cell {
+  background-color: var(--color-bg-muted);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+body.dark-mode .tareas-grid .table-header {
+  background-color: var(--color-bg-elevated);
+}
+
+body.dark-mode .tareas-grid select,
+body.dark-mode .tareas-grid input {
+  background-color: var(--color-bg-input);
+  border-color: var(--color-border);
+  color: var(--color-text);
+  box-shadow: none;
+}
+
+body.dark-mode .tareas-grid select[disabled] {
+  background-color: var(--color-bg-muted);
+  border-color: var(--color-border);
+}
+
+body.dark-mode .status-card {
+  background-color: #1f2937;
+  border-color: #334155;
+}
+
+body.dark-mode .status-card.planilla-card {
+  background-color: #111827;
+}
+
+body.dark-mode .status-card-body {
+  color: var(--color-text);
+}
+
+body.dark-mode .status-card strong {
+  color: var(--color-text-on-brand);
+}
+

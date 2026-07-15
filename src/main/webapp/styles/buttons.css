@@ -1,0 +1,67 @@
+button, #backBtn, #addBtn, #downloadBtn {
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  min-height: 42px;
+  padding: 0.58rem 0.95rem;
+  font-size: 0.9rem;
+  font-family: var(--font-family);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), opacity var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+button {
+  color: var(--color-text);
+  background: var(--color-bg-elevated);
+}
+
+.back-button,
+.download-button {
+  background: linear-gradient(135deg, var(--color-brand-accent), var(--color-brand));
+  color: #ffffff;
+}
+
+.add-button,
+.save-button {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: #ffffff;
+}
+
+.delete-button {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.back-button:hover,
+.add-button:hover,
+.save-button:hover,
+.delete-button:hover,
+.download-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.back-icon,
+.add-icon,
+.save-icon,
+.download-icon,
+.delete-icon {
+  height: 13px;
+}
+
+#backBtn { margin-right: 0.2rem; }
+#saveBtn { margin-left: 0.2rem; }
