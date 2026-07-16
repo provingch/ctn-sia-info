@@ -58,6 +58,18 @@ public final class GoogleClassroomUtils {
         return parseCourseKey(courseName).isPresent();
     }
 
+    public static String extractSpecialtyHint(String courseName, String room) {
+        String source = room != null && !room.isBlank() ? room : courseName;
+        if (source == null || source.isBlank()) {
+            return "";
+        }
+        String cleaned = stripLevelAndSection(source);
+        if (cleaned.isBlank()) {
+            return "";
+        }
+        return normalize(cleaned);
+    }
+
     private static String normalize(String text) {
         String withoutAccents = Normalizer.normalize(text, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "");

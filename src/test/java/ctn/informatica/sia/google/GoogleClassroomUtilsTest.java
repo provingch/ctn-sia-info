@@ -50,7 +50,7 @@ public class GoogleClassroomUtilsTest {
     public void testTeacherCourseMatchUsesCourseIdentity() {
         Curso curso = new Curso(1, "Algoritmia", 2026, "A");
         Course classroomCourse = new Course();
-        classroomCourse.setName("Algoritmica 2do A");
+        classroomCourse.setName("Algoritmia 2do A");
         classroomCourse.setRoom("");
 
         assertTrue(GoogleClassroomService.courseMatchesTeacherCurso(classroomCourse, List.of(curso)));

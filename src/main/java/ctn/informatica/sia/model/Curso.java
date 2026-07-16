@@ -50,11 +50,11 @@ public class Curso {
         }
         boolean sameLevel = this.getNivel() == courseKey.getNivel();
         boolean sameSection = this.seccion != null && this.seccion.equalsIgnoreCase(courseKey.getSeccion());
-        boolean sameSpecialty = true;
         String expectedSpecialty = normalizeValue(courseKey.getSala());
-        if (!expectedSpecialty.isBlank()) {
-            sameSpecialty = normalizeValue(this.especialidad).equals(expectedSpecialty);
+        if (expectedSpecialty.isBlank()) {
+            return false;
         }
+        boolean sameSpecialty = normalizeValue(this.especialidad).equals(expectedSpecialty);
         return sameLevel && sameSection && sameSpecialty;
     }
 

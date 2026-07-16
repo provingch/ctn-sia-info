@@ -53,8 +53,9 @@ public final class GoogleClassroomService {
             return false;
         }
         boolean hasAccessToken = profesor.getGcAccessToken() != null && !profesor.getGcAccessToken().isBlank();
+        boolean hasRefreshToken = profesor.getGcRefreshToken() != null && !profesor.getGcRefreshToken().isBlank();
         boolean hasGoogleEmail = profesor.getGoogleEmail() != null && !profesor.getGoogleEmail().isBlank();
-        return hasAccessToken || hasGoogleEmail;
+        return hasAccessToken || hasRefreshToken || hasGoogleEmail;
     }
 
     public static Optional<GoogleClassroomUtils.CourseKey> parseCourseKey(String courseName) {
@@ -202,29 +203,37 @@ public final class GoogleClassroomService {
             key = parseCourseKey(name + " " + course.getRoom(), null);
         }
 
-        if (key.isPresent()) {
-            for (Curso curso : cursos) {
-                if (curso.matchesCourseKey(key.get())) {
-                    return true;
-                }
-            }
-        }
-
-        Integer maybeLevel = tryExtractLevel(name);
-        if (maybeLevel == null) {
+        String specialtyHint = GoogleClassroomUtils.extractSpecialtyHint(name, course.getRoom());
+        if (specialtyHint.isBlank()) {
             return false;
         }
 
-        for (Curso curso : cursos) {
-            if (curso.getNivel() == maybeLevel && curso.getSeccion() != null && !curso.getSeccion().isBlank()) {
-                String courseSection = key.map(GoogleClassroomUtils.CourseKey::getSeccion).orElse(null);
-                if (courseSection != null && courseSection.equalsIgnoreCase(curso.getSeccion())) {
+        if (key.isPresent()) {
+            for (Curso curso : cursos) {
+                boolean sameLevel = curso.getNivel() == key.get().getNivel();
+                boolean sameSection = curso.getSeccion() != null && curso.getSeccion().equalsIgnoreCase(key.get().getSeccion());
+                boolean sameSpecialty = specialtyHintMatchesCurso(specialtyHint, curso);
+                if (sameLevel && sameSection && sameSpecialty) {
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    private static boolean specialtyHintMatchesCurso(String specialtyHint, Curso curso) {
+        if (curso == null || specialtyHint == null || specialtyHint.isBlank()) {
+            return false;
+        }
+        String normalizedHint = GoogleClassroomUtils.normalizeSubjectName(specialtyHint);
+        String normalizedCurso = GoogleClassroomUtils.normalizeSubjectName(curso.getEspecialidad());
+        if (normalizedHint.isBlank() || normalizedCurso.isBlank()) {
+            return false;
+        }
+        return normalizedHint.equals(normalizedCurso)
+                || normalizedHint.contains(normalizedCurso)
+                || normalizedCurso.contains(normalizedHint);
     }
 
     public static List<Course> listAllowedCourses(Profesor profesor, List<Curso> cursos, List<String> teacherSubjects) throws IOException {

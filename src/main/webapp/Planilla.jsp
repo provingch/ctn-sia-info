@@ -169,7 +169,7 @@
 
         <div class="table-container">
           <div class="table-responsive">
-            <div class="table" style="grid-template-columns: 40px 260px 140px${taskColumns} minmax(110px, 1fr);">
+            <div class="table" style="grid-template-columns: 40px 260px 140px${taskColumns};">
               <div class="table-row">
                 <div class="table-heading">
                   Tareas - ${planilla.nombre}
@@ -204,7 +204,6 @@
                     </div>
                   </div>
                 </c:forEach>
-                <div class="cell empty-fill"></div>
               </div>
 
               <c:forEach var="row" items="${rows}" varStatus="rs">
@@ -226,7 +225,6 @@
                              value="${row.grades[t.id] != null ? row.grades[t.id] : ''}" />
                     </div>
                   </c:forEach>
-                  <div class="cell empty-fill"></div>
                 </div>
               </c:forEach>
 
