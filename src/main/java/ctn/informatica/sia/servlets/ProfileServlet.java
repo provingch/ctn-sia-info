@@ -14,6 +14,7 @@ import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.Materia;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
+import ctn.informatica.sia.util.SiaUiContext;
 import com.google.api.services.classroom.model.Course;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -93,6 +94,30 @@ public class ProfileServlet extends HttpServlet {
             }
         }
         return merged;
+    }
+
+    private List<Especialidad> loadEspecialidades() {
+        try {
+            return new EspecialidadDao().findAll();
+        } catch (Exception ex) {
+            log("Error loading specialty catalog", ex);
+            return Collections.emptyList();
+        }
+    }
+
+    private String resolveProfesorEspecialidadNombre(Profesor profesor) {
+        if (profesor == null || profesor.getEspecialidadId() == null) {
+            return "Sin especialidad";
+        }
+        try {
+            Especialidad especialidad = new EspecialidadDao().findById(profesor.getEspecialidadId());
+            if (especialidad != null && especialidad.getNombre() != null && !especialidad.getNombre().isBlank()) {
+                return especialidad.getNombre();
+            }
+        } catch (Exception ex) {
+            log("Error resolving professor specialty name", ex);
+        }
+        return "Sin especialidad";
     }
 
     private List<Integer> parseEspecialidadIds(String[] values) {
@@ -184,7 +209,7 @@ public class ProfileServlet extends HttpServlet {
         boolean googleClassroomConnected = false;
         List<Materia> teacherMaterias = Collections.emptyList();
         List<Materia> availableMaterias = Collections.emptyList();
-        List<Especialidad> especialidades = Collections.emptyList();
+        List<Especialidad> especialidades = loadEspecialidades();
         String manualTeacherSubjectsText = "";
         if (session != null) {
             Object manualSubjects = session.getAttribute("manualTeacherSubjects");
@@ -201,7 +226,7 @@ public class ProfileServlet extends HttpServlet {
             if (profesor != null) {
                 availableMaterias = new MateriaDao().listAvailableForProfesor(profesor.getId());
             }
-            especialidades = new EspecialidadDao().findAll();
+            especialidades = loadEspecialidades();
         } catch (SQLException ex) {
             log("Error loading teacher materias for profile user " + (user != null ? user.getId() : -1), ex);
         } catch (Exception ex) {
@@ -224,6 +249,7 @@ public class ProfileServlet extends HttpServlet {
         req.setAttribute("teacherMaterias", teacherMaterias);
         req.setAttribute("availableMaterias", availableMaterias);
         req.setAttribute("especialidades", especialidades);
+        req.setAttribute("profesorEspecialidadNombre", resolveProfesorEspecialidadNombre(profesor));
         req.setAttribute("manualTeacherSubjectsText", manualTeacherSubjectsText);
         req.setAttribute("activityLog", session != null ? session.getAttribute("activityLog") : Collections.emptyList());
 
@@ -400,6 +426,7 @@ public class ProfileServlet extends HttpServlet {
         String telefono = req.getParameter("telefono");
         String celular = req.getParameter("celular");
         String usuario = req.getParameter("usuario");
+        String especialidadIdParam = req.getParameter("especialidadId");
 
         if (usuario == null || usuario.trim().isEmpty()) {
             errors.add("El nombre de usuario no puede estar vacío.");
@@ -424,10 +451,21 @@ public class ProfileServlet extends HttpServlet {
         if (correo != null) {
             profesor.setCorreo(correo);
         }
+        if (especialidadIdParam == null || especialidadIdParam.trim().isEmpty()) {
+            profesor.setEspecialidadId(null);
+        } else {
+            try {
+                profesor.setEspecialidadId(Integer.valueOf(especialidadIdParam.trim()));
+            } catch (NumberFormatException ex) {
+                errors.add("Especialidad inválida.");
+            }
+        }
 
         if (!errors.isEmpty()) {
             req.setAttribute("errors", errors);
             req.setAttribute("profesor", profesor);
+            req.setAttribute("especialidades", loadEspecialidades());
+            req.setAttribute("profesorEspecialidadNombre", resolveProfesorEspecialidadNombre(profesor));
             req.getRequestDispatcher("/Profile.jsp").forward(req, resp);
             return;
         }
@@ -437,6 +475,8 @@ public class ProfileServlet extends HttpServlet {
             if (session != null) {
                 appendActivityLog(session, "Datos del perfil actualizados");
                 session.setAttribute("flashMessage", "Datos guardados correctamente.");
+                String specialtyName = resolveProfesorEspecialidadNombre(profesor);
+                session.setAttribute("siaSpecialty", SiaUiContext.normalizeSpecialty(specialtyName));
             }
             if (isAjaxRequest(req)) {
                 writeJsonResponse(resp, true, "Datos guardados correctamente.");

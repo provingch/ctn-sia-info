@@ -4,8 +4,10 @@
  */
 package ctn.informatica.sia.servlets;
 
+import ctn.informatica.sia.dao.EspecialidadDao;
 import ctn.informatica.sia.dao.PadreDao;
 import ctn.informatica.sia.dao.UserDao;
+import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.Padre;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
@@ -48,11 +50,17 @@ public class LoginServlet extends HttpServlet {
                 try {
                     Profesor profesor = new ctn.informatica.sia.dao.ProfesorDao().findById(user.getId());
                     session.setAttribute("profesor", profesor);
-                    String specialty = SiaUiContext.normalizeSpecialty(
-                            profesor != null && profesor.getNombre() != null && !profesor.getNombre().isBlank()
-                                    ? profesor.getNombre()
-                                    : user.getUsername()
-                    );
+                    String specialty = "informatica";
+                    if (profesor != null && profesor.getEspecialidadId() != null) {
+                        try {
+                            Especialidad especialidad = new EspecialidadDao().findById(profesor.getEspecialidadId());
+                            if (especialidad != null && especialidad.getNombre() != null && !especialidad.getNombre().isBlank()) {
+                                specialty = SiaUiContext.normalizeSpecialty(especialidad.getNombre());
+                            }
+                        } catch (Exception ignoredEspecialidad) {
+                            specialty = "informatica";
+                        }
+                    }
                     session.setAttribute("siaSpecialty", specialty);
                 } catch (Exception ignored) {
                     // no-op: the planilla pages can recover by loading the professor from the DB later

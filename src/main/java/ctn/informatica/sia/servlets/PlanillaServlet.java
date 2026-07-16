@@ -21,6 +21,7 @@ import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.StudentRow;
 import ctn.informatica.sia.model.Tarea;
 import ctn.informatica.sia.model.User;
+import ctn.informatica.sia.util.SiaUiContext;
 import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.CourseWork;
 import java.io.IOException;
@@ -130,6 +131,7 @@ public class PlanillaServlet extends HttpServlet {
             }
 
             Curso curso = new CursoDao().findById(planilla.getCursoId());
+            request.setAttribute("cursoSpecialty", SiaUiContext.normalizeSpecialty(curso != null ? curso.getEspecialidad() : null));
             request.setAttribute("pageTitle", resolvePlanillaPageTitle(planilla, materia));
 
             RegistroDao registroDao = new RegistroDao();
@@ -283,6 +285,7 @@ public class PlanillaServlet extends HttpServlet {
                 if (profesor != null && GoogleClassroomService.isGoogleConnected(profesor)) {
                     try {
                         Curso curso = new CursoDao().findById(planilla.getCursoId());
+                        request.setAttribute("cursoSpecialty", SiaUiContext.normalizeSpecialty(curso != null ? curso.getEspecialidad() : null));
                         java.util.Optional<com.google.api.services.classroom.model.Course> matchingCourse =
                                 GoogleClassroomService.resolveCourseForPlanilla(profesor, curso, planilla, dao);
                         if (matchingCourse.isPresent()) {

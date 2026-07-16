@@ -21,8 +21,8 @@ public final class SiaUiContext {
             case "electromecánica", "electromecanica" -> "electromecanica";
             case "electricidad" -> "electricidad";
             case "electrónica", "electronica" -> "electronica";
-            case "construcciones" -> "construcciones";
-            case "química", "quimica" -> "quimica";
+            case "construcciones civiles", "construcciones-civiles", "construcciones" -> "construcciones";
+            case "química industrial", "quimica industrial", "química-industrial", "quimica-industrial", "química", "quimica" -> "quimica";
             case "informática", "informatica" -> "informatica";
             default -> normalized.replace(' ', '-').replace('_', '-');
         };

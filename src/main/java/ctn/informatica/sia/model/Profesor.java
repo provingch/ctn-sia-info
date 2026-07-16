@@ -19,6 +19,7 @@ public class Profesor {
     private Integer telefono;
     private Integer celular;
     private String correo;
+    private Integer especialidadId;
 
     private String googleEmail;
     private String gcAccessToken;
@@ -114,6 +115,14 @@ public class Profesor {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public Integer getEspecialidadId() {
+        return especialidadId;
+    }
+
+    public void setEspecialidadId(Integer especialidadId) {
+        this.especialidadId = especialidadId;
     }
 
 }

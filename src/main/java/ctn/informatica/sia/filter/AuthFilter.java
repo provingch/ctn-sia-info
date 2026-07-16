@@ -12,7 +12,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
+import ctn.informatica.sia.dao.EspecialidadDao;
 import ctn.informatica.sia.dao.UserDao;
+import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.Padre;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
@@ -53,11 +55,18 @@ public class AuthFilter implements Filter {
                 try {
                     Profesor profesor = new ctn.informatica.sia.dao.ProfesorDao().findById(restoredUser.getId());
                     session.setAttribute("profesor", profesor);
-                    session.setAttribute("siaSpecialty", SiaUiContext.normalizeSpecialty(
-                            profesor != null && profesor.getNombre() != null && !profesor.getNombre().isBlank()
-                                    ? profesor.getNombre()
-                                    : restoredUser.getUsername()
-                    ));
+                    String specialty = "informatica";
+                    if (profesor != null && profesor.getEspecialidadId() != null) {
+                        try {
+                            Especialidad especialidad = new EspecialidadDao().findById(profesor.getEspecialidadId());
+                            if (especialidad != null && especialidad.getNombre() != null && !especialidad.getNombre().isBlank()) {
+                                specialty = SiaUiContext.normalizeSpecialty(especialidad.getNombre());
+                            }
+                        } catch (Exception ignoredEspecialidad) {
+                            specialty = "informatica";
+                        }
+                    }
+                    session.setAttribute("siaSpecialty", specialty);
                 } catch (Exception ignored) {
                     // no-op
                 }

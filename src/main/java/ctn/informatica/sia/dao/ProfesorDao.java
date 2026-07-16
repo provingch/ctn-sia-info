@@ -29,6 +29,8 @@ public class ProfesorDao extends conexion {
         if (!rs.wasNull()) p.setCelular(cel);
 
         p.setCorreo(rs.getString("correo"));
+        int especialidadId = rs.getInt("especialidad_id");
+        if (!rs.wasNull()) p.setEspecialidadId(especialidadId);
         p.setGoogleEmail(rs.getString("google_email"));
         p.setGcAccessToken(rs.getString("google_access_token"));
         p.setGcRefreshToken(rs.getString("google_refresh_token"));
@@ -40,7 +42,7 @@ public class ProfesorDao extends conexion {
     // ── findById ─────────────────────────────────────────────────────────────
     public Profesor findById(int id) {
         final String sql = "SELECT id, nombre, apellido, usuario, contrasenia, "
-                         + "ci, telefono, celular, correo, google_email, "
+                         + "ci, telefono, celular, correo, especialidad_id, google_email, "
                          + "google_access_token, google_refresh_token, google_token_expiry "
                          + "FROM profesor WHERE id = ?";
         try (Connection c = getCon();
@@ -60,7 +62,7 @@ public class ProfesorDao extends conexion {
     // Ajusta el nombre de columna si en tu tabla se llama distinto.
     public Profesor findByGoogleEmail(String email) {
         final String sql = "SELECT id, nombre, apellido, usuario, contrasenia, "
-                         + "ci, telefono, celular, correo, google_email, "
+                         + "ci, telefono, celular, correo, especialidad_id, google_email, "
                          + "google_access_token, google_refresh_token, google_token_expiry "
                          + "FROM profesor WHERE google_email = ? OR correo = ?";
         try (Connection c = getCon();
@@ -151,7 +153,7 @@ public class ProfesorDao extends conexion {
         final String sql = "UPDATE profesor "
                          + "SET nombre = ?, apellido = ?, usuario = ?, "
                          + "    contrasenia = ?, ci = ?, telefono = ?, "
-                         + "    celular = ?, correo = ? "
+                         + "    celular = ?, correo = ?, especialidad_id = ? "
                          + "WHERE id = ?";
         try (Connection c = getCon();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -170,7 +172,9 @@ public class ProfesorDao extends conexion {
             else                          ps.setNull(7, Types.INTEGER);
 
             ps.setString(8, p.getCorreo());
-            ps.setInt(9, p.getId());
+            if (p.getEspecialidadId() != null) ps.setInt(9, p.getEspecialidadId());
+            else                                ps.setNull(9, Types.INTEGER);
+            ps.setInt(10, p.getId());
 
             return ps.executeUpdate() == 1;
         } catch (SQLException ex) {

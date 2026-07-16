@@ -20,7 +20,7 @@
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
 
-<body data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
+<body data-specialty="${not empty cursoSpecialty ? cursoSpecialty : (empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty)}">
   <header class="site-header"><!-- TODO turn this into navbar -->
     <div class="header-logo-container">
       <a href="${pageContext.request.contextPath}/HomeServlet" aria-label="Ir a inicio">

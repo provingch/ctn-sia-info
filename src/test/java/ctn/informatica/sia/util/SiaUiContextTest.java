@@ -10,5 +10,7 @@ class SiaUiContextTest {
         assertEquals("mecanica-automotriz", SiaUiContext.normalizeSpecialty("Mecánica Automotriz"));
         assertEquals("informatica", SiaUiContext.normalizeSpecialty("   "));
         assertEquals("quimica", SiaUiContext.normalizeSpecialty("quimica"));
+        assertEquals("construcciones", SiaUiContext.normalizeSpecialty("Construcciones Civiles"));
+        assertEquals("quimica", SiaUiContext.normalizeSpecialty("Química Industrial"));
     }
 }

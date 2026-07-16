@@ -4,11 +4,14 @@
  */
 package ctn.informatica.sia.servlets;
 
+import ctn.informatica.sia.dao.CursoDao;
 import ctn.informatica.sia.dao.InstrumentoDao;
 import ctn.informatica.sia.dao.PlanillaDao;
 import ctn.informatica.sia.dao.TareaDao;
+import ctn.informatica.sia.model.Curso;
 import ctn.informatica.sia.model.Instrumento;
 import ctn.informatica.sia.model.Planilla;
+import ctn.informatica.sia.util.SiaUiContext;
 import ctn.informatica.sia.model.Tarea;
 import ctn.informatica.sia.model.User;
 import java.io.IOException;
@@ -107,6 +110,11 @@ public class TareaServlet extends HttpServlet {
 
             // Load instrumentos
             List<Instrumento> instrumentos = new InstrumentoDao().findAll();
+            Curso curso = null;
+            if (selectedPlanilla != null) {
+                curso = new CursoDao().findById(selectedPlanilla.getCursoId());
+            }
+            request.setAttribute("cursoSpecialty", SiaUiContext.normalizeSpecialty(curso != null ? curso.getEspecialidad() : null));
 
             // Place data on request
             request.setAttribute("editingTarea", editingTarea);

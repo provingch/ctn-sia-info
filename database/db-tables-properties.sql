@@ -53,8 +53,12 @@ CREATE TABLE profesor (
     google_refresh_token TEXT NULL,
     google_token_expiry BIGINT NULL,
     materias_manual TEXT NULL,
+    especialidad_id INT NULL,
     nivel TINYINT NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT fk_profesor_especialidad FOREIGN KEY (especialidad_id)
+        REFERENCES especialidad (id)
+        ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE materia (
