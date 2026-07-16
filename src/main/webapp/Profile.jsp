@@ -14,8 +14,42 @@
 <head>
   <title>Mi Perfil</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
+  <style>
+  .page-heading h1 {
+    margin: 0;
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  }
+  .page-subtitle {
+    margin-top: 0.65rem;
+    color: var(--muted);
+    max-width: 48rem;
+  }
+  .inline-form {
+    display: inline-block;
+    margin: 0;
+  }
+  .activity-log ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+  @media (max-width: 900px) {
+    .profile-tabs {
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 0.75rem;
+      padding-bottom: 0.5rem;
+    }
+    .profile-tab {
+      flex: 1 0 auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+    }
+  }
+  </style>
 </head>
 
 <body data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
@@ -561,149 +595,7 @@
 })();
 </script>
 
-<script src="${pageContext.request.contextPath}/scripts/sia-theme.js"></script>
-
-.subject-input-row select {
-  flex: 1 1 240px;
-  min-width: 240px;
-}
-.page-heading h1 {
-  margin: 0;
-  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
-}
-.page-subtitle {
-  margin-top: 0.65rem;
-  color: var(--color-text-secondary);
-  max-width: 48rem;
-}
-.profile-top-section {
-  margin-bottom: 1.5rem;
-  padding: 1.4rem 1.4rem;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, var(--color-bg-muted), var(--color-bg-elevated));
-  box-shadow: var(--shadow-card);
-}
-.profile-layout {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 1.5rem;
-  align-items: start;
-}
-.profile-sidebar {
-  position: sticky;
-  top: calc(var(--header-height) + 1.25rem);
-}
-.profile-tabs {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin: 0;
-}
-.profile-tab {
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-elevated);
-  color: var(--color-text);
-  padding: 1rem 1rem;
-  cursor: pointer;
-  font-weight: 600;
-  font-family: var(--font-family);
-  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
-  text-align: left;
-  width: 100%;
-}
-.profile-tab + .profile-tab {
-  border-top: none;
-}
-.profile-tab:first-child {
-  border-top-left-radius: var(--radius-sm);
-  border-top-right-radius: var(--radius-sm);
-}
-.profile-tab:last-child {
-  border-bottom-left-radius: var(--radius-sm);
-  border-bottom-right-radius: var(--radius-sm);
-}
-.profile-tab:hover,
-.profile-tab:focus-visible {
-  background: var(--color-bg-muted);
-}
-.profile-tab.active {
-  background: var(--color-tab-active);
-  color: #ffffff;
-  border-color: var(--color-tab-active);
-}
-.profile-panel {
-  display: none;
-}
-.profile-panel.active {
-  display: block;
-}
-.profile-content {
-  min-width: 0;
-}
-
-@media (max-width: 900px) {
-  .profile-layout {
-    grid-template-columns: 1fr;
-  }
-  .profile-sidebar {
-    position: static;
-  }
-  .profile-tabs {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 0.75rem;
-    padding-bottom: 0.5rem;
-  }
-  .profile-tab {
-    flex: 1 0 auto;
-    border-radius: var(--radius-pill);
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-    border-left: 1px solid var(--color-border);
-    border-right: 1px solid var(--color-border);
-  }
-  .profile-tab + .profile-tab {
-    border-top: 1px solid var(--color-border);
-  }
-}
-
-.subject-list {
-  display: grid;
-  gap: 0.75rem;
-}
-.subject-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-elevated);
-}
-.inline-form {
-  display: inline-block;
-  margin: 0;
-}
-.secondary-button {
-  border: 1px solid var(--color-border-strong);
-  background: var(--color-bg-muted);
-  color: var(--color-text);
-  padding: 0.45rem 0.8rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-family: var(--font-family);
-}
-.empty-state {
-  color: var(--color-text-muted);
-  font-style: italic;
-}
-.activity-log ul {
-  margin: 0;
-  padding-left: 1.2rem;
-  display: grid;
-  gap: 0.6rem;
-}
-</style>
+<script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
 </body>
 
 </html>

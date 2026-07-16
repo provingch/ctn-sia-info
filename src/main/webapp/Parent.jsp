@@ -5,7 +5,7 @@
 <head>
     <title>CTNPortal - Padres</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
 <body data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
@@ -170,6 +170,6 @@
   });
 })();
 </script>
-<script src="${pageContext.request.contextPath}/scripts/sia-theme.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
 </body>
 </html>

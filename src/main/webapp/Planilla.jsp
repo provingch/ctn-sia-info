@@ -14,9 +14,9 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title><c:out value="${not empty pageTitle ? pageTitle : planilla.nombre}" /></title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css">
-  <script src="${pageContext.request.contextPath}/scripts/planilla.js"></script>
-  <script src="${pageContext.request.contextPath}/scripts/session-dropdown.js"></script>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
+  <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=163"></script>
+  <script src="${pageContext.request.contextPath}/scripts/session-dropdown.js?v=163"></script>
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
 
@@ -302,7 +302,7 @@
       };
     </script>
   </c:if>
-  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js"></script>
+  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
 </body>
 
 </html>
