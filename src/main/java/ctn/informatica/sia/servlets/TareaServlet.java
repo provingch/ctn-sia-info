@@ -229,6 +229,25 @@ public class TareaServlet extends HttpServlet {
             request.setAttribute("total", totalStr);
             request.setAttribute("titulo", titulo);
             request.setAttribute("etapa", etapaStr);
+
+            Planilla selectedPlanilla = null;
+            for (Planilla p : planillas) {
+                if (p.getId() == planillaId) {
+                    selectedPlanilla = p;
+                    break;
+                }
+            }
+
+            Curso curso = null;
+            if (selectedPlanilla != null) {
+                try {
+                    curso = new CursoDao().findById(selectedPlanilla.getCursoId());
+                } catch (SQLException ex) {
+                    throw new ServletException("Error loading curso for specialty", ex);
+                }
+            }
+            request.setAttribute("cursoSpecialty", SiaUiContext.normalizeSpecialty(curso != null ? curso.getEspecialidad() : null));
+
             request.getRequestDispatcher("/Tarea.jsp").forward(request, response);
             return;
         }
