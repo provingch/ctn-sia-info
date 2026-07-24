@@ -11,8 +11,7 @@
 }
 
 .titleblock {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  display: flex;
   background: var(--paper);
   border: 1px solid var(--line);
   border-bottom: 3px solid var(--accent);
@@ -60,27 +59,56 @@
 }
 
 .tb-right {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  border-left: 1px solid var(--line);
+  display: none;
 }
 
 .tb-cell {
-  border-left: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: 0.6rem 0.7rem;
-  min-height: 44px;
+  display: none;
 }
 
-.tb-cell b {
-  display: block;
+.course-info-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  margin-bottom: 1.2rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.course-info-item {
+  padding: 0.8rem 1rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.course-info-item:last-child {
+  border-right: none;
+}
+
+.course-info-item:nth-child(4n) {
+  border-right: none;
+}
+
+.course-info-label {
+  font-size: 0.7rem;
+  font-weight: 700;
   color: var(--muted);
-  font-weight: 600;
-  font-size: 9px;
   text-transform: uppercase;
-  margin-bottom: 0.2rem;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+}
+
+.course-info-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .planilla-hero {

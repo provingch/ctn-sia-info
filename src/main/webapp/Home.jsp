@@ -75,11 +75,24 @@
             <span>Acceso a planillas y tareas</span>
           </div>
         </div>
-        <div class="tb-right">
-          <div class="tb-cell"><b>Curso</b>${selCurso.getCurso()}.<sup>o</sup> "${selCurso.seccion}"</div>
-          <div class="tb-cell"><b>Especialidad</b>${selCurso.especialidad}</div>
-          <div class="tb-cell"><b>Docente</b>${sessionScope.user.fullName}</div>
-          <div class="tb-cell"><b>Fecha</b><c:out value="${nowFormatted}" /></div>
+      </div>
+
+      <div class="course-info-bar">
+        <div class="course-info-item">
+          <span class="course-info-label">CURSO</span>
+          <span class="course-info-value">${selCurso.getCurso()}.<sup>o</sup> "${selCurso.seccion}"</span>
+        </div>
+        <div class="course-info-item">
+          <span class="course-info-label">ESPECIALIDAD</span>
+          <span class="course-info-value">${selCurso.especialidad}</span>
+        </div>
+        <div class="course-info-item">
+          <span class="course-info-label">DOCENTE</span>
+          <span class="course-info-value">${sessionScope.user.fullName}</span>
+        </div>
+        <div class="course-info-item">
+          <span class="course-info-label">FECHA</span>
+          <span class="course-info-value"><c:out value="${nowFormatted}" /></span>
         </div>
       </div>
 
