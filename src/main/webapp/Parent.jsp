@@ -5,6 +5,7 @@
 <head>
     <title>CTNPortal - Padres</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
@@ -20,6 +21,9 @@
         <div class="session-dropdown" id="sessionDropdown">
             <button class="session-button" id="sessionButton" aria-haspopup="true" aria-expanded="false" aria-controls="sessionMenu">
                 Sesión
+                <svg class="dropdown-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7 10l5 5 5-5z"/>
+                </svg>
             </button>
             <nav class="session-menu" id="sessionMenu" role="menu" aria-labelledby="sessionButton">
                 <a role="menuitem" class="session-item" href="${pageContext.request.contextPath}/LogoutServlet">Cerrar Sesión</a>

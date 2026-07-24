@@ -20,6 +20,7 @@
 <head>
   <title>CTNPortal - Profesores</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
@@ -96,8 +97,8 @@
             <p class="planilla-subtitle">Panel principal para abrir planillas, revisar cursos y gestionar tareas.</p>
           </div>
           <div class="planilla-hero__actions">
-            <div class="btn-row">
-              <a class="btn-secondary" href="${pageContext.request.contextPath}/ProfileServlet">Perfil</a>
+            <div class="btn-row hero-actions">
+              <a class="btn-primary hero-action-button" href="${pageContext.request.contextPath}/ProfileServlet">Perfil institucional</a>
             </div>
           </div>
         </div>
@@ -275,4 +276,3 @@
 </body>
 
 </html>
-

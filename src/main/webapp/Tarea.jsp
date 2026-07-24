@@ -11,11 +11,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
 
 <head>
   <title>Tareas</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
@@ -82,10 +83,18 @@
           <c:out value="${nowFormatted}" />
         </span>
       </div>
-      <c:choose>
-          <c:when test="${not empty editingTarea}"><h1>Modificar Tarea</h1></c:when>
-          <c:otherwise><h1>Agregar Tarea</h1></c:otherwise>
-      </c:choose>
+      <div class="top-section planilla-hero hero-shell">
+        <div class="planilla-hero__header">
+          <div class="planilla-hero__info">
+            <span class="badge"><span class="dot"></span>Tareas</span>
+            <c:choose>
+              <c:when test="${not empty editingTarea}"><h1>Modificar tarea</h1></c:when>
+              <c:otherwise><h1>Agregar tarea</h1></c:otherwise>
+            </c:choose>
+            <p class="planilla-subtitle">Carga instrumentos, fechas y puntajes para la planilla seleccionada.</p>
+          </div>
+        </div>
+      </div>
       
       <c:if test="${not empty errors}">
         <c:forEach var="err" items="${errors}">

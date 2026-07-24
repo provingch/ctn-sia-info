@@ -14,6 +14,7 @@
 <head>
   <title>Mi Perfil</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   <style>
@@ -95,19 +96,10 @@
 
   <main>
     <section class="container page-shell">
-      <div class="titleblock">
-        <div class="tb-left">
-          <div class="tb-logo">CTN</div>
-          <div class="tb-name">
-            <h1>Colegio Técnico Nacional</h1>
-            <span>Perfil institucional</span>
-          </div>
-        </div>
-        <div class="tb-right">
-          <div class="tb-cell"><b>Usuario</b>${sessionScope.user.fullName}</div>
-          <div class="tb-cell"><b>Especialidad</b><span><c:out value="${not empty profesorEspecialidadNombre ? profesorEspecialidadNombre : 'Sin especialidad'}" /></span></div>
-          <div class="tb-cell"><b>Rol</b><span>${sessionScope.user.level == 1 ? 'Profesor' : sessionScope.user.level == 2 ? 'Administrador' : sessionScope.user.level == 4 ? 'Padre' : ''}</span></div>
-          <div class="tb-cell"><b>Fecha</b><c:out value="${nowFormatted}" /></div>
+      <div class="profile-heading">
+        <div class="profile-heading__title">
+          <h1>Perfil institucional</h1>
+          <p class="profile-heading__subtitle">Colegio Técnico Nacional</p>
         </div>
       </div>
       <div class="info-bar">

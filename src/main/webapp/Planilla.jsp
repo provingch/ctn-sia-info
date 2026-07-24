@@ -13,6 +13,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><c:out value="${not empty pageTitle ? pageTitle : planilla.nombre}" /></title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
   <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=163"></script>

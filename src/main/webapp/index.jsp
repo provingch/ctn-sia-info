@@ -14,6 +14,7 @@
   <head>
     <title>CTNPortal</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   </head>
@@ -31,11 +32,15 @@
       <div class="right-section"></div>
     </header>
 
-    <main>
+    <main class="login-main">
       <div class="login-wrapper">
         <div class="login-card">
           <div class="login-logo-container">
             <img class="login-logo" src="${pageContext.request.contextPath}/images/ctn-logo-2.svg">
+          </div>
+          <div class="login-heading">
+            <h1>Acceso institucional</h1>
+            <p>Sistema de informes academicos</p>
           </div>
           <c:if test="${loginError}">
               <div class="login-error">Nombre de usuario o contraseña incorrectos.</div>

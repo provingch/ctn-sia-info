@@ -11,6 +11,12 @@ y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.
 - Consolidación del diseño visual bajo el sistema SIA.
 - Ajustes de documentación y limpieza general del repositorio.
 
+## [1.7.1] - 2026-07-24
+
+### Modificado
+- Actualizada la vista `Home.jsp` para incluir meta viewport y renovar el botón principal a un estilo más prominente: `Perfil institucional`.
+- Simplificado el encabezado de `Profile.jsp` para eliminar el banner de información y dejar un título institucional más limpio.
+
 ## [1.7.0] - 2026-07-24
 
 ### Corregido
