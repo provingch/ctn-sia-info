@@ -72,6 +72,11 @@ public class PlanillaServlet extends HttpServlet {
                 etapa = Integer.parseInt(etapaStr.trim());
             }
 
+            if (!hasValidPlanillaIdentifier(planillaIdStr, cursoIdStr, materiaIdStr)) {
+                response.sendRedirect(request.getContextPath() + "/HomeServlet");
+                return;
+            }
+
             if (cursoIdStr != null && materiaIdStr != null
                     && !cursoIdStr.isEmpty() && !materiaIdStr.isEmpty()) {
 
@@ -225,6 +230,13 @@ public class PlanillaServlet extends HttpServlet {
         }
     }
 
+    private boolean hasValidPlanillaIdentifier(String planillaIdStr, String cursoIdStr, String materiaIdStr) {
+        boolean hasPlanillaId = planillaIdStr != null && !planillaIdStr.trim().isEmpty();
+        boolean hasCompositeKey = cursoIdStr != null && !cursoIdStr.trim().isEmpty()
+                && materiaIdStr != null && !materiaIdStr.trim().isEmpty();
+        return hasPlanillaId || hasCompositeKey;
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -244,6 +256,11 @@ public class PlanillaServlet extends HttpServlet {
         try {
             if (etapaStr != null && !etapaStr.trim().isEmpty()) {
                 etapa = Integer.parseInt(etapaStr.trim());
+            }
+
+            if (!hasValidPlanillaIdentifier(planillaIdStr, cursoIdStr, materiaIdStr)) {
+                response.sendRedirect(request.getContextPath() + "/HomeServlet");
+                return;
             }
 
             if (cursoIdStr != null && materiaIdStr != null

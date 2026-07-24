@@ -174,7 +174,9 @@
   display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:12px;background:color-mix(in srgb,var(--accent) 18%,var(--paper));border:var(--accent-border);font-family:var(--font-family);font-size:12px;color:var(--accent-contrast);
 }
 
-.badge .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);border:var(--accent-border);}
+.header-school-name {
+  display: none;
+}
 
 .card-title-row {
   display: flex;

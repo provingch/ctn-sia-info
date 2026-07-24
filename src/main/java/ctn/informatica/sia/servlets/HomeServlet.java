@@ -156,7 +156,6 @@ public class HomeServlet extends HttpServlet {
             // Map Classroom courseId -> planillaId and materiaId for quick linking from Home.jsp
             Map<String, Integer> classroomPlanillaMap = new HashMap<>();
             Map<String, Integer> classroomPlanillaMateriaMap = new HashMap<>();
-            Set<Integer> matchedPlanillaIds = new HashSet<>();
             if (profesor != null && googleClassroomConnected) {
                 for (Planilla p : planillas) {
                     try {
@@ -166,7 +165,6 @@ public class HomeServlet extends HttpServlet {
                             if (c.getId() != null && !c.getId().isBlank()) {
                                 classroomPlanillaMap.put(c.getId(), p.getId());
                                 classroomPlanillaMateriaMap.put(c.getId(), p.getMateriaId());
-                                matchedPlanillaIds.add(p.getId());
                             }
                         }
                     } catch (IOException ioe) {
@@ -202,19 +200,11 @@ public class HomeServlet extends HttpServlet {
                 }
             }
 
-            // Exclude planillas that are already represented by Classroom blocks to avoid duplicates
-            ArrayList<Planilla> planillasToShow = new ArrayList<>();
-            for (Planilla p : planillas) {
-                if (!matchedPlanillaIds.contains(p.getId())) {
-                    planillasToShow.add(p);
-                }
-            }
-
-            request.setAttribute("planillas", planillasToShow);
-            request.setAttribute("showPlanillaCards", shouldRenderPlanillaCards(planillasToShow));
+            request.setAttribute("planillas", planillas);
+            request.setAttribute("showPlanillaCards", shouldRenderPlanillaCards(planillas));
             request.setAttribute("classroomPlanillaMap", classroomPlanillaMap);
             request.setAttribute("classroomPlanillaMateriaMap", classroomPlanillaMateriaMap);
-            request.setAttribute("matchedPlanillaIds", matchedPlanillaIds);
+            request.setAttribute("matchedPlanillaIds", Collections.emptySet());
         } else {
             request.setAttribute("planillas", Collections.emptyList());
             request.setAttribute("showPlanillaCards", false);

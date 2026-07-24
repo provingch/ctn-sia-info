@@ -251,12 +251,20 @@ section { margin-bottom: 28px; }
 }
 .info-bar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 16px;
   border-style: solid;
   background: color-mix(in srgb, var(--paper) 86%, var(--accent) 6%);
+}
+.info-bar-divider {
+  color: var(--muted);
+  margin: 0 4px;
+}
+.info-bar-spacer {
+  flex: 1;
 }
 .note b, .selection-hint strong { color: var(--ink); }
 
@@ -480,7 +488,7 @@ input.no-spinner::-webkit-inner-spin-button, input.no-spinner::-webkit-outer-spi
   background: color-mix(in srgb, var(--accent) 12%, var(--paper));
   box-shadow: inset 3px 0 0 var(--accent);
 }
-.profile-panel { display: none; }
+.profile-panel { display: none; padding: 0 1.2rem; }
 .profile-panel.active { display: block; }
 .profile-content { min-width: 0; }
 

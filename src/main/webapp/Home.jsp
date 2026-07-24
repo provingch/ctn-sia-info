@@ -85,9 +85,10 @@
 
       <div class="info-bar">
         <span>Bienvenido/a ${sessionScope.user.fullName}</span>
-        <span>
-          <c:out value="${nowFormatted}" />
-        </span>
+        <span class="info-bar-divider">•</span>
+        <span>${selCurso.getCurso()}.<sup>o</sup> "${selCurso.seccion}" | ${selCurso.especialidad}</span>
+        <span class="info-bar-spacer"></span>
+        <span><c:out value="${nowFormatted}" /></span>
       </div>
       <div class="top-section planilla-hero hero-shell">
         <div class="planilla-hero__header">
@@ -144,14 +145,34 @@
               <c:forEach var="course" items="${googleClassroomCourses}">
                 <c:set var="targetMateriaId" value="${classroomPlanillaMateriaMap[course.id]}" />
                 <c:set var="hasMatch" value="${not empty targetMateriaId}" />
-                <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${targetMateriaId}&etapa=${selEtapa}">
-                    <div class="planilla-card card">
+                <c:choose>
+                  <c:when test="${hasMatch}">
+                    <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${targetMateriaId}&etapa=${selEtapa}">
+                      <div class="planilla-card card">
+                        <div class="head">
+                          <div class="card-title-row">
+                            <c:out value="${course.name}" />
+                          </div>
+                        </div>
+                        <div class="body">
+                          <div class="info-grid">
+                            <span class="total-tareas label">Sección</span>
+                            <span class="total-tareas colon">:</span>
+                            <span class="total-tareas value"><c:out value="${empty course.section ? (empty course.room ? '-' : course.room) : course.section}" /></span>
+                            <span class="total-tareas label">Sala</span>
+                            <span class="total-tareas colon">:</span>
+                            <span class="total-tareas value"><c:out value="${empty course.room ? '-' : course.room}" /></span>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  </c:when>
+                  <c:otherwise>
+                    <div class="planilla-card card" aria-disabled="true">
                       <div class="head">
                         <div class="card-title-row">
                           <c:out value="${course.name}" />
-                          <c:if test="${not hasMatch}">
-                            <span class="badge-warning">Sin vincular</span>
-                          </c:if>
+                          <span class="badge-warning">Sin vincular</span>
                         </div>
                       </div>
                       <div class="body">
@@ -165,7 +186,8 @@
                         </div>
                       </div>
                     </div>
-                </a>
+                  </c:otherwise>
+                </c:choose>
               </c:forEach>
             </div>
           </div>

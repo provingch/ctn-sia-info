@@ -6,8 +6,8 @@
 .profile-grid {
   width: 100%;
   max-width: 960px;
-  margin-top: 8px;
-  margin-bottom: 40px;
+  margin: 0 auto;
+  padding: 8px 1.2rem 40px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1.2rem;
