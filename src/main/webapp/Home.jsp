@@ -71,8 +71,8 @@
         <div class="tb-left">
           <div class="tb-logo">CTN</div>
           <div class="tb-name">
-            <h1>Colegio Técnico Nacional</h1>
-            <span>Sistema de informes académicos</span>
+            <h1>Panel de materias</h1>
+            <span>Acceso a planillas y tareas</span>
           </div>
         </div>
         <div class="tb-right">
@@ -143,20 +143,16 @@
             <div class="planilla-grid">
               <c:forEach var="course" items="${googleClassroomCourses}">
                 <c:set var="targetMateriaId" value="${classroomPlanillaMateriaMap[course.id]}" />
-                <c:choose>
-                  <c:when test="${not empty targetMateriaId}">
-                    <%-- PlanillaServlet resuelve la planilla por cursoId+materiaId+etapa,
-                         y la genera al vuelo si todavia no existe en la BD. --%>
-                    <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${targetMateriaId}&etapa=${selEtapa}">
-                  </c:when>
-                  <c:otherwise>
-                    <c:set var="targetHref" value="https://classroom.google.com/c/${course.id}" />
-                    <a class="planilla-card-link" href="${targetHref}" target="_blank" rel="noopener noreferrer">
-                  </c:otherwise>
-                </c:choose>
+                <c:set var="hasMatch" value="${not empty targetMateriaId}" />
+                <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${targetMateriaId}&etapa=${selEtapa}">
                     <div class="planilla-card card">
                       <div class="head">
-                        <c:out value="${course.name}" />
+                        <div class="card-title-row">
+                          <c:out value="${course.name}" />
+                          <c:if test="${not hasMatch}">
+                            <span class="badge-warning">Sin vincular</span>
+                          </c:if>
+                        </div>
                       </div>
                       <div class="body">
                         <div class="info-grid">
@@ -169,7 +165,7 @@
                         </div>
                       </div>
                     </div>
-                  </a>
+                </a>
               </c:forEach>
             </div>
           </div>

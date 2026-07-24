@@ -98,8 +98,8 @@
     <section class="container page-shell">
       <div class="profile-heading">
         <div class="profile-heading__title">
-          <h1>Perfil institucional</h1>
-          <p class="profile-heading__subtitle">Colegio Técnico Nacional</p>
+          <h1>Mi Perfil</h1>
+          <p class="profile-heading__subtitle">Gestiona tu información personal y configuración</p>
         </div>
       </div>
       <div class="info-bar">
@@ -141,31 +141,41 @@
               <form id="profileForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="profileSaveStatus">
                 <input type="hidden" name="action" value="saveProfile" />
                 <div class="profile-grid profile-grid-layout">
-                  <div class="table-card card">
-                    <div class="table-header">Datos del Profesor</div>
-                    <div class="cell"><strong>Nombre</strong></div>
-                    <div class="cell">${profesor.fullName}</div>
-                    <div class="cell"><strong>Cédula</strong></div>
-                    <div class="cell">${profesor.ci}</div>
-                    <div class="cell"><strong>Correo</strong></div>
-                    <div class="cell">
-                      <input type="email" name="correo" value="${profesor.correo}" />
+                  <div class="form-card card">
+                    <div class="form-card-header">Información Personal</div>
+                    <div class="form-field">
+                      <label for="profesorName">Nombre</label>
+                      <input type="text" id="profesorName" value="${profesor.fullName}" disabled />
                     </div>
-                    <div class="cell"><strong>Teléfono</strong></div>
-                    <div class="cell">
-                      <input class="no-spinner" type="number" name="telefono" value="${profesor.telefono}" />
+                    <div class="form-field">
+                      <label for="profesorCI">Cédula</label>
+                      <input type="text" id="profesorCI" value="${profesor.ci}" disabled />
                     </div>
-                    <div class="cell"><strong>Celular</strong></div>
-                    <div class="cell">
-                      <input class="no-spinner" type="number" name="celular" value="${profesor.celular}" />
+                  </div>
+                  <div class="form-card card">
+                    <div class="form-card-header">Contacto</div>
+                    <div class="form-field">
+                      <label for="correo">Correo electrónico</label>
+                      <input type="email" id="correo" name="correo" value="${profesor.correo}" />
                     </div>
-                    <div class="cell"><strong>Usuario</strong></div>
-                    <div class="cell">
-                      <input type="text" name="usuario" value="${profesor.usuario}" />
+                    <div class="form-field">
+                      <label for="telefono">Teléfono</label>
+                      <input class="no-spinner" type="number" id="telefono" name="telefono" value="${profesor.telefono}" />
                     </div>
-                    <div class="cell"><strong>Especialidad personal</strong></div>
-                    <div class="cell">
-                      <select name="especialidadId">
+                    <div class="form-field">
+                      <label for="celular">Celular</label>
+                      <input class="no-spinner" type="number" id="celular" name="celular" value="${profesor.celular}" />
+                    </div>
+                  </div>
+                  <div class="form-card card">
+                    <div class="form-card-header">Cuenta</div>
+                    <div class="form-field">
+                      <label for="usuario">Usuario</label>
+                      <input type="text" id="usuario" name="usuario" value="${profesor.usuario}" />
+                    </div>
+                    <div class="form-field">
+                      <label for="especialidadId">Especialidad personal</label>
+                      <select id="especialidadId" name="especialidadId">
                         <option value="">-- Sin especialidad --</option>
                         <c:forEach var="e" items="${especialidades}">
                           <option value="${e.id}" ${profesor.especialidadId != null && profesor.especialidadId == e.id ? 'selected' : ''}>
@@ -175,27 +185,25 @@
                       </select>
                     </div>
                   </div>
-                  <div class="table-card card">
-                    <div class="table-header">Google Classroom</div>
+                  <div class="form-card card">
+                    <div class="form-card-header">Google Classroom</div>
                     <c:url var="googleConnectUrl" value="/GoogleLoginServlet" />
                     <c:url var="googleDisconnectUrl" value="/GoogleDisconnectServlet" />
                     <c:choose>
                       <c:when test="${not empty profesor.googleEmail or not empty profesor.gcAccessToken}">
-                        <div class="google-connected">Conectado como <strong><c:out value="${profesor.googleEmail}"/></strong></div>
-                        <div class="google-help selection-hint">Puedes reconectar o desconectar tu cuenta.</div>
-                        <div class="action-row">
-                          <a class="btn-primary google-connect-button" href="${pageContext.request.contextPath}${googleConnectUrl}">Reconectar Classroom</a>
-                          <button class="btn-danger google-disconnect-button" type="submit" form="googleDisconnectForm">Desconectar</button>
+                        <div class="classroom-status classroom-status--connected">Conectado como <strong><c:out value="${profesor.googleEmail}"/></strong></div>
+                        <div class="classroom-actions">
+                          <a class="btn-primary" href="${pageContext.request.contextPath}${googleConnectUrl}">Reconectar</a>
+                          <button class="btn-danger" type="submit" form="googleDisconnectForm">Desconectar</button>
                         </div>
                       </c:when>
                       <c:otherwise>
-                        <div class="google-disconnected selection-hint">No conectado a Google Classroom.</div>
-                        <a class="btn-primary google-connect-button" href="${pageContext.request.contextPath}${googleConnectUrl}">Conectar Classroom</a>
+                        <div class="classroom-status classroom-status--disconnected">No conectado a Google Classroom</div>
+                        <a class="btn-primary" href="${pageContext.request.contextPath}${googleConnectUrl}">Conectar ahora</a>
                       </c:otherwise>
                     </c:choose>
                   </div>
-                  <div class="table-card table-card--wide card">
-                    <div class="table-header">Acciones</div>
+                  <div class="form-card form-card--actions card">
                     <div class="action-row">
                       <c:url var="HomeUrl" value="/HomeServlet" />
                       <a id="backBtn" class="back-button" href="${HomeUrl}">

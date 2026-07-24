@@ -152,6 +152,27 @@
 
 .badge .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);border:var(--accent-border);}
 
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.badge-warning {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--amber) 18%, var(--paper));
+  border: 1px solid var(--amber);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--amber);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 .card-surface,
 .panel-card {
   border: 1px solid var(--color-border);

@@ -39,8 +39,8 @@
             <img class="login-logo" src="${pageContext.request.contextPath}/images/ctn-logo-2.svg">
           </div>
           <div class="login-heading">
-            <h1>Acceso institucional</h1>
-            <p>Sistema de informes academicos</p>
+            <h1>Iniciar sesión</h1>
+            <p>Sistema de informes académicos</p>
           </div>
           <c:if test="${loginError}">
               <div class="login-error">Nombre de usuario o contraseña incorrectos.</div>

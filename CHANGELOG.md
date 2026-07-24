@@ -13,9 +13,21 @@ y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.
 
 ## [1.7.1] - 2026-07-24
 
-### Modificado
-- Actualizada la vista `Home.jsp` para incluir meta viewport y renovar el botón principal a un estilo más prominente: `Perfil institucional`.
-- Simplificado el encabezado de `Profile.jsp` para eliminar el banner de información y dejar un título institucional más limpio.
+### Mejorado
+- **UI/UX**: Rediseño de interfaz para mejorar claridad y consistencia visual.
+  - Actualizado el encabezado principal de `Home.jsp` de "Colegio Técnico Nacional" a "Panel de materias" para mejor claridad de propósito.
+  - Modernizado formulario de perfil en `Profile.jsp`: migrado de layout table-grid a card-based layout con campos etiquetados apropiadamente.
+  - Actualizado encabezado de login en `index.jsp` de "Acceso institucional" a "Iniciar sesión" (más claro).
+  - Agregado indicador visual "Sin vincular" para cursos de Google Classroom sin correspondencia de materia.
+
+### Cambiado
+- **Comportamiento de navegación**: Cursos de Google Classroom sin materia vinculada ahora redirigen a `PlanillaServlet` (en lugar de ir a Classroom externamente).
+- **Estilos CSS**: Refactorizado `styles/profile-grid.css` para usar sistema de componentes moderno (`.form-card`, `.form-field`) mientras se mantiene compatibilidad retroactiva para formularios de seguridad.
+- **Componentes**: Agregados nuevos estilos CSS en `components.css`: `.card-title-row`, `.badge-warning` para indicadores visuales consistentes.
+
+### Notas técnicas
+- Preservadas todas las dependencias de autoguard JavaScript (nombres de campos inmutables): `correo`, `telefono`, `celular`, `usuario`, `especialidadId`.
+- Google Classroom status ahora usa clases `.classroom-status--connected` y `.classroom-status--disconnected` con colores coherentes.
 
 ## [1.7.0] - 2026-07-24
 
