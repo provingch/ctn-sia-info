@@ -258,6 +258,7 @@ public final class GoogleClassroomService {
 
         List<Course> filteredCourses = new ArrayList<>();
         LinkedHashSet<String> seenClassroomCourseIds = new LinkedHashSet<>();
+        boolean fallbackToSelectedCourse = cursos.size() == 1;
         for (Course course : allCourses) {
             String name = course.getName();
             Optional<GoogleClassroomUtils.CourseKey> key = parseCourseKey(name, course.getRoom());
@@ -272,6 +273,11 @@ public final class GoogleClassroomService {
             }
 
             if (key.isEmpty()) {
+                System.out.println("[DEBUG] listAllowedCourses - courseId=" + course.getId()
+                        + " name='" + name + "' room='" + course.getRoom() + "' -> no se pudo extraer nivel+sección; se mostrará como curso sin vincular");
+                if (fallbackToSelectedCourse && seenClassroomCourseIds.add(course.getId())) {
+                    filteredCourses.add(course);
+                }
                 continue;
             }
 
@@ -287,6 +293,11 @@ public final class GoogleClassroomService {
             // Classroom course names often differ from the local subject labels, so a
             // course that already matches the selected teacher course should still be shown.
             if (!matchesAnyCurso) {
+                System.out.println("[DEBUG] listAllowedCourses - courseId=" + course.getId()
+                        + " name='" + name + "' room='" + course.getRoom() + "' -> no coincide automáticamente con el curso seleccionado; se mostrará como sin vincular");
+                if (fallbackToSelectedCourse && seenClassroomCourseIds.add(course.getId())) {
+                    filteredCourses.add(course);
+                }
                 continue;
             }
 

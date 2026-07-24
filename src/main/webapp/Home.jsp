@@ -67,22 +67,6 @@
 
   <main>
     <section class="container page-shell">
-      <div class="titleblock">
-        <div class="tb-left">
-          <div class="tb-logo">CTN</div>
-          <div class="tb-name">
-            <h1>Panel de materias</h1>
-            <span>Acceso a planillas y tareas</span>
-          </div>
-        </div>
-        <div class="tb-right">
-          <div class="tb-cell"><b>Curso</b> ${selCurso.getCurso()}.<sup>o</sup> "${selCurso.seccion}"</div>
-          <div class="tb-cell"><b>Especialidad</b> ${selCurso.especialidad}</div>
-          <div class="tb-cell"><b>Docente</b> ${sessionScope.user.fullName}</div>
-          <div class="tb-cell"><b>Fecha</b> <c:out value="${nowFormatted}" /></div>
-        </div>
-      </div>
-
       <div class="info-bar">
         <span>Bienvenido/a ${sessionScope.user.fullName}</span>
         <span class="info-bar-divider">•</span>
@@ -138,58 +122,9 @@
           </div>
         </c:if>
 
-        <c:if test="${googleClassroomConnected and not empty googleClassroomCourses}">
-          <div class="section-block">
-            <div class="section-heading">Cursos de Google Classroom</div>
-            <div class="planilla-grid">
-              <c:forEach var="course" items="${googleClassroomCourses}">
-                <c:set var="targetMateriaId" value="${classroomPlanillaMateriaMap[course.id]}" />
-                <c:set var="hasMatch" value="${not empty targetMateriaId}" />
-                <c:choose>
-                  <c:when test="${hasMatch}">
-                    <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${targetMateriaId}&etapa=${selEtapa}">
-                      <div class="planilla-card card">
-                        <div class="head">
-                          <div class="card-title-row">
-                            <c:out value="${course.name}" />
-                          </div>
-                        </div>
-                        <div class="body">
-                          <div class="info-grid">
-                            <span class="total-tareas label">Sección</span>
-                            <span class="total-tareas colon">:</span>
-                            <span class="total-tareas value"><c:out value="${empty course.section ? (empty course.room ? '-' : course.room) : course.section}" /></span>
-                            <span class="total-tareas label">Sala</span>
-                            <span class="total-tareas colon">:</span>
-                            <span class="total-tareas value"><c:out value="${empty course.room ? '-' : course.room}" /></span>
-                          </div>
-                        </div>
-                      </div>
-                    </a>
-                  </c:when>
-                  <c:otherwise>
-                    <div class="planilla-card card" aria-disabled="true">
-                      <div class="head">
-                        <div class="card-title-row">
-                          <c:out value="${course.name}" />
-                          <span class="badge-warning">Sin vincular</span>
-                        </div>
-                      </div>
-                      <div class="body">
-                        <div class="info-grid">
-                          <span class="total-tareas label">Sección</span>
-                          <span class="total-tareas colon">:</span>
-                          <span class="total-tareas value"><c:out value="${empty course.section ? (empty course.room ? '-' : course.room) : course.section}" /></span>
-                          <span class="total-tareas label">Sala</span>
-                          <span class="total-tareas colon">:</span>
-                          <span class="total-tareas value"><c:out value="${empty course.room ? '-' : course.room}" /></span>
-                        </div>
-                      </div>
-                    </div>
-                  </c:otherwise>
-                </c:choose>
-              </c:forEach>
-            </div>
+        <c:if test="${not empty googleClassroomVisibilityNotice}">
+          <div class="empty-state empty-state-card empty-state-card--compact">
+            <c:out value="${googleClassroomVisibilityNotice}" />
           </div>
         </c:if>
 

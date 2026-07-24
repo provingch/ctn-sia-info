@@ -94,6 +94,7 @@ public class HomeServlet extends HttpServlet {
         boolean googleClassroomConnected = false;
         String googleClassroomError = null;
         String googleClassroomPlaceholder = null;
+        String googleClassroomVisibilityNotice = null;
 
         Profesor profesor = new ProfesorDao().findById(user.getId());
         if (profesor != null) {
@@ -200,6 +201,11 @@ public class HomeServlet extends HttpServlet {
                 }
             }
 
+            if (googleClassroomConnected && !googleClassroomCourses.isEmpty() && selectedCurso != null
+                    && classroomPlanillaMateriaMap.isEmpty()) {
+                googleClassroomVisibilityNotice = "Se encontraron cursos en Google Classroom, pero ninguno pudo asociarse automáticamente a este curso. Revisa el nombre del curso en Classroom o vincúlalo manualmente.";
+            }
+
             request.setAttribute("planillas", planillas);
             request.setAttribute("showPlanillaCards", shouldRenderPlanillaCards(planillas));
             request.setAttribute("classroomPlanillaMap", classroomPlanillaMap);
@@ -220,6 +226,7 @@ public class HomeServlet extends HttpServlet {
         request.setAttribute("googleClassroomCourses", googleClassroomCourses);
         request.setAttribute("googleClassroomError", googleClassroomError);
         request.setAttribute("googleClassroomPlaceholder", googleClassroomPlaceholder);
+        request.setAttribute("googleClassroomVisibilityNotice", googleClassroomVisibilityNotice);
 
         request.getRequestDispatcher("/Home.jsp").forward(request, response);
 
