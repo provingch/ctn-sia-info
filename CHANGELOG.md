@@ -11,6 +11,14 @@ y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.
 - Consolidación del diseño visual bajo el sistema SIA.
 - Ajustes de documentación y limpieza general del repositorio.
 
+## [1.7.0] - 2026-07-24
+
+### Corregido
+- Se actualizaron dependencias con vulnerabilidades conocidas para reducir el riesgo de seguridad del proyecto.
+- Se actualizó `mysql-connector-j` de 8.0.33 a 8.2.0.
+- Se actualizó `poi-ooxml` de 5.2.3 a 5.4.0.
+- Se registró la remediación de seguridad en la línea base de la versión 1.7 del changelog.
+
 ## [1.6.0] - 2026-07-15
 
 ### Añadido
