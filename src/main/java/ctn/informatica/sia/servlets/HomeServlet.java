@@ -28,9 +28,7 @@ import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Optional;
 
 /**
@@ -221,17 +219,31 @@ public class HomeServlet extends HttpServlet {
                 googleClassroomVisibilityNotice = "Se encontraron cursos en Google Classroom, pero ninguno pudo asociarse automáticamente a este curso. Revisa el nombre del curso en Classroom o vincúlalo manualmente.";
             }
 
+            List<Materia> materiasDetectadas = Collections.emptyList();
+            if (profesor != null) {
+                try {
+                    materiasDetectadas = new PlanillaDao().findMateriasSinPlanilla(user.getId(), selectedCurso.getId(), selectedEtapa);
+                } catch (SQLException sqle) {
+                    log("Error loading materias sin planilla for user " + user.getId()
+                            + ", curso " + selectedCurso.getId()
+                            + ", etapa " + selectedEtapa, sqle);
+                    materiasDetectadas = Collections.emptyList();
+                }
+            }
+
             request.setAttribute("planillas", planillas);
             request.setAttribute("showPlanillaCards", shouldRenderPlanillaCards(planillas));
             request.setAttribute("classroomPlanillaMap", classroomPlanillaMap);
             request.setAttribute("classroomPlanillaMateriaMap", classroomPlanillaMateriaMap);
             request.setAttribute("matchedPlanillaIds", Collections.emptySet());
+            request.setAttribute("materiasDetectadas", materiasDetectadas);
         } else {
             request.setAttribute("planillas", Collections.emptyList());
             request.setAttribute("showPlanillaCards", false);
             request.setAttribute("classroomPlanillaMap", Collections.emptyMap());
             request.setAttribute("classroomPlanillaMateriaMap", Collections.emptyMap());
             request.setAttribute("matchedPlanillaIds", Collections.emptySet());
+            request.setAttribute("materiasDetectadas", Collections.emptyList());
         }
 
         request.setAttribute("cursos", cursos);

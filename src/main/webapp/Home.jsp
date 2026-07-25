@@ -160,6 +160,33 @@
         </c:choose>
       </div>
 
+      <c:if test="${not empty materiasDetectadas}">
+        <div class="section-block">
+          <div class="section-heading">Materias disponibles para asignar</div>
+          <div class="planilla-grid">
+            <c:forEach var="materia" items="${materiasDetectadas}">
+              <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${materia.id}&etapa=${selEtapa}">
+                <div class="planilla-card card">
+                  <div class="head">
+                    <div class="card-title-row">
+                      <c:out value="${materia.nombre}" />
+                      <span class="badge-warning">Sin planilla creada</span>
+                    </div>
+                  </div>
+                  <div class="body">
+                    <div class="info-grid">
+                      <span class="total-tareas label">Categoría</span>
+                      <span class="total-tareas colon">:</span>
+                      <span class="total-tareas value"><c:out value="${materia.categoria}" /></span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </c:forEach>
+          </div>
+        </div>
+      </c:if>
+
       <c:if test="${googleClassroomConnected and not empty googleClassroomCourses}">
         <div class="section-block">
           <div class="section-heading">Cursos de Google Classroom</div>

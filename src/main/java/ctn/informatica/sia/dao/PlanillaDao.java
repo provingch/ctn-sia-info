@@ -144,6 +144,36 @@ public class PlanillaDao extends conexion {
         }
     }
 
+    public List<Materia> findMateriasSinPlanilla(int profesorId, int cursoId, int etapaIndex) throws SQLException {
+        String sql = "SELECT DISTINCT m.id, m.nombre, m.categoria "
+                + "FROM materia m "
+                + "JOIN profesor_materia pm ON pm.materia_id = m.id AND pm.profesor_id = ? "
+                + "JOIN materia_especialidad me ON me.materia_id = m.id "
+                + "JOIN curso c ON c.especialidad_id = me.especialidad_id "
+                + "WHERE c.id = ? "
+                + "AND m.id NOT IN ("
+                + "    SELECT p.materia_id FROM planilla p "
+                + "    WHERE p.curso_id = ? AND p.profesor_id = ? AND p.etapa = ? AND p.periodo = ?"
+                + ") "
+                + "ORDER BY m.nombre";
+        try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql)) {
+            int index = 1;
+            ps.setInt(index++, profesorId);
+            ps.setInt(index++, cursoId);
+            ps.setInt(index++, cursoId);
+            ps.setInt(index++, profesorId);
+            ps.setString(index++, normalizeEtapa(etapaIndex));
+            ps.setInt(index++, DEFAULT_PERIOD);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Materia> materias = new ArrayList<>();
+                while (rs.next()) {
+                    materias.add(new Materia(rs.getInt("id"), rs.getString("nombre"), rs.getString("categoria")));
+                }
+                return materias;
+            }
+        }
+    }
+
     public Planilla findById(int id) throws SQLException {// could create an interface
         String sql = "SELECT p.id, m.nombre AS nombre, curso_id, materia_id, categoria, periodo, etapa, profesor_id, p.google_course_id "
                 + "FROM planilla p JOIN materia m ON p.materia_id = m.id "
