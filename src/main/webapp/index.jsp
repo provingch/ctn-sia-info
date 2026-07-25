@@ -63,11 +63,6 @@
       </div>
     </main>
 
-    <footer class="footer">
-      <hr>
-      <p>Colegio Técnico Nacional</p>
-    </footer>
-
     <!-- Cookie Consent Banner -->
     <div id="cookieConsent" class="cookie-consent-banner" role="banner">
       <div class="cookie-consent-content">

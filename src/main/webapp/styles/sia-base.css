@@ -453,8 +453,8 @@ input:focus, select:focus, textarea:focus {
 input.no-spinner { appearance: textfield; -moz-appearance: textfield; }
 input.no-spinner::-webkit-inner-spin-button, input.no-spinner::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
-.login-main { min-height: calc(100vh - 170px); display: grid; align-items: center; }
-.login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 70vh; }
+body.login-page .login-main { min-height: calc(100vh - 72px); display: grid; align-items: center; }
+body.login-page .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: auto; }
 .login-card { max-width: 420px; width: 100%; padding: 28px; border-radius: var(--radius); }
 .login-logo-container { display: flex; justify-content: center; margin-bottom: 16px; }
 .login-logo { width: 70px; height: 70px; }

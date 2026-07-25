@@ -35,8 +35,8 @@ public class AdminMateriasServlet extends HttpServlet {
             // professor counts per materia
             java.util.Map<Integer, Integer> profCounts = dao.countProfesoresForAll();
             req.setAttribute("profCounts", profCounts);
-            // map materia->especialidad names
-            java.util.Map<Integer, java.util.List<String>> materiaEspecialidades = new java.util.HashMap<>();
+            // map materia->especialidad names as joined text for JSTL
+            java.util.Map<Integer, String> materiaEspecialidadesTexto = new java.util.HashMap<>();
             for (Materia m : materias) {
                 java.util.List<Integer> ids = dao.listEspecialidadIdsForMateria(m.getId());
                 java.util.List<String> names = new java.util.ArrayList<>();
@@ -44,9 +44,9 @@ public class AdminMateriasServlet extends HttpServlet {
                     ctn.informatica.sia.model.Especialidad e = new ctn.informatica.sia.dao.EspecialidadDao().findById(id);
                     if (e != null) names.add(e.getNombre());
                 }
-                materiaEspecialidades.put(m.getId(), names);
+                materiaEspecialidadesTexto.put(m.getId(), String.join(", ", names));
             }
-            req.setAttribute("materiaEspecialidades", materiaEspecialidades);
+            req.setAttribute("materiaEspecialidadesTexto", materiaEspecialidadesTexto);
 
             String editIdParam = req.getParameter("editId");
             if (editIdParam != null && !editIdParam.isBlank()) {
@@ -88,8 +88,22 @@ public class AdminMateriasServlet extends HttpServlet {
                 req.setAttribute("conflicts", conflicts);
                 req.setAttribute("fromId", fromId);
                 req.setAttribute("toId", toId);
-                // reload materias for display
-                req.setAttribute("materias", new MateriaDao().listAll());
+
+                List<Materia> materias = dao.listAll();
+                req.setAttribute("materias", materias);
+                req.setAttribute("especialidades", new ctn.informatica.sia.dao.EspecialidadDao().findAll());
+                req.setAttribute("profCounts", dao.countProfesoresForAll());
+                java.util.Map<Integer, String> materiaEspecialidadesTexto = new java.util.HashMap<>();
+                for (Materia m : materias) {
+                    java.util.List<Integer> ids = dao.listEspecialidadIdsForMateria(m.getId());
+                    java.util.List<String> names = new java.util.ArrayList<>();
+                    for (Integer id : ids) {
+                        ctn.informatica.sia.model.Especialidad e = new ctn.informatica.sia.dao.EspecialidadDao().findById(id);
+                        if (e != null) names.add(e.getNombre());
+                    }
+                    materiaEspecialidadesTexto.put(m.getId(), String.join(", ", names));
+                }
+                req.setAttribute("materiaEspecialidadesTexto", materiaEspecialidadesTexto);
                 req.getRequestDispatcher("/AdminMaterias.jsp").forward(req, resp);
                 return;
             } else if ("merge".equals(action)) {
@@ -147,10 +161,13 @@ public class AdminMateriasServlet extends HttpServlet {
             session.setAttribute("errors", java.util.List.of("Ids inválidos para merge."));
         } catch (SQLException ex) {
             session.setAttribute("errors", java.util.List.of("No se pudo realizar el merge: " + ex.getMessage()));
+        } catch (Exception ex) {
+            session.setAttribute("errors", java.util.List.of("Error interno: " + ex.getMessage()));
         }
         resp.sendRedirect(req.getContextPath() + "/AdminMateriasServlet");
     }
 
+    @SuppressWarnings("unchecked")
     private void appendAdminActivity(HttpSession session, String entry) {
         if (session == null) return;
         java.util.List<String> log = (java.util.List<String>) session.getAttribute("adminActivityLog");

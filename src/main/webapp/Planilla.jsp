@@ -64,23 +64,7 @@
   <main>
     <div class="wrap">
     <section class="container">
-      <div class="titleblock">
-        <div class="tb-left">
-          <div class="tb-logo">CTN</div>
-          <div class="tb-name">
-            <h1 style="font-size:15px;">Colegio Técnico Nacional</h1>
-            <span>SISTEMA DE INFORMES ACADÉMICOS</span>
-          </div>
-        </div>
-        <div class="tb-right">
-          <div class="tb-cell"><b>Curso</b>${curso.getCurso()}.<sup>o</sup> "${curso.seccion}"</div>
-          <div class="tb-cell"><b>Especialidad</b><span id="tbSpecialtyName">${curso.especialidad}</span></div>
-          <div class="tb-cell"><b>Docente</b>${sessionScope.user.fullName}</div>
-          <div class="tb-cell"><b>Fecha</b><span>${nowFormatted}</span></div>
-        </div>
-      </div>
-
-      <div class="info-bar">
+        <div class="info-bar">
         <span>Bienvenido/a ${sessionScope.user.fullName}</span>
         <span>
           <c:out value="${nowFormatted}" />

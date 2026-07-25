@@ -39,20 +39,6 @@
   </header>
   <main>
     <section class="container page-shell">
-      <div class="titleblock">
-        <div class="tb-left">
-          <div class="tb-logo">CTN</div>
-          <div class="tb-name">
-            <h1>Panel de Administrador</h1>
-            <span>Visión general del sistema</span>
-          </div>
-        </div>
-        <div class="tb-right">
-          <div class="tb-cell"><b>Usuario</b>${sessionScope.user.fullName}</div>
-          <div class="tb-cell"><b>Sección</b>Administración</div>
-          <div class="tb-cell"><b>Rol</b>Admin</div>
-        </div>
-      </div>
       <div class="info-bar">
         <span>Bienvenido/a ${sessionScope.user.fullName}</span>
       </div>

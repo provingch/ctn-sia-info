@@ -62,21 +62,6 @@
 
   <main>
     <section class="container page-shell">
-      <div class="titleblock">
-        <div class="tb-left">
-          <div class="tb-logo">CTN</div>
-          <div class="tb-name">
-            <h1>Colegio Técnico Nacional</h1>
-            <span>Gestión de tareas</span>
-          </div>
-        </div>
-        <div class="tb-right">
-          <div class="tb-cell"><b>Materia</b>${selPlanilla}</div>
-          <div class="tb-cell"><b>Especialidad</b>Instrumentos</div>
-          <div class="tb-cell"><b>Docente</b>${sessionScope.user.fullName}</div>
-          <div class="tb-cell"><b>Fecha</b><c:out value="${nowFormatted}" /></div>
-        </div>
-      </div>
       <div class="info-bar">
         <span>Bienvenido/a ${sessionScope.user.fullName}</span>
         <span>
