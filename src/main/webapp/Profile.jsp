@@ -18,15 +18,6 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css?v=163">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   <style>
-  .page-heading h1 {
-    margin: 0;
-    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
-  }
-  .page-subtitle {
-    margin-top: 0.65rem;
-    color: var(--muted);
-    max-width: 48rem;
-  }
   .inline-form {
     display: inline-block;
     margin: 0;
@@ -96,18 +87,7 @@
 
   <main>
     <section class="container page-shell">
-      <div class="profile-heading">
-        <div class="profile-heading__title">
-          <h1>Mi Perfil</h1>
-          <p class="profile-heading__subtitle">Gestiona tu información personal y configuración</p>
-        </div>
-      </div>
-      <div class="info-bar">
-        <span>Bienvenido/a ${sessionScope.user.fullName}</span>
-        <span>
-          <c:out value="${nowFormatted}" />
-        </span>
-      </div>
+
       <c:if test="${not empty sessionScope.flashMessage}">
         <div class="flash" data-timeout="4000">
           ${sessionScope.flashMessage}
@@ -127,15 +107,16 @@
       </c:if>
 
       <div class="profile-layout">
-        <aside class="profile-sidebar" aria-label="Navegación de perfil">
-          <div class="profile-tabs" role="tablist" aria-label="Secciones del perfil">
-            <button type="button" class="profile-tab active" data-target="perfil-panel">Perfil</button>
-            <button type="button" class="profile-tab" data-target="seguridad-panel">Seguridad</button>
-            <button type="button" class="profile-tab" data-target="materias-panel">Materias</button>
-            <button type="button" class="profile-tab" data-target="registros-panel">Registros</button>
-          </div>
-        </aside>
-        <div class="profile-content">
+        <div class="profile-shell">
+          <aside class="profile-sidebar" aria-label="Navegación de perfil">
+            <div class="profile-tabs" role="tablist" aria-label="Secciones del perfil">
+              <button type="button" class="profile-tab active" data-target="perfil-panel">Perfil</button>
+              <button type="button" class="profile-tab" data-target="seguridad-panel">Seguridad</button>
+              <button type="button" class="profile-tab" data-target="materias-panel">Materias</button>
+              <button type="button" class="profile-tab" data-target="registros-panel">Registros</button>
+            </div>
+          </aside>
+          <div class="profile-content">
           <div class="profile-panels">
             <section id="perfil-panel" class="profile-panel active">
               <form id="profileForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="profileSaveStatus">
@@ -319,7 +300,7 @@
                           <input type="hidden" name="action" value="deleteSubject" />
                           <input type="hidden" name="subjectId" value="${subject.id}" />
                           <input type="hidden" name="subjectName" value="${subject.nombre}" />
-                          <button class="btn-danger" type="submit" onclick="return confirm('¿Eliminar esta materia del perfil?');">Eliminar</button>
+                          <button class="btn-danger" type="submit">Eliminar</button>
                         </form>
                       </div>
                     </c:forEach>
@@ -347,6 +328,7 @@
         </section>
       </div>
     </div>
+  </div>
   </div>
 
 
@@ -404,20 +386,44 @@
 (function () {
   const tabs = document.querySelectorAll('.profile-tab');
   const panels = document.querySelectorAll('.profile-panel');
+  const storageKey = 'ctn-profile-active-tab';
+
+  function activateTab(tab) {
+    tabs.forEach(function (item) {
+      item.classList.remove('active');
+    });
+    panels.forEach(function (panel) {
+      panel.classList.remove('active');
+    });
+    tab.classList.add('active');
+    const target = document.getElementById(tab.dataset.target);
+    if (target) {
+      target.classList.add('active');
+    }
+    try {
+      localStorage.setItem(storageKey, tab.dataset.target);
+    } catch (e) {
+      // ignore localStorage failures
+    }
+  }
+
+  const savedTarget = (() => {
+    try {
+      return localStorage.getItem(storageKey);
+    } catch (e) {
+      return null;
+    }
+  })();
+  const initialTab = Array.from(tabs).find(function (t) {
+    return t.dataset.target === savedTarget;
+  }) || tabs[0];
+  if (initialTab) {
+    activateTab(initialTab);
+  }
 
   tabs.forEach(function (tab) {
     tab.addEventListener('click', function () {
-      tabs.forEach(function (item) {
-        item.classList.remove('active');
-      });
-      panels.forEach(function (panel) {
-        panel.classList.remove('active');
-      });
-      tab.classList.add('active');
-      const target = document.getElementById(tab.dataset.target);
-      if (target) {
-        target.classList.add('active');
-      }
+      activateTab(tab);
     });
   });
 })();
@@ -426,7 +432,9 @@
 <script>
 (function () {
   const profileForm = document.getElementById('profileForm');
+  const securityForm = document.getElementById('securityForm');
   const subjectForm = document.getElementById('subjectForm');
+  const deleteSubjectForms = document.querySelectorAll('#teacherMateriaList form.inline-form');
 
   function resolveAjaxPayload(responseText, response) {
     const contentType = response.headers.get('content-type') || '';
@@ -494,7 +502,7 @@
     });
   }
 
-  function submitWithFetch(form, statusId, successMessage, isSubjectForm) {
+  function submitWithFetch(form, statusId, successMessage, isSubjectForm, isSecurityForm) {
     const statusEl = document.getElementById(statusId);
     if (isSubjectForm) {
       const validationError = validateSubjectForm(form);
@@ -548,9 +556,47 @@
         syncSubjectFormState(subjectForm);
       }
 
+      if (isSecurityForm) {
+        ['currentPassword', 'newPassword', 'confirmPassword'].forEach(function (id) {
+          const input = document.getElementById(id);
+          if (input) input.value = '';
+        });
+      }
+
       setStatus(statusEl, payload.message || successMessage, 'is-success');
     }).catch(function (error) {
       setStatus(statusEl, error.message || 'No se pudo guardar.', 'is-error');
+    });
+  }
+
+  function submitInlineDeleteForm(form) {
+    const item = form.closest('.subject-item');
+    const formData = new FormData(form);
+    const body = new URLSearchParams();
+
+    for (const [key, value] of formData.entries()) {
+      body.append(key, value);
+    }
+
+    fetch(form.getAttribute('action'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: body
+    }).then(async function (response) {
+      const responseText = await response.text();
+      const payload = resolveAjaxPayload(responseText, response);
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || 'No se pudo eliminar la materia.');
+      }
+      if (item) {
+        item.remove();
+      }
+    }).catch(function (error) {
+      console.error(error);
+      alert(error.message || 'No se pudo eliminar la materia.');
     });
   }
 
@@ -589,11 +635,27 @@
 
     subjectForm.addEventListener('submit', function (event) {
       event.preventDefault();
-      submitWithFetch(subjectForm, 'subjectSaveStatus', 'Materia guardada.', true);
+      submitWithFetch(subjectForm, 'subjectSaveStatus', 'Materia guardada.', true, false);
     });
 
     subjectStatus && setStatus(subjectStatus, 'Listo para guardar.', 'is-success');
   }
+
+  if (securityForm) {
+    const securityStatus = document.getElementById('securitySaveStatus');
+    securityForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      submitWithFetch(securityForm, 'securitySaveStatus', 'Contraseña actualizada.', false, true);
+    });
+    securityStatus && setStatus(securityStatus, 'Listo para guardar.', 'is-success');
+  }
+
+  deleteSubjectForms.forEach(function (form) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      submitInlineDeleteForm(form);
+    });
+  });
 })();
 </script>
 

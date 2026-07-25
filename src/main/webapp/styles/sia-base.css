@@ -405,13 +405,19 @@ button:active,
 }
 .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); border: var(--accent-border); }
 
-.card, .planilla-card, .table-card, .profile-panel, .section-block, .login-card, .empty-state-card, .profile-sidebar {
+.card, .planilla-card, .table-card, .section-block, .login-card, .empty-state-card {
   border: 1px solid var(--line);
   background: var(--paper);
   border-left: 4px solid var(--accent);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+}
+.profile-sidebar {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
 }
 .card .head, .table-header, .section-heading {
   padding: 10px 14px;
@@ -432,6 +438,28 @@ button:active,
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+@media (max-width: 900px) {
+  .profile-shell {
+    display: block;
+    min-height: auto;
+    border-radius: var(--radius);
+  }
+  .profile-sidebar {
+    position: static;
+    width: 100%;
+    padding: 16px 16px 0;
+  }
+  .profile-content {
+    min-height: auto;
+    overflow: visible;
+  }
+  .profile-panel.active {
+    max-height: none;
+    overflow: visible;
+    padding: 16px;
+  }
+}
 
 input, select, textarea {
   font: inherit;
@@ -489,12 +517,53 @@ body.login-page .login-wrapper { display: flex; justify-content: center; align-i
 .planilla-subtitle { margin: 0; color: var(--muted); }
 .menu-container { margin-top: 12px; display: grid; gap: 8px; }
 .grid-container, .profile-layout { display: grid; gap: 16px; }
-.profile-layout { grid-template-columns: 240px minmax(0, 1fr); align-items: start; }
-.profile-sidebar { position: sticky; top: 1rem; align-self: start; }
+.profile-layout { grid-template-columns: 1fr; align-items: start; }
+.profile-shell {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 0;
+  min-height: calc(100vh - 180px);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.profile-sidebar {
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  padding: 24px 20px 20px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+.profile-content {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.profile-panels {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.profile-panel {
+  display: none;
+  padding: 0;
+  min-height: 0;
+}
+.profile-panel.active {
+  display: block;
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(100vh - 232px);
+}
 .profile-tabs { display: grid; gap: 8px; }
 .profile-tab {
   border: 1px solid var(--line);
-  background: var(--paper);
+  background: transparent;
   color: var(--ink);
   padding: 9px 10px;
   text-align: left;
@@ -506,9 +575,6 @@ body.login-page .login-wrapper { display: flex; justify-content: center; align-i
   background: color-mix(in srgb, var(--accent) 12%, var(--paper));
   box-shadow: inset 3px 0 0 var(--accent);
 }
-.profile-panel { display: none; padding: 0 1.2rem; }
-.profile-panel.active { display: block; }
-.profile-content { min-width: 0; }
 
 .subject-list, .subject-form-grid, .checkbox-grid { display: grid; gap: 10px; }
 .checkbox-item { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 8px 10px; background: var(--paper); border-radius: var(--radius-sm); }
