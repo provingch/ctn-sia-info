@@ -103,6 +103,15 @@ public class MateriaDao extends conexion {
         }
     }
 
+    public boolean unlinkProfesorMateria(int profesorId, int materiaId) throws SQLException {
+        String sql = "DELETE FROM profesor_materia WHERE profesor_id = ? AND materia_id = ?";
+        try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, profesorId);
+            ps.setInt(2, materiaId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     public List<String> findNamesByProfesor(int profesorId) throws SQLException {
         String sql = "SELECT DISTINCT m.nombre "
                 + "FROM ( "

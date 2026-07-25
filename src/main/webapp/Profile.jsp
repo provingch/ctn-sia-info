@@ -294,6 +294,12 @@
                     <c:forEach var="subject" items="${teacherMaterias}">
                       <div class="subject-item">
                         <span><c:out value="${subject.nombre}" /></span>
+                        <form method="post" action="${pageContext.request.contextPath}/ProfileServlet" class="inline-form">
+                          <input type="hidden" name="action" value="deleteSubject" />
+                          <input type="hidden" name="subjectId" value="${subject.id}" />
+                          <input type="hidden" name="subjectName" value="${subject.nombre}" />
+                          <button class="btn-danger" type="submit" onclick="return confirm('¿Eliminar esta materia del perfil?');">Eliminar</button>
+                        </form>
                       </div>
                     </c:forEach>
                   </c:otherwise>

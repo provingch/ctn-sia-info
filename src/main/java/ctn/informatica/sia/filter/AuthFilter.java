@@ -18,6 +18,7 @@ import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.Padre;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
+import ctn.informatica.sia.util.RememberMeTokenStore;
 import ctn.informatica.sia.util.SiaUiContext;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -100,21 +101,31 @@ public class AuthFilter implements Filter {
         }
         for (Cookie cookie : cookies) {
             if ("SIA_REMEMBER".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isBlank()) {
+                String tokenValue = cookie.getValue().trim();
                 try {
-                    int userId = Integer.parseInt(cookie.getValue().trim());
-                    User user = new UserDao().findById(userId);
-                    if (user != null) {
-                        Cookie refreshedCookie = new Cookie("SIA_REMEMBER", String.valueOf(user.getId()));
-                        refreshedCookie.setMaxAge(60 * 60 * 24 * 30);
-                        refreshedCookie.setPath(request.getContextPath().isBlank() ? "/" : request.getContextPath());
-                        refreshedCookie.setHttpOnly(true);
-                        refreshedCookie.setSecure(request.isSecure());
-                        response.addCookie(refreshedCookie);
-                        return user;
+                    Integer userId = RememberMeTokenStore.resolveUserId(tokenValue).orElse(null);
+                    if (userId != null) {
+                        User user = new UserDao().findById(userId);
+                        if (user != null) {
+                            Cookie refreshedCookie = new Cookie("SIA_REMEMBER", tokenValue);
+                            refreshedCookie.setMaxAge(60 * 60 * 24 * 30);
+                            refreshedCookie.setPath(request.getContextPath().isBlank() ? "/" : request.getContextPath());
+                            refreshedCookie.setHttpOnly(true);
+                            refreshedCookie.setSecure(request.isSecure());
+                            response.addCookie(refreshedCookie);
+                            return user;
+                        }
                     }
                 } catch (Exception ex) {
                     System.err.println("Unable to restore user session from remember-me cookie: " + ex.getMessage());
                 }
+                Cookie expiredCookie = new Cookie("SIA_REMEMBER", "");
+                expiredCookie.setMaxAge(0);
+                expiredCookie.setPath(request.getContextPath().isBlank() ? "/" : request.getContextPath());
+                expiredCookie.setHttpOnly(true);
+                expiredCookie.setSecure(request.isSecure());
+                response.addCookie(expiredCookie);
+                return null;
             }
         }
         return null;

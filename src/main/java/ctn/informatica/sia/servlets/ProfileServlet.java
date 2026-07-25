@@ -14,6 +14,7 @@ import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.Materia;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
+import ctn.informatica.sia.util.RememberMeTokenStore;
 import ctn.informatica.sia.util.SiaUiContext;
 import com.google.api.services.classroom.model.Course;
 import java.io.IOException;
@@ -289,6 +290,7 @@ public class ProfileServlet extends HttpServlet {
                     if (profesor != null && profesor.getContrasenia().equals(currentPassword)) {
                         profesor.setContrasenia(newPassword);
                         new ProfesorDao().update(profesor);
+                        RememberMeTokenStore.invalidateUserTokens(user.getId());
                         session.setAttribute("flashMessage", "Contraseña actualizada exitosamente.");
                         appendActivityLog(session, "Contraseña actualizada.");
                     } else {
@@ -308,6 +310,80 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
         
+        if ("deleteSubject".equals(action)) {
+            List<String> errors = new ArrayList<>();
+            String subjectIdParam = req.getParameter("subjectId");
+            String subjectName = sanitizeMateriaNombre(req.getParameter("subjectName"));
+            int subjectId = -1;
+            if (subjectIdParam != null && !subjectIdParam.trim().isEmpty()) {
+                try {
+                    subjectId = Integer.parseInt(subjectIdParam.trim());
+                } catch (NumberFormatException ignored) {
+                    errors.add("La materia seleccionada es inválida.");
+                }
+            }
+
+            if (subjectName.isEmpty() && subjectId <= 0) {
+                errors.add("Debes seleccionar una materia para eliminar.");
+            }
+
+            if (errors.isEmpty()) {
+                try {
+                    if (subjectId > 0) {
+                        new MateriaDao().unlinkProfesorMateria(user.getId(), subjectId);
+                    }
+
+                    String existingManualText = "";
+                    if (session != null) {
+                        Object storedManualSubjects = session.getAttribute("manualTeacherSubjects");
+                        if (storedManualSubjects instanceof String) {
+                            existingManualText = (String) storedManualSubjects;
+                        }
+                    }
+                    if (user != null && existingManualText.isBlank()) {
+                        existingManualText = new ProfesorDao().findManualSubjectsText(user.getId());
+                    }
+
+                    List<String> remainingSubjects = new ArrayList<>();
+                    for (String token : existingManualText.split("[,\r\n;]+")) {
+                        String normalized = token == null ? "" : token.trim();
+                        if (normalized.isEmpty()) {
+                            continue;
+                        }
+                        if (subjectName.isBlank() || !subjectName.equalsIgnoreCase(normalized)) {
+                            remainingSubjects.add(normalized);
+                        }
+                    }
+                    String normalizedManualSubjects = String.join(", ", remainingSubjects);
+                    if (session != null) {
+                        session.setAttribute("manualTeacherSubjects", normalizedManualSubjects);
+                    }
+                    if (user != null) {
+                        new ProfesorDao().updateManualSubjectsText(user.getId(), normalizedManualSubjects);
+                    }
+                    if (session != null) {
+                        session.setAttribute("flashMessage", "Materia eliminada correctamente.");
+                    }
+                    if (isAjaxRequest(req)) {
+                        writeJsonResponse(resp, true, "Materia eliminada correctamente.");
+                        return;
+                    }
+                    resp.sendRedirect(req.getContextPath() + "/ProfileServlet");
+                    return;
+                } catch (SQLException ex) {
+                    errors.add("No se pudo eliminar la materia. Intente de nuevo más tarde.");
+                }
+            }
+
+            req.setAttribute("errors", errors);
+            if (isAjaxRequest(req)) {
+                writeJsonResponse(resp, false, String.join("; ", errors));
+                return;
+            }
+            doGet(req, resp);
+            return;
+        }
+
         if ("saveManualSubjects".equals(action)) {
             List<String> errors = new ArrayList<>();
             String materiaNombre = sanitizeMateriaNombre(req.getParameter("materiaNombre"));

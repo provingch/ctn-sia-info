@@ -4,6 +4,7 @@
  */
 package ctn.informatica.sia.servlets;
 
+import ctn.informatica.sia.util.RememberMeTokenStore;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,6 +29,15 @@ public class LogoutServlet extends HttpServlet {
             HttpSession session = request.getSession(false);
             if (session != null) session.invalidate();
 
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie existingCookie : cookies) {
+                    if ("SIA_REMEMBER".equals(existingCookie.getName()) && existingCookie.getValue() != null && !existingCookie.getValue().isBlank()) {
+                        RememberMeTokenStore.invalidateToken(existingCookie.getValue().trim());
+                        break;
+                    }
+                }
+            }
             Cookie cookie = new Cookie("SIA_REMEMBER", "");
             cookie.setMaxAge(0);
             cookie.setPath(request.getContextPath().isBlank() ? "/" : request.getContextPath());

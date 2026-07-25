@@ -81,11 +81,6 @@
             <h1>Materias de ${selCurso.especialidad} ${selCurso.getCurso()}.<sup>o</sup> "${selCurso.seccion}"</h1>
             <p class="planilla-subtitle">Panel principal para abrir planillas, revisar cursos y gestionar tareas.</p>
           </div>
-          <div class="planilla-hero__actions">
-            <div class="btn-row hero-actions">
-              <a class="btn-primary hero-action-button" href="${pageContext.request.contextPath}/ProfileServlet">Perfil institucional</a>
-            </div>
-          </div>
         </div>
         <div class="menu-container">
           <form action="HomeServlet" method="get">
@@ -164,6 +159,53 @@
           </c:otherwise>
         </c:choose>
       </div>
+
+      <c:if test="${googleClassroomConnected and not empty googleClassroomCourses}">
+        <div class="section-block">
+          <div class="section-heading">Cursos de Google Classroom</div>
+          <div class="planilla-grid">
+            <c:forEach var="course" items="${googleClassroomCourses}">
+              <c:set var="courseId" value="${course.id}" />
+              <c:set var="planillaId" value="${classroomPlanillaMap[courseId]}" />
+              <c:set var="materiaId" value="${classroomPlanillaMateriaMap[courseId]}" />
+              <c:choose>
+                <c:when test="${not empty planillaId}">
+                  <c:url var="courseLink" value="/PlanillaServlet">
+                    <c:param name="planillaId" value="${planillaId}" />
+                    <c:param name="cursoId" value="${selCurso.id}" />
+                    <c:param name="materiaId" value="${materiaId}" />
+                    <c:param name="etapa" value="${selEtapa}" />
+                  </c:url>
+                </c:when>
+                <c:when test="${not empty materiaId}">
+                  <c:url var="courseLink" value="/PlanillaServlet">
+                    <c:param name="cursoId" value="${selCurso.id}" />
+                    <c:param name="materiaId" value="${materiaId}" />
+                    <c:param name="etapa" value="${selEtapa}" />
+                  </c:url>
+                </c:when>
+                <c:otherwise>
+                  <c:set var="courseLink" value="${pageContext.request.contextPath}/HomeServlet?cursoId=${selCurso.id}&etapa=${selEtapa}" />
+                </c:otherwise>
+              </c:choose>
+              <a class="planilla-card-link" href="${courseLink}">
+                <div class="planilla-card card">
+                  <div class="head">
+                    <c:out value="${course.name}" />
+                  </div>
+                  <div class="body">
+                    <div class="info-grid">
+                      <span class="total-tareas label">Sección</span>
+                      <span class="total-tareas colon">:</span>
+                      <span class="total-tareas value"><c:out value="${empty course.section ? 'Sin sección' : course.section}" /></span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </c:forEach>
+          </div>
+        </div>
+      </c:if>
 
     </section>
 

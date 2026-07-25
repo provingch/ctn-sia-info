@@ -51,6 +51,12 @@
           <form class="login-form" action="LoginServlet" method="post">
             <input class="form-username" placeholder="Usuario" type="text" name="username">
             <input class="form-password" placeholder="Contraseña" type="password" name="password">
+            <div class="login-remember">
+              <label>
+                <input type="checkbox" name="rememberMe" value="true">
+                <span>Mantener sesión</span>
+              </label>
+            </div>
             <input class="form-submit" type="submit" value="Iniciar Sesión">
           </form>
         </div>

@@ -11,6 +11,7 @@ import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.Padre;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
+import ctn.informatica.sia.util.RememberMeTokenStore;
 import ctn.informatica.sia.util.SiaUiContext;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -73,7 +74,14 @@ public class LoginServlet extends HttpServlet {
                 } catch (Exception ignored) {
                     // no-op: parent page can recover by loading the parent from the DB later
                 }
-                setRememberMeCookie(request, response, user);
+                boolean rememberMe = "true".equalsIgnoreCase(request.getParameter("rememberMe"));
+                if (rememberMe) {
+                    String token = RememberMeTokenStore.issueToken(user.getId());
+                    setRememberMeCookie(request, response, token);
+                } else {
+                    RememberMeTokenStore.invalidateUserTokens(user.getId());
+                    clearRememberMeCookie(request, response);
+                }
 
                 int level = user.getLevel();
                 switch (level) {
@@ -101,9 +109,18 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    private void setRememberMeCookie(HttpServletRequest request, HttpServletResponse response, User user) {
-        Cookie cookie = new Cookie(REMEMBER_COOKIE_NAME, String.valueOf(user.getId()));
+    private void setRememberMeCookie(HttpServletRequest request, HttpServletResponse response, String token) {
+        Cookie cookie = new Cookie(REMEMBER_COOKIE_NAME, token);
         cookie.setMaxAge(REMEMBER_MAX_AGE_SECONDS);
+        cookie.setPath(request.getContextPath().isBlank() ? "/" : request.getContextPath());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(request.isSecure());
+        response.addCookie(cookie);
+    }
+
+    private void clearRememberMeCookie(HttpServletRequest request, HttpServletResponse response) {
+        Cookie cookie = new Cookie(REMEMBER_COOKIE_NAME, "");
+        cookie.setMaxAge(0);
         cookie.setPath(request.getContextPath().isBlank() ? "/" : request.getContextPath());
         cookie.setHttpOnly(true);
         cookie.setSecure(request.isSecure());

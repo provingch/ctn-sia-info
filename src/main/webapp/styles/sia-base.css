@@ -153,10 +153,14 @@ section { margin-bottom: 28px; }
   padding: 14px 16px;
   margin-bottom: 20px;
   border: 1px solid var(--line);
-  background: var(--paper);
+  background: color-mix(in srgb, var(--paper) 92%, var(--accent) 8%);
   border-bottom: 3px solid var(--accent);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 12px;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
 }
 .header-logo-container { display: flex; align-items: center; gap: 10px; }
 .header-logo { width: 36px; height: 36px; }
@@ -175,15 +179,29 @@ section { margin-bottom: 28px; }
   border-radius: var(--radius);
   cursor: pointer;
   transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .manual-link {
   display: inline-flex;
   align-items: center;
-  min-height: 34px;
-  padding: 0 10px;
-  border: 1px solid transparent;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
   border-radius: var(--radius);
-  color: var(--muted);
+  color: var(--ink);
+  background: var(--paper);
+}
+.theme-toggle-button {
+  width: 38px;
+  padding: 0;
+}
+.theme-toggle-button svg {
+  width: 16px;
+  height: 16px;
 }
 .manual-link:hover,
 .session-button:hover,
@@ -680,6 +698,25 @@ input.no-spinner::-webkit-inner-spin-button, input.no-spinner::-webkit-outer-spi
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--paper) 86%, var(--bg) 14%);
   color: var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.login-remember {
+  display: flex;
+  justify-content: flex-start;
+}
+.login-remember label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.login-remember input {
+  width: auto;
 }
 
 .activity-log {
