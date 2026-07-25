@@ -283,6 +283,7 @@
                 </div>
               </div>
             </div>
+          </form>
 
             <div class="table-card table-card--wide card">
               <div class="table-header">Materias disponibles</div>
@@ -307,7 +308,6 @@
                 </c:choose>
               </div>
             </div>
-          </form>
         </section>
 
         <section id="registros-panel" class="profile-panel">
