@@ -4,20 +4,22 @@
  */
 package ctn.informatica.sia.servlets;
 
-import ctn.informatica.sia.dao.EspecialidadDao;
-import ctn.informatica.sia.model.Especialidad;
+import ctn.informatica.sia.clases.conexion;
 import ctn.informatica.sia.model.User;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
+
 /**
- *
- * @author jonat
+ * Admin dashboard skeleton for real administrator users.
  */
 @WebServlet(name = "AdminServlet", urlPatterns = {"/AdminServlet"})
 public class AdminServlet extends HttpServlet {
@@ -27,36 +29,30 @@ public class AdminServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         User user = session == null ? null : (User) session.getAttribute("user");
-
-        try {
-            List<Especialidad> especialidades = new EspecialidadDao().findAll();
-            request.setAttribute("especialidades", especialidades);
-
-            // optionally, set selected especialidad if a request param was provided
-            String selId = request.getParameter("especialidad");
-            if (selId != null && !selId.isEmpty()) {
-                try {
-                    int id = Integer.parseInt(selId);
-                    Especialidad sel = new EspecialidadDao().findById(id);
-                    if (sel != null) {
-                        request.setAttribute("selEspecialidad", sel);
-                    }
-                } catch (NumberFormatException ignored) {
-                }
-            }
-
-        } catch (Exception ex) {
-            throw new ServletException("Error loading especialidades", ex);
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            return;
         }
 
-        // forward to JSP page (adjust path to your JSP)
+        try (Connection c = new conexion().getCon()) {
+            request.setAttribute("profesorCount", countRows(c, "SELECT COUNT(*) FROM profesor"));
+            request.setAttribute("cursoCount", countRows(c, "SELECT COUNT(*) FROM curso"));
+            request.setAttribute("especialidadCount", countRows(c, "SELECT COUNT(*) FROM especialidad"));
+        } catch (SQLException ex) {
+            throw new ServletException("Error loading admin dashboard statistics", ex);
+        }
+
         request.getRequestDispatcher("/Admin.jsp").forward(request, response);
-        
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private int countRows(Connection connection, String sql) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
     }
 
 }

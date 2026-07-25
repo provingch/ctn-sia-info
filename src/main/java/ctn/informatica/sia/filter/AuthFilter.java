@@ -18,6 +18,8 @@ import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.Padre;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
+import java.util.List;
+import java.util.Map;
 import ctn.informatica.sia.util.RememberMeTokenStore;
 import ctn.informatica.sia.util.SiaUiContext;
 import jakarta.servlet.http.Cookie;
@@ -29,8 +31,48 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author jonat
  */
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/HomeServlet", "/PlanillaServlet", "/TareaServlet", "/ProfileServlet", "/AdminServlet", "/ParentServlet"})
+@WebFilter(filterName = "AuthFilter", urlPatterns = {"/HomeServlet", "/PlanillaServlet", "/TareaServlet", "/ProfileServlet", "/EvaluacionServlet", "/AdminServlet", "/ParentServlet"})
 public class AuthFilter implements Filter {
+
+    private static final Map<String, List<Integer>> AUTHORIZED_LEVELS = Map.of(
+            "/HomeServlet", List.of(1),
+            "/PlanillaServlet", List.of(1),
+            "/TareaServlet", List.of(1),
+            "/ProfileServlet", List.of(1, 2, 3, 4),
+            "/EvaluacionServlet", List.of(2),
+            "/AdminServlet", List.of(3),
+            "/ParentServlet", List.of(4)
+    );
+
+    private boolean isAuthorized(String servletPath, Object user) {
+        if (servletPath == null) {
+            return false;
+        }
+        if (!(user instanceof User)) {
+            return false;
+        }
+        User loggedUser = (User) user;
+        List<Integer> allowedLevels = AUTHORIZED_LEVELS.get(servletPath);
+        return allowedLevels != null && allowedLevels.contains(loggedUser.getLevel());
+    }
+
+    private String getRedirectPathForLevel(Object user) {
+        if (!(user instanceof User)) {
+            return "/index.jsp";
+        }
+        switch (((User) user).getLevel()) {
+            case 1:
+                return "/HomeServlet";
+            case 2:
+                return "/EvaluacionServlet";
+            case 3:
+                return "/AdminServlet";
+            case 4:
+                return "/ParentServlet";
+            default:
+                return "/index.jsp";
+        }
+    }
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -90,6 +132,12 @@ public class AuthFilter implements Filter {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
+
+        String currentPath = request.getServletPath();
+        if (!isAuthorized(currentPath, user)) {
+            response.sendRedirect(ctx + getRedirectPathForLevel(user));
+            return;
+        }
 
         chain.doFilter(req, res);
     }
