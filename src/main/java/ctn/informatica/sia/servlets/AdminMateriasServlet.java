@@ -62,7 +62,7 @@ public class AdminMateriasServlet extends HttpServlet {
                     req.setAttribute("errors", java.util.List.of("Id de edición inválido."));
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             log("Error loading materias for admin", ex);
             req.setAttribute("errors", java.util.List.of("No se pudo cargar el catálogo de materias."));
         }

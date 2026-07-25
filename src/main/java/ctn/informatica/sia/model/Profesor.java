@@ -20,6 +20,7 @@ public class Profesor {
     private Integer celular;
     private String correo;
     private Integer especialidadId;
+    private int nivel;
 
     private String googleEmail;
     private String gcAccessToken;
@@ -123,6 +124,14 @@ public class Profesor {
 
     public void setEspecialidadId(Integer especialidadId) {
         this.especialidadId = especialidadId;
+    }
+
+    public int getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(int nivel) {
+        this.nivel = nivel;
     }
 
 }

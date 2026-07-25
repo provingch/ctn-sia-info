@@ -68,6 +68,7 @@
       </div>
       <div style="margin-top:1rem">
         <a class="btn-primary" href="${pageContext.request.contextPath}/AdminMateriasServlet">Gestionar Materias</a>
+        <a class="btn-primary" href="${pageContext.request.contextPath}/AdminUsuariosServlet">Gestionar Usuarios</a>
       </div>
     </section>
     <footer class="footer">

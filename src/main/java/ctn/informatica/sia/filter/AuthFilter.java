@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author jonat
  */
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/HomeServlet", "/PlanillaServlet", "/TareaServlet", "/ProfileServlet", "/EvaluacionServlet", "/AdminServlet", "/AdminMateriasServlet", "/ParentServlet"})
+@WebFilter(filterName = "AuthFilter", urlPatterns = {"/HomeServlet", "/PlanillaServlet", "/TareaServlet", "/ProfileServlet", "/EvaluacionServlet", "/AdminServlet", "/AdminMateriasServlet", "/AdminUsuariosServlet", "/ParentServlet"})
 public class AuthFilter implements Filter {
 
         private static final Map<String, List<Integer>> AUTHORIZED_LEVELS = Map.of(
@@ -42,6 +42,7 @@ public class AuthFilter implements Filter {
             "/EvaluacionServlet", List.of(2),
             "/AdminServlet", List.of(3),
             "/AdminMateriasServlet", List.of(3),
+            "/AdminUsuariosServlet", List.of(3),
             "/ParentServlet", List.of(4)
         );
 
