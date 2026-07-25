@@ -185,5 +185,6 @@
     </section>
 </main>
 <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
+<script src="${pageContext.request.contextPath}/scripts/session-dropdown.js?v=163"></script>
 </body>
 </html>
