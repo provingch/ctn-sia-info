@@ -404,6 +404,10 @@ public class MateriaDao extends conexion {
      * Returns an empty list when no conflicts are found.
      */
     public List<String> checkMergeConflicts(int fromMateriaId, int toMateriaId) throws SQLException {
+        if (fromMateriaId <= 0 || toMateriaId <= 0 || fromMateriaId == toMateriaId) {
+            return new ArrayList<>();
+        }
+
         String conflictSql = "SELECT p.id, p.curso_id, p.periodo, p.etapa "
                 + "FROM planilla p "
                 + "WHERE p.materia_id = ? AND EXISTS ("

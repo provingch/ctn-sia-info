@@ -47,6 +47,21 @@ public class AdminMateriasServlet extends HttpServlet {
                 materiaEspecialidades.put(m.getId(), names);
             }
             req.setAttribute("materiaEspecialidades", materiaEspecialidades);
+
+            String editIdParam = req.getParameter("editId");
+            if (editIdParam != null && !editIdParam.isBlank()) {
+                try {
+                    int editId = Integer.parseInt(editIdParam);
+                    Materia editMateria = dao.findById(editId);
+                    if (editMateria != null) {
+                        req.setAttribute("editMode", Boolean.TRUE);
+                        req.setAttribute("editMateria", editMateria);
+                        req.setAttribute("editEspecialidadIds", dao.listEspecialidadIdsForMateria(editId));
+                    }
+                } catch (NumberFormatException ignored) {
+                    req.setAttribute("errors", java.util.List.of("Id de edición inválido."));
+                }
+            }
         } catch (SQLException ex) {
             log("Error loading materias for admin", ex);
             req.setAttribute("errors", java.util.List.of("No se pudo cargar el catálogo de materias."));
@@ -104,14 +119,27 @@ public class AdminMateriasServlet extends HttpServlet {
                 appendAdminActivity(session, "Crear materia: " + nombre + " id=" + created);
                 session.setAttribute("flashMessage", "Materia creada correctamente.");
             } else if ("edit".equals(action)) {
-                int materiaId = Integer.parseInt(req.getParameter("materiaId"));
+                String materiaIdParam = req.getParameter("materiaId");
                 String categoria = req.getParameter("categoria");
                 String[] espVals = req.getParameterValues("especialidades");
+                if (materiaIdParam == null || materiaIdParam.isBlank()) {
+                    session.setAttribute("errors", java.util.List.of("Falta el identificador de la materia."));
+                    resp.sendRedirect(req.getContextPath() + "/AdminMateriasServlet");
+                    return;
+                }
+                if (categoria == null || categoria.isBlank()) {
+                    session.setAttribute("errors", java.util.List.of("No se aplicaron cambios: faltó la categoría. Elija un valor antes de guardar."));
+                    resp.sendRedirect(req.getContextPath() + "/AdminMateriasServlet");
+                    return;
+                }
                 java.util.List<Integer> espIds = new java.util.ArrayList<>();
                 if (espVals != null) for (String v : espVals) try { espIds.add(Integer.parseInt(v)); } catch (NumberFormatException ignore) {}
                 MateriaDao dao = new MateriaDao();
+                int materiaId = Integer.parseInt(materiaIdParam);
                 dao.updateCategoria(materiaId, categoria);
-                dao.replaceEspecialidades(materiaId, espIds);
+                if (espVals != null) {
+                    dao.replaceEspecialidades(materiaId, espIds);
+                }
                 appendAdminActivity(session, "Editar materia: id=" + materiaId);
                 session.setAttribute("flashMessage", "Materia actualizada correctamente.");
             }

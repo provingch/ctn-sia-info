@@ -89,6 +89,36 @@
 </c:if>
 
 <hr/>
+<c:if test="${editMode and not empty editMateria}">
+    <h2>Editar materia</h2>
+    <form method="post" action="${pageContext.request.contextPath}/AdminMateriasServlet">
+        <input type="hidden" name="action" value="edit" />
+        <input type="hidden" name="materiaId" value="${editMateria.id}" />
+        <label>Nombre:</label>
+        <input type="text" value="${editMateria.nombre}" disabled />
+        <label>Categoría:</label>
+        <select name="categoria">
+            <option value="">-- no cambiar --</option>
+            <option value="comun" ${editMateria.categoria eq 'comun' ? 'selected' : ''}>comun</option>
+            <option value="especifico" ${editMateria.categoria eq 'especifico' ? 'selected' : ''}>especifico</option>
+        </select>
+        <div>
+            <label>Especialidades:</label>
+            <c:forEach var="e" items="${especialidades}">
+                <c:set var="isChecked" value="false" />
+                <c:forEach var="selectedId" items="${editEspecialidadIds}">
+                    <c:if test="${selectedId == e.id}">
+                        <c:set var="isChecked" value="true" />
+                    </c:if>
+                </c:forEach>
+                <label><input type="checkbox" name="especialidades" value="${e.id}" ${isChecked ? 'checked' : ''} /> ${e.nombre}</label>
+            </c:forEach>
+        </div>
+        <button type="submit">Guardar cambios</button>
+    </form>
+    <hr/>
+</c:if>
+
 <h2>Catálogo</h2>
 <table>
     <thead><tr><th>ID</th><th>Nombre</th><th>Categoria</th><th>Especialidades</th><th>Profesores</th><th>Acciones</th></tr></thead>
@@ -108,17 +138,7 @@
             </td>
             <td><c:out value="${profCounts[m.id] != null ? profCounts[m.id] : 0}" /></td>
             <td>
-                <form method="post" action="AdminMateriasServlet" style="display:inline-block;">
-                    <input type="hidden" name="action" value="edit" />
-                    <input type="hidden" name="materiaId" value="${m.id}" />
-                    <button type="submit">Editar</button>
-                </form>
-                <form method="post" action="AdminMateriasServlet" style="display:inline-block;">
-                    <input type="hidden" name="action" value="check" />
-                    <input type="hidden" name="fromId" value="${m.id}" />
-                    <input type="hidden" name="toId" value="${m.id}" />
-                    <button type="submit">Ver conflictos</button>
-                </form>
+                <a href="${pageContext.request.contextPath}/AdminMateriasServlet?editId=${m.id}">Editar</a>
             </td>
         </tr>
     </c:forEach>
