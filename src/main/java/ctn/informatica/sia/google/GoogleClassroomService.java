@@ -192,16 +192,7 @@ public final class GoogleClassroomService {
         }
 
         String name = course.getName();
-        Optional<GoogleClassroomUtils.CourseKey> key = parseCourseKey(name, course.getRoom());
-        if (key.isEmpty() && course.getSection() != null && !course.getSection().isBlank()) {
-            key = parseCourseKey(course.getSection(), course.getRoom());
-        }
-        if (key.isEmpty() && course.getSection() != null && !course.getSection().isBlank()) {
-            key = parseCourseKey(name + " " + course.getSection(), course.getRoom());
-        }
-        if (key.isEmpty() && course.getRoom() != null && !course.getRoom().isBlank()) {
-            key = parseCourseKey(name + " " + course.getRoom(), null);
-        }
+        Optional<GoogleClassroomUtils.CourseKey> key = parseCourseKey(name);
 
         String specialtyHint = GoogleClassroomUtils.extractSpecialtyHint(name, course.getRoom());
         if (specialtyHint.isBlank()) {
@@ -260,16 +251,7 @@ public final class GoogleClassroomService {
         LinkedHashSet<String> seenClassroomCourseIds = new LinkedHashSet<>();
         for (Course course : allCourses) {
             String name = course.getName();
-            Optional<GoogleClassroomUtils.CourseKey> key = parseCourseKey(name, course.getRoom());
-            if (key.isEmpty() && course.getSection() != null && !course.getSection().isBlank()) {
-                key = parseCourseKey(course.getSection(), course.getRoom());
-            }
-            if (key.isEmpty() && course.getSection() != null && !course.getSection().isBlank()) {
-                key = parseCourseKey(name + " " + course.getSection(), course.getRoom());
-            }
-            if (key.isEmpty() && course.getRoom() != null && !course.getRoom().isBlank()) {
-                key = parseCourseKey(name + " " + course.getRoom(), null);
-            }
+            Optional<GoogleClassroomUtils.CourseKey> key = parseCourseKey(name);
 
             // Diagnostic: show what parsing produced for this course
             try {

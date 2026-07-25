@@ -57,6 +57,12 @@ public class GoogleClassroomUtilsTest {
     }
 
     @Test
+    public void testExtractSpecialtyHintUsesCourseNameOnly() {
+        assertEquals("laboratorio redes", GoogleClassroomUtils.extractSpecialtyHint("Laboratorio redes 3ro A", "Informática"));
+        assertEquals("algoritmia", GoogleClassroomUtils.extractSpecialtyHint("Algoritmia 2do A", "Química"));
+    }
+
+    @Test
     public void testNormalizeTitleForMatching() {
         assertEquals("tarea de matematica", GoogleClassroomUtils.normalizeTitle("Tarea de Matemática"));
         assertEquals("tp 1", GoogleClassroomUtils.normalizeTitle("TP 1"));

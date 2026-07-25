@@ -59,11 +59,10 @@ public final class GoogleClassroomUtils {
     }
 
     public static String extractSpecialtyHint(String courseName, String room) {
-        String source = room != null && !room.isBlank() ? room : courseName;
-        if (source == null || source.isBlank()) {
+        if (courseName == null || courseName.isBlank()) {
             return "";
         }
-        String cleaned = stripLevelAndSection(source);
+        String cleaned = stripLevelAndSection(courseName);
         if (cleaned.isBlank()) {
             return "";
         }
@@ -87,8 +86,8 @@ public final class GoogleClassroomUtils {
         if (text == null || text.isBlank()) {
             return "";
         }
-        String withoutLevel = text.replaceAll("(?<![\\p{L}\\p{N}])(primero|segundo|tercero|1(?:ro|er)?|2(?:do)?|3(?:ro)?|[123])(?=(?:\\s*|[°º\\-])?[abc]|\\b)", " ");
-        String withoutSection = withoutLevel.replaceAll("(?:^|[^\\p{L}\\p{N}]|[0-9°º])([abc])(?=\\b|\\s|$)", " ");
+        String withoutLevel = LEVEL_PATTERN.matcher(text).replaceAll(" ");
+        String withoutSection = SECTION_PATTERN.matcher(withoutLevel).replaceAll(" ");
         return withoutSection.replaceAll("\\s+", " ").trim();
     }
 
