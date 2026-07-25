@@ -384,6 +384,21 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
+        if ("linkExisting".equals(action)) {
+            String materiaIdParam = req.getParameter("materiaId");
+            try {
+                int materiaId = Integer.parseInt(materiaIdParam == null ? "-1" : materiaIdParam);
+                if (user != null && user.getLevel() >= 1) {
+                    new MateriaDao().linkProfesorMateria(user.getId(), materiaId);
+                    if (session != null) session.setAttribute("flashMessage", "Vinculado a la materia existente correctamente.");
+                }
+            } catch (NumberFormatException | SQLException ex) {
+                if (session != null) session.setAttribute("errors", java.util.List.of("No se pudo vincular a la materia seleccionada."));
+            }
+            resp.sendRedirect(req.getContextPath() + "/ProfileServlet");
+            return;
+        }
+
         if ("saveManualSubjects".equals(action)) {
             // Server-side guard: only profesor (1) and admin (3) may create or persist materias
             if (user == null || (user.getLevel() != 1 && user.getLevel() != 3)) {
@@ -430,13 +445,40 @@ public class ProfileServlet extends HttpServlet {
                 try {
                     MateriaDao materiaDao = new MateriaDao();
                     Materia materia = materiaDao.findByNombre(materiaNombre);
+                    // If materia doesn't exist, suggest similar materias to nivel 1 (profesor)
+                    if (materia == null && user.getLevel() == 1) {
+                        java.util.List<Materia> similar = materiaDao.findSimilarByName(materiaNombre);
+                        if (!similar.isEmpty()) {
+                            req.setAttribute("similarMaterias", similar);
+                            req.setAttribute("pendingMateriaNombre", materiaNombre);
+                            req.setAttribute("categoria", categoria);
+                            req.setAttribute("especialidadesSelected", especialidadIds);
+                            doGet(req, resp);
+                            return;
+                        }
+                    }
+
+                    // If materia exists and this is a profesor, disallow changing category/especialidades
+                    if (materia != null && user.getLevel() == 1) {
+                        int others = materiaDao.countOtherProfesores(materia.getId(), user.getId());
+                        if (others > 0) {
+                            // link only, do not change category/especialidades
+                            materiaDao.linkProfesorMateria(user.getId(), materia.getId());
+                            if (session != null) session.setAttribute("flashMessage", "Se ha vinculado a la materia existente. Para cambiar categoría/especialidades, contactá al admin.");
+                            doGet(req, resp);
+                            return;
+                        }
+                    }
                     if (materia == null) {
                         int createdId = materiaDao.create(materiaNombre, categoria);
                         if (createdId > 0) {
                             materia = materiaDao.findById(createdId);
                         }
                     } else {
-                        materiaDao.updateCategoria(materia.getId(), categoria);
+                        // Only update category if allowed (admins or no other professors)
+                        if (user.getLevel() == 3 || materiaDao.countOtherProfesores(materia.getId(), user.getId()) == 0) {
+                            materiaDao.updateCategoria(materia.getId(), categoria);
+                        }
                     }
 
                     if (materia != null) {

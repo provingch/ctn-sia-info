@@ -18,9 +18,35 @@ public class AdminMateriasServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
+        User user = session == null ? null : (User) session.getAttribute("user");
+        if (user == null || user.getLevel() != 3) {
+            resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            return;
+        }
+
         try {
-            List<Materia> materias = new MateriaDao().listAll();
+            MateriaDao dao = new MateriaDao();
+            List<Materia> materias = dao.listAll();
             req.setAttribute("materias", materias);
+            // load especialidades for create/edit form
+            java.util.List<ctn.informatica.sia.model.Especialidad> especialidades = new ctn.informatica.sia.dao.EspecialidadDao().findAll();
+            req.setAttribute("especialidades", especialidades);
+            // professor counts per materia
+            java.util.Map<Integer, Integer> profCounts = dao.countProfesoresForAll();
+            req.setAttribute("profCounts", profCounts);
+            // map materia->especialidad names
+            java.util.Map<Integer, java.util.List<String>> materiaEspecialidades = new java.util.HashMap<>();
+            for (Materia m : materias) {
+                java.util.List<Integer> ids = dao.listEspecialidadIdsForMateria(m.getId());
+                java.util.List<String> names = new java.util.ArrayList<>();
+                for (Integer id : ids) {
+                    ctn.informatica.sia.model.Especialidad e = new ctn.informatica.sia.dao.EspecialidadDao().findById(id);
+                    if (e != null) names.add(e.getNombre());
+                }
+                materiaEspecialidades.put(m.getId(), names);
+            }
+            req.setAttribute("materiaEspecialidades", materiaEspecialidades);
         } catch (SQLException ex) {
             log("Error loading materias for admin", ex);
             req.setAttribute("errors", java.util.List.of("No se pudo cargar el catálogo de materias."));
@@ -66,6 +92,28 @@ public class AdminMateriasServlet extends HttpServlet {
                 // detailed admin activity log
                 appendAdminActivity(session, "Merge materias: from=" + fromId + " to=" + toId);
                 session.setAttribute("flashMessage", "Merge realizado correctamente.");
+            } else if ("create".equals(action)) {
+                String nombre = req.getParameter("nombre");
+                String categoria = req.getParameter("categoria");
+                String[] espVals = req.getParameterValues("especialidades");
+                java.util.List<Integer> espIds = new java.util.ArrayList<>();
+                if (espVals != null) for (String v : espVals) try { espIds.add(Integer.parseInt(v)); } catch (NumberFormatException ignore) {}
+                MateriaDao dao = new MateriaDao();
+                int created = dao.create(nombre, categoria);
+                if (created > 0) dao.replaceEspecialidades(created, espIds);
+                appendAdminActivity(session, "Crear materia: " + nombre + " id=" + created);
+                session.setAttribute("flashMessage", "Materia creada correctamente.");
+            } else if ("edit".equals(action)) {
+                int materiaId = Integer.parseInt(req.getParameter("materiaId"));
+                String categoria = req.getParameter("categoria");
+                String[] espVals = req.getParameterValues("especialidades");
+                java.util.List<Integer> espIds = new java.util.ArrayList<>();
+                if (espVals != null) for (String v : espVals) try { espIds.add(Integer.parseInt(v)); } catch (NumberFormatException ignore) {}
+                MateriaDao dao = new MateriaDao();
+                dao.updateCategoria(materiaId, categoria);
+                dao.replaceEspecialidades(materiaId, espIds);
+                appendAdminActivity(session, "Editar materia: id=" + materiaId);
+                session.setAttribute("flashMessage", "Materia actualizada correctamente.");
             }
         } catch (NumberFormatException ex) {
             session.setAttribute("errors", java.util.List.of("Ids inválidos para merge."));

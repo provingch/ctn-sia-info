@@ -66,6 +66,9 @@
         <div class="cell">Especialidades</div>
         <div class="cell"><c:out value="${especialidadCount}" /></div>
       </div>
+      <div style="margin-top:1rem">
+        <a class="btn-primary" href="${pageContext.request.contextPath}/AdminMateriasServlet">Gestionar Materias</a>
+      </div>
     </section>
     <footer class="footer">
       <hr>

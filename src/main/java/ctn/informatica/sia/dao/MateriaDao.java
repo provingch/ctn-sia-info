@@ -155,6 +155,51 @@ public class MateriaDao extends conexion {
         return out;
     }
 
+    /**
+     * Count linked professors per materia for all materias. Returns a map materiaId->count.
+     */
+    public java.util.Map<Integer, Integer> countProfesoresForAll() throws SQLException {
+        String sql = "SELECT materia_id, COUNT(*) AS cnt FROM profesor_materia GROUP BY materia_id";
+        java.util.Map<Integer, Integer> out = new java.util.HashMap<>();
+        try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                out.put(rs.getInt("materia_id"), rs.getInt("cnt"));
+            }
+        }
+        return out;
+    }
+
+    public int countOtherProfesores(int materiaId, int excludingProfesorId) throws SQLException {
+        String sql = "SELECT COUNT(*) AS cnt FROM profesor_materia WHERE materia_id = ? AND profesor_id != ?";
+        try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, materiaId);
+            ps.setInt(2, excludingProfesorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt("cnt");
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Find materias with names similar to the provided name (simple LIKE match).
+     */
+    public List<Materia> findSimilarByName(String name) throws SQLException {
+        if (name == null) return java.util.Collections.emptyList();
+        String normalized = name.trim().toLowerCase();
+        String sql = "SELECT id, nombre, categoria FROM materia WHERE LOWER(nombre) LIKE ? ORDER BY nombre LIMIT 10";
+        List<Materia> out = new ArrayList<>();
+        try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, "%" + normalized + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    out.add(fromResultSet(rs));
+                }
+            }
+        }
+        return out;
+    }
+
     public boolean linkEspecialidad(int materiaId, int especialidadId) throws SQLException {
         String sql = "INSERT IGNORE INTO materia_especialidad (materia_id, especialidad_id) VALUES (?, ?)";
         try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(sql)) {

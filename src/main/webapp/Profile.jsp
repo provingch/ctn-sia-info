@@ -285,6 +285,25 @@
             </div>
           </form>
 
+          <c:if test="${not empty similarMaterias}">
+            <div class="card">
+              <div class="table-header">Se encontraron materias similares</div>
+              <p>Se detectaron materias parecidas a "${pendingMateriaNombre}". Seleccioná una para vincularte o volvé atrás para crear una nueva:</p>
+              <ul>
+                <c:forEach var="sm" items="${similarMaterias}">
+                  <li>
+                    ${sm.nombre} (${sm.categoria})
+                    <form method="post" action="${pageContext.request.contextPath}/ProfileServlet" style="display:inline-block;">
+                      <input type="hidden" name="action" value="linkExisting" />
+                      <input type="hidden" name="materiaId" value="${sm.id}" />
+                      <button type="submit">Vincularme</button>
+                    </form>
+                  </li>
+                </c:forEach>
+              </ul>
+            </div>
+          </c:if>
+
             <div class="table-card table-card--wide card">
               <div class="table-header">Materias disponibles</div>
               <div id="teacherMateriaList" class="subject-list-grid">
