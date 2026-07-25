@@ -252,4 +252,129 @@ public class MateriaDao extends conexion {
         }
         return null;
     }
+
+    /**
+     * Merge two materias: move all references from fromMateriaId into toMateriaId
+     * and delete the source materia. This runs in a single transaction and will
+     * fail with SQLException if conflicting planillas exist (same curso/periodo/etapa).
+     *
+     * @throws SQLException with a descriptive message when merge cannot proceed
+     */
+    public boolean mergeMaterias(int fromMateriaId, int toMateriaId) throws SQLException {
+        if (fromMateriaId <= 0 || toMateriaId <= 0 || fromMateriaId == toMateriaId) {
+            throw new SQLException("Invalid materia ids for merge");
+        }
+
+        String conflictSql = "SELECT p.id, p.curso_id, p.periodo, p.etapa "
+                + "FROM planilla p "
+                + "WHERE p.materia_id = ? AND EXISTS ("
+                + "  SELECT 1 FROM planilla q WHERE q.materia_id = ? AND q.curso_id = p.curso_id AND q.periodo = p.periodo AND q.etapa = p.etapa"
+                + ")";
+
+        try (Connection c = getCon()) {
+            try {
+                c.setAutoCommit(false);
+
+                // detect conflicts
+                try (PreparedStatement ps = c.prepareStatement(conflictSql)) {
+                    ps.setInt(1, fromMateriaId);
+                    ps.setInt(2, toMateriaId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        StringBuilder conflicts = new StringBuilder();
+                        while (rs.next()) {
+                            if (conflicts.length() > 0) {
+                                conflicts.append(", ");
+                            }
+                            conflicts.append("planilla#").append(rs.getInt("id"))
+                                    .append("(curso=").append(rs.getInt("curso_id"))
+                                    .append(" periodo=").append(rs.getInt("periodo"))
+                                    .append(" etapa=").append(rs.getString("etapa"))
+                                    .append(")");
+                        }
+                        if (conflicts.length() > 0) {
+                            c.rollback();
+                            throw new SQLException("Conflicting planillas exist: " + conflicts.toString());
+                        }
+                    }
+                }
+
+                // 1) update planilla references
+                try (PreparedStatement updPlan = c.prepareStatement("UPDATE planilla SET materia_id = ? WHERE materia_id = ?")) {
+                    updPlan.setInt(1, toMateriaId);
+                    updPlan.setInt(2, fromMateriaId);
+                    updPlan.executeUpdate();
+                }
+
+                // 2) copy profesor_materia entries
+                try (PreparedStatement insPm = c.prepareStatement("INSERT IGNORE INTO profesor_materia (profesor_id, materia_id) SELECT profesor_id, ? FROM profesor_materia WHERE materia_id = ?")) {
+                    insPm.setInt(1, toMateriaId);
+                    insPm.setInt(2, fromMateriaId);
+                    insPm.executeUpdate();
+                }
+
+                // 3) delete old profesor_materia rows
+                try (PreparedStatement delPm = c.prepareStatement("DELETE FROM profesor_materia WHERE materia_id = ?")) {
+                    delPm.setInt(1, fromMateriaId);
+                    delPm.executeUpdate();
+                }
+
+                // 4) copy materia_especialidad rows
+                try (PreparedStatement insMe = c.prepareStatement("INSERT IGNORE INTO materia_especialidad (materia_id, especialidad_id) SELECT ?, especialidad_id FROM materia_especialidad WHERE materia_id = ?")) {
+                    insMe.setInt(1, toMateriaId);
+                    insMe.setInt(2, fromMateriaId);
+                    insMe.executeUpdate();
+                }
+
+                // 5) delete old materia_especialidad rows
+                try (PreparedStatement delMe = c.prepareStatement("DELETE FROM materia_especialidad WHERE materia_id = ?")) {
+                    delMe.setInt(1, fromMateriaId);
+                    delMe.executeUpdate();
+                }
+
+                // 6) delete materia
+                try (PreparedStatement delM = c.prepareStatement("DELETE FROM materia WHERE id = ?")) {
+                    delM.setInt(1, fromMateriaId);
+                    delM.executeUpdate();
+                }
+
+                c.commit();
+                return true;
+            } catch (SQLException ex) {
+                try {
+                    c.rollback();
+                } catch (SQLException ignore) {
+                }
+                throw ex;
+            } finally {
+                try {
+                    c.setAutoCommit(true);
+                } catch (SQLException ignore) {
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks for conflicting planillas that would prevent merging from->to.
+     * Returns an empty list when no conflicts are found.
+     */
+    public List<String> checkMergeConflicts(int fromMateriaId, int toMateriaId) throws SQLException {
+        String conflictSql = "SELECT p.id, p.curso_id, p.periodo, p.etapa "
+                + "FROM planilla p "
+                + "WHERE p.materia_id = ? AND EXISTS ("
+                + "  SELECT 1 FROM planilla q WHERE q.materia_id = ? AND q.curso_id = p.curso_id AND q.periodo = p.periodo AND q.etapa = p.etapa"
+                + ")";
+        List<String> conflicts = new ArrayList<>();
+        try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(conflictSql)) {
+            ps.setInt(1, fromMateriaId);
+            ps.setInt(2, toMateriaId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    conflicts.add("planilla#" + rs.getInt("id") + " (curso=" + rs.getInt("curso_id")
+                            + " periodo=" + rs.getInt("periodo") + " etapa=" + rs.getString("etapa") + ")");
+                }
+            }
+        }
+        return conflicts;
+    }
 }

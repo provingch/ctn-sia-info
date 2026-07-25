@@ -385,6 +385,11 @@ public class ProfileServlet extends HttpServlet {
         }
 
         if ("saveManualSubjects".equals(action)) {
+            // Server-side guard: only profesor (1) and admin (3) may create or persist materias
+            if (user == null || (user.getLevel() != 1 && user.getLevel() != 3)) {
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
             List<String> errors = new ArrayList<>();
             String materiaNombre = sanitizeMateriaNombre(req.getParameter("materiaNombre"));
             String categoria = normalizeCategoria(req.getParameter("categoria"));
