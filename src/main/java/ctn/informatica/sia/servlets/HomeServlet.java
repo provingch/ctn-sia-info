@@ -133,6 +133,21 @@ public class HomeServlet extends HttpServlet {
         if (googleClassroomConnected) {
             try {
                 googleClassroomCourses = GoogleClassroomService.listAllowedCourses(profesor, classroomSelectionContext, teacherSubjects);
+                // Diagnostic logging: print parsed course key and whether it matches the selected curso
+                try {
+                    for (com.google.api.services.classroom.model.Course course : googleClassroomCourses) {
+                        java.util.Optional<GoogleClassroomUtils.CourseKey> key = GoogleClassroomService.parseCourseKey(course.getName(), course.getRoom());
+                        boolean matches = GoogleClassroomService.courseMatchesTeacherCurso(course, classroomSelectionContext);
+                        if (key.isPresent()) {
+                            GoogleClassroomUtils.CourseKey k = key.get();
+                            log("[GC DEBUG] courseId=" + course.getId() + " name='" + course.getName() + "' room='" + course.getRoom() + "' parsedKey=" + k.toString() + " matchesSelected=" + matches);
+                        } else {
+                            log("[GC DEBUG] courseId=" + course.getId() + " name='" + course.getName() + "' room='" + course.getRoom() + "' parsedKey=NONE matchesSelected=" + matches);
+                        }
+                    }
+                } catch (Exception exx) {
+                    log("[GC DEBUG] unable to log classroom diagnostics: " + exx.getMessage());
+                }
             } catch (Exception ex) {
                 log("Error loading Google Classroom courses for user " + user.getId(), ex);
                 googleClassroomError = "No se pudieron cargar los cursos de Google Classroom: " + ex.getMessage();

@@ -188,20 +188,41 @@
                   <c:set var="courseLink" value="${pageContext.request.contextPath}/HomeServlet?cursoId=${selCurso.id}&etapa=${selEtapa}" />
                 </c:otherwise>
               </c:choose>
-              <a class="planilla-card-link" href="${courseLink}">
-                <div class="planilla-card card">
-                  <div class="head">
-                    <c:out value="${course.name}" />
-                  </div>
-                  <div class="body">
-                    <div class="info-grid">
-                      <span class="total-tareas label">Sección</span>
-                      <span class="total-tareas colon">:</span>
-                      <span class="total-tareas value"><c:out value="${empty course.section ? 'Sin sección' : course.section}" /></span>
+              <c:choose>
+                <c:when test="${not empty planillaId or not empty materiaId}">
+                  <a class="planilla-card-link" href="${courseLink}">
+                    <div class="planilla-card card">
+                      <div class="head">
+                        <c:out value="${course.name}" />
+                      </div>
+                      <div class="body">
+                        <div class="info-grid">
+                          <span class="total-tareas label">Sección</span>
+                          <span class="total-tareas colon">:</span>
+                          <span class="total-tareas value"><c:out value="${empty course.section ? 'Sin sección' : course.section}" /></span>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </c:when>
+                <c:otherwise>
+                  <div class="planilla-card card" aria-disabled="true">
+                    <div class="head">
+                      <div class="card-title-row">
+                        <c:out value="${course.name}" />
+                        <span class="badge-warning">Sin vincular</span>
+                      </div>
+                    </div>
+                    <div class="body">
+                      <div class="info-grid">
+                        <span class="total-tareas label">Sección</span>
+                        <span class="total-tareas colon">:</span>
+                        <span class="total-tareas value"><c:out value="${empty course.section ? 'Sin sección' : course.section}" /></span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
+                </c:otherwise>
+              </c:choose>
             </c:forEach>
           </div>
         </div>

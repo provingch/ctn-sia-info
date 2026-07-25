@@ -719,6 +719,38 @@ input.no-spinner::-webkit-inner-spin-button, input.no-spinner::-webkit-outer-spi
   width: auto;
 }
 
+/* refine checkbox sizing and accent for consistent UI */
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+/* Cookie consent banner styling (fixed bottom) */
+.cookie-consent-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1200;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+  padding: 12px 16px;
+}
+.cookie-consent-banner.hidden { display: none; }
+.cookie-consent-content {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cookie-consent-actions { display: flex; gap: 8px; }
+
 .activity-log {
   padding: 16px;
 }

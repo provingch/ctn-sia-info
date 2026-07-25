@@ -283,6 +283,8 @@
                 </div>
               </div>
             </div>
+          </form>
+
             <div class="table-card table-card--wide card">
               <div class="table-header">Materias disponibles</div>
               <div id="teacherMateriaList" class="subject-list-grid">

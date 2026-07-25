@@ -272,6 +272,18 @@ public final class GoogleClassroomService {
                 key = parseCourseKey(name + " " + course.getRoom(), null);
             }
 
+            // Diagnostic: show what parsing produced for this course
+            try {
+                if (key.isPresent()) {
+                    GoogleClassroomUtils.CourseKey k = key.get();
+                    System.out.println("[DEBUG] listAllowedCourses - courseId=" + course.getId() + " parsedKey=" + k.toString());
+                } else {
+                    System.out.println("[DEBUG] listAllowedCourses - courseId=" + course.getId() + " parsedKey=NONE");
+                }
+            } catch (Exception logEx) {
+                System.out.println("[DEBUG] listAllowedCourses - courseId=" + course.getId() + " parse error: " + logEx.getMessage());
+            }
+
             if (key.isEmpty()) {
                 System.out.println("[DEBUG] listAllowedCourses - courseId=" + course.getId()
                         + " name='" + name + "' room='" + course.getRoom() + "' -> no se pudo extraer nivel+sección; se mostrará como curso sin vincular");
