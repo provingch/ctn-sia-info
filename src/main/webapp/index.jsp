@@ -5,8 +5,111 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.Optional"%>
+<%@page import="jakarta.servlet.http.Cookie"%>
+<%@page import="ctn.informatica.sia.dao.UserDao"%>
+<%@page import="ctn.informatica.sia.dao.ProfesorDao"%>
+<%@page import="ctn.informatica.sia.dao.PadreDao"%>
+<%@page import="ctn.informatica.sia.dao.EspecialidadDao"%>
+<%@page import="ctn.informatica.sia.model.User"%>
+<%@page import="ctn.informatica.sia.model.Profesor"%>
+<%@page import="ctn.informatica.sia.model.Padre"%>
+<%@page import="ctn.informatica.sia.model.Especialidad"%>
+<%@page import="ctn.informatica.sia.util.RememberMeTokenStore"%>
+<%@page import="ctn.informatica.sia.util.SiaUiContext"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<%
+    HttpSession existingSession = request.getSession(false);
+    User currentUser = existingSession == null ? null : (User) existingSession.getAttribute("user");
+    if (currentUser == null) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("SIA_REMEMBER".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isBlank()) {
+                    String token = cookie.getValue().trim();
+                    Integer userId = RememberMeTokenStore.resolveUserId(token).orElse(null);
+                    if (userId != null) {
+                        User restoredUser = new UserDao().findById(userId);
+                        if (restoredUser != null) {
+                            HttpSession session = request.getSession(true);
+                            session.setMaxInactiveInterval(60 * 60 * 24 * 7);
+                            session.setAttribute("user", restoredUser);
+                            try {
+                                Profesor profesor = new ProfesorDao().findById(restoredUser.getId());
+                                session.setAttribute("profesor", profesor);
+                                String specialty = "informatica";
+                                if (profesor != null && profesor.getEspecialidadId() != null) {
+                                    Especialidad especialidad = new EspecialidadDao().findById(profesor.getEspecialidadId());
+                                    if (especialidad != null && especialidad.getNombre() != null && !especialidad.getNombre().isBlank()) {
+                                        specialty = SiaUiContext.normalizeSpecialty(especialidad.getNombre());
+                                    }
+                                }
+                                session.setAttribute("siaSpecialty", specialty);
+                            } catch (Exception ignored) {
+                                // no-op
+                            }
+                            try {
+                                Padre padre = new PadreDao().findById(restoredUser.getId());
+                                if (padre != null) {
+                                    session.setAttribute("padre", padre);
+                                }
+                            } catch (Exception ignored) {
+                                // no-op
+                            }
+                            String redirectTarget;
+                            switch (restoredUser.getLevel()) {
+                                case 1:
+                                    redirectTarget = "/HomeServlet";
+                                    break;
+                                case 2:
+                                    redirectTarget = "/EvaluacionServlet";
+                                    break;
+                                case 3:
+                                    redirectTarget = "/AdminServlet";
+                                    break;
+                                case 4:
+                                    redirectTarget = "/ParentServlet";
+                                    break;
+                                default:
+                                    redirectTarget = "/index.jsp";
+                            }
+                            response.sendRedirect(request.getContextPath() + redirectTarget);
+                            return;
+                        }
+                    }
+                    Cookie expiredCookie = new Cookie("SIA_REMEMBER", "");
+                    expiredCookie.setMaxAge(0);
+                    expiredCookie.setPath(request.getContextPath().isBlank() ? "/" : request.getContextPath());
+                    expiredCookie.setHttpOnly(true);
+                    expiredCookie.setSecure(request.isSecure());
+                    response.addCookie(expiredCookie);
+                    break;
+                }
+            }
+        }
+    } else {
+        String redirectTarget;
+        switch (currentUser.getLevel()) {
+            case 1:
+                redirectTarget = "/HomeServlet";
+                break;
+            case 2:
+                redirectTarget = "/EvaluacionServlet";
+                break;
+            case 3:
+                redirectTarget = "/AdminServlet";
+                break;
+            case 4:
+                redirectTarget = "/ParentServlet";
+                break;
+            default:
+                redirectTarget = "/index.jsp";
+        }
+        response.sendRedirect(request.getContextPath() + redirectTarget);
+        return;
+    }
+%>
 
 <!DOCTYPE html>
 <html data-theme="light">
