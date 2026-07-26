@@ -16,7 +16,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=206">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=207">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   <style>
   .inline-form {
@@ -89,6 +89,7 @@
       </c:if>
 
       <div class="profile-layout">
+        <c:url var="HomeUrl" value="/HomeServlet" />
         <div class="profile-shell">
           <aside class="profile-sidebar" aria-label="Navegación de perfil">
             <div class="profile-tabs" role="tablist" aria-label="Secciones del perfil">
@@ -109,6 +110,10 @@
                 <small>Actividad</small>
               </button>
             </div>
+            <a id="backBtn" class="profile-back-link" href="${HomeUrl}">
+              <img class="back-icon" src="${pageContext.request.contextPath}/icons/back-arrow.svg" alt="Atrás">
+              <span>Volver al inicio</span>
+            </a>
           </aside>
           <div class="profile-content">
           <div class="profile-panels">
@@ -178,16 +183,7 @@
                       </c:otherwise>
                     </c:choose>
                   </div>
-                  <div class="form-card form-card--actions card">
-                    <div class="action-row">
-                      <c:url var="HomeUrl" value="/HomeServlet" />
-                      <a id="backBtn" class="back-button" href="${HomeUrl}">
-                        <img class="back-icon" src="${pageContext.request.contextPath}/icons/back-arrow.svg" alt="Atrás">
-                        Volver al inicio
-                      </a>
-                      <span id="profileSaveStatus" class="save-status" aria-live="polite">Guardado automático activo.</span>
-                    </div>
-                  </div>
+                  <span id="profileSaveStatus" class="save-status profile-save-status" aria-live="polite">Guardado automático activo.</span>
                 </div>
               </form>
               <form id="googleDisconnectForm" action="${pageContext.request.contextPath}${googleDisconnectUrl}" method="post" style="display:none;"></form>
