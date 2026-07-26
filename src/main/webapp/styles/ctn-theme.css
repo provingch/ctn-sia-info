@@ -619,7 +619,14 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 }
 .admin-inline-form {
   display: inline-flex;
+  width: auto;
   margin: 0;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 .btn-compact {
   min-height: 28px;
@@ -663,6 +670,37 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   border: none;
   background: color-mix(in srgb, var(--paper) 86%, #6b7280 14%);
   box-shadow: none;
+}
+
+.profile-role-banner {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 12px 13px;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--paper) 88%, #111827 10%);
+}
+
+.profile-role-banner .profile-role-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.profile-role-banner strong {
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.profile-role-banner p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
 }
 .profile-content {
   min-width: 0;
@@ -831,6 +869,56 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   background: #6b7280;
   border-color: #6b7280;
   color: #ffffff;
+}
+
+.profile-role-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin: 10px 14px 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, var(--paper));
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.profile-access-card {
+  margin: 12px 14px;
+  padding: 12px 13px;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--paper) 90%, #4b5563 10%);
+}
+
+.profile-access-card strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.profile-access-card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.profile-permissions-list {
+  display: grid;
+  gap: 8px;
+  margin: 12px 14px;
+}
+
+.profile-permissions-list span {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--paper) 90%, #6b7280 10%);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
 }
 .subject-list, .subject-form-grid, .checkbox-grid { display: grid; gap: 10px; }
 .checkbox-item { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 8px 10px; background: var(--paper); border-radius: var(--radius-sm); }
@@ -1602,6 +1690,20 @@ form[style*="display:inline"] {
   padding: 0;
   border: 0;
   background: transparent;
+}
+
+form.admin-inline-form,
+.admin-row-actions form {
+  display: inline-flex;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 label {

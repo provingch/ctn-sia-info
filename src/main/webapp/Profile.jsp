@@ -16,7 +16,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=210">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=222">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   <style>
   .inline-form {
@@ -92,6 +92,11 @@
         <c:url var="HomeUrl" value="/HomeServlet" />
         <div class="profile-shell">
           <aside class="profile-sidebar" aria-label="Navegación de perfil">
+            <div class="profile-role-banner">
+              <span class="profile-role-label">Rol actual</span>
+              <strong><c:out value="${profileRoleLabel}" /></strong>
+              <p><c:out value="${profileAccessDescription}" /></p>
+            </div>
             <div class="profile-tabs" role="tablist" aria-label="Secciones del perfil">
               <button type="button" class="profile-tab active" data-target="perfil-panel" role="tab" aria-controls="perfil-panel" aria-selected="true">
                 <span>Perfil</span>
@@ -101,10 +106,12 @@
                 <span>Seguridad</span>
                 <small>Contraseña</small>
               </button>
-              <button type="button" class="profile-tab" data-target="materias-panel" role="tab" aria-controls="materias-panel" aria-selected="false">
-                <span>Materias</span>
-                <small>Asignaciones</small>
-              </button>
+              <c:if test="${showMateriasPanel}">
+                <button type="button" class="profile-tab" data-target="materias-panel" role="tab" aria-controls="materias-panel" aria-selected="false">
+                  <span>Materias</span>
+                  <small>Asignaciones</small>
+                </button>
+              </c:if>
               <button type="button" class="profile-tab" data-target="registros-panel" role="tab" aria-controls="registros-panel" aria-selected="false">
                 <span>Registros</span>
                 <small>Actividad</small>
@@ -118,75 +125,143 @@
           <div class="profile-content">
           <div class="profile-panels">
             <section id="perfil-panel" class="profile-panel active">
-              <form id="profileForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="profileSaveStatus">
-                <input type="hidden" name="action" value="saveProfile" />
-                <div class="profile-grid profile-grid-layout">
-                  <div class="form-card card">
-                    <div class="form-card-header">Información Personal</div>
-                    <div class="form-field">
-                      <label for="profesorName">Nombre</label>
-                      <input type="text" id="profesorName" value="${profesor.fullName}" disabled />
-                    </div>
-                    <div class="form-field">
-                      <label for="profesorCI">Cédula</label>
-                      <input type="text" id="profesorCI" value="${profesor.ci}" disabled />
-                    </div>
-                  </div>
-                  <div class="form-card card">
-                    <div class="form-card-header">Contacto</div>
-                    <div class="form-field">
-                      <label for="correo">Correo electrónico</label>
-                      <input type="email" id="correo" name="correo" value="${profesor.correo}" />
-                    </div>
-                    <div class="form-field">
-                      <label for="telefono">Teléfono</label>
-                      <input class="no-spinner" type="number" id="telefono" name="telefono" value="${profesor.telefono}" />
-                    </div>
-                    <div class="form-field">
-                      <label for="celular">Celular</label>
-                      <input class="no-spinner" type="number" id="celular" name="celular" value="${profesor.celular}" />
-                    </div>
-                  </div>
-                  <div class="form-card card">
-                    <div class="form-card-header">Cuenta</div>
-                    <div class="form-field">
-                      <label for="usuario">Usuario</label>
-                      <input type="text" id="usuario" name="usuario" value="${profesor.usuario}" />
-                    </div>
-                    <div class="form-field">
-                      <label for="especialidadId">Especialidad personal</label>
-                      <select id="especialidadId" name="especialidadId">
-                        <option value="">-- Sin especialidad --</option>
-                        <c:forEach var="e" items="${especialidades}">
-                          <option value="${e.id}" ${profesor.especialidadId != null && profesor.especialidadId == e.id ? 'selected' : ''}>
-                            <c:out value="${e.nombre}" />
-                          </option>
-                        </c:forEach>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="form-card card">
-                    <div class="form-card-header">Google Classroom</div>
-                    <c:url var="googleConnectUrl" value="/GoogleLoginServlet" />
-                    <c:url var="googleDisconnectUrl" value="/GoogleDisconnectServlet" />
-                    <c:choose>
-                      <c:when test="${not empty profesor.googleEmail or not empty profesor.gcAccessToken}">
-                        <div class="classroom-status classroom-status--connected">Conectado como <strong><c:out value="${profesor.googleEmail}"/></strong></div>
-                        <div class="classroom-actions">
-                          <a class="btn-primary" href="${pageContext.request.contextPath}${googleConnectUrl}">Reconectar</a>
-                          <button class="btn-danger" type="submit" form="googleDisconnectForm">Desconectar</button>
+              <c:choose>
+                <c:when test="${isProfessorProfile}">
+                  <form id="profileForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="profileSaveStatus">
+                    <input type="hidden" name="action" value="saveProfile" />
+                    <div class="profile-grid profile-grid-layout">
+                      <div class="form-card card">
+                        <div class="form-card-header">Información Personal</div>
+                        <div class="form-field">
+                          <label for="profesorName">Nombre</label>
+                          <input type="text" id="profesorName" value="${profesor.fullName}" disabled />
                         </div>
-                      </c:when>
-                      <c:otherwise>
-                        <div class="classroom-status classroom-status--disconnected">No conectado a Google Classroom</div>
-                        <a class="btn-primary" href="${pageContext.request.contextPath}${googleConnectUrl}">Conectar ahora</a>
-                      </c:otherwise>
-                    </c:choose>
+                        <div class="form-field">
+                          <label for="profesorCI">Cédula</label>
+                          <input type="text" id="profesorCI" value="${profesor.ci}" disabled />
+                        </div>
+                      </div>
+                      <div class="form-card card">
+                        <div class="form-card-header">Contacto</div>
+                        <div class="form-field">
+                          <label for="correo">Correo electrónico</label>
+                          <input type="email" id="correo" name="correo" value="${profesor.correo}" />
+                        </div>
+                        <div class="form-field">
+                          <label for="telefono">Teléfono</label>
+                          <input class="no-spinner" type="number" id="telefono" name="telefono" value="${profesor.telefono}" />
+                        </div>
+                        <div class="form-field">
+                          <label for="celular">Celular</label>
+                          <input class="no-spinner" type="number" id="celular" name="celular" value="${profesor.celular}" />
+                        </div>
+                      </div>
+                      <div class="form-card card">
+                        <div class="form-card-header">Cuenta</div>
+                        <div class="form-field">
+                          <label for="usuario">Usuario</label>
+                          <input type="text" id="usuario" name="usuario" value="${profesor.usuario}" />
+                        </div>
+                        <div class="form-field">
+                          <label for="especialidadId">Especialidad personal</label>
+                          <select id="especialidadId" name="especialidadId">
+                            <option value="">-- Sin especialidad --</option>
+                            <c:forEach var="e" items="${especialidades}">
+                              <option value="${e.id}" ${profesor.especialidadId != null && profesor.especialidadId == e.id ? 'selected' : ''}>
+                                <c:out value="${e.nombre}" />
+                              </option>
+                            </c:forEach>
+                          </select>
+                        </div>
+                      </div>
+                      <c:if test="${showGoogleClassroomPanel}">
+                        <div class="form-card card">
+                          <div class="form-card-header">Google Classroom</div>
+                          <c:url var="googleConnectUrl" value="/GoogleLoginServlet" />
+                          <c:url var="googleDisconnectUrl" value="/GoogleDisconnectServlet" />
+                          <c:choose>
+                            <c:when test="${not empty profesor.googleEmail or not empty profesor.gcAccessToken}">
+                              <div class="classroom-status classroom-status--connected">Conectado como <strong><c:out value="${profesor.googleEmail}"/></strong></div>
+                              <div class="classroom-actions">
+                                <a class="btn-primary" href="${pageContext.request.contextPath}${googleConnectUrl}">Reconectar</a>
+                                <button class="btn-danger" type="submit" form="googleDisconnectForm">Desconectar</button>
+                              </div>
+                            </c:when>
+                            <c:otherwise>
+                              <div class="classroom-status classroom-status--disconnected">No conectado a Google Classroom</div>
+                              <a class="btn-primary" href="${pageContext.request.contextPath}${googleConnectUrl}">Conectar ahora</a>
+                            </c:otherwise>
+                          </c:choose>
+                        </div>
+                      </c:if>
+                      <span id="profileSaveStatus" class="save-status profile-save-status" aria-live="polite">Guardado automático activo.</span>
+                    </div>
+                  </form>
+                  <form id="googleDisconnectForm" action="${pageContext.request.contextPath}${googleDisconnectUrl}" method="post" style="display:none;"></form>
+                </c:when>
+                <c:otherwise>
+                  <div class="profile-grid profile-grid-layout">
+                    <div class="form-card card">
+                      <div class="form-card-header">Información Personal</div>
+                      <div class="profile-role-pill"><c:out value="${profileRoleLabel}" /></div>
+                      <div class="form-field">
+                        <label>Vista</label>
+                        <input type="text" value="Consulta de perfil" disabled />
+                      </div>
+                      <div class="form-field">
+                        <label>Nombre</label>
+                        <input type="text" value="${empty profileOwner.fullName ? sessionScope.user.fullName : profileOwner.fullName}" disabled />
+                      </div>
+                      <div class="form-field">
+                        <label>Cédula</label>
+                        <input type="text" value="${empty profileOwner.ci ? 'No registrada' : profileOwner.ci}" disabled />
+                      </div>
+                    </div>
+                    <div class="form-card card">
+                      <div class="form-card-header">Cuenta</div>
+                      <div class="form-field">
+                        <label>Usuario</label>
+                        <input type="text" value="${empty profileOwner.usuario ? sessionScope.user.username : profileOwner.usuario}" disabled />
+                      </div>
+                      <div class="form-field">
+                        <label>Correo electrónico</label>
+                        <input type="email" value="${empty profileOwner.correo ? 'No registrado' : profileOwner.correo}" disabled />
+                      </div>
+                      <div class="form-field">
+                        <label>Teléfono</label>
+                        <input type="text" value="${empty profileOwner.telefono ? 'No registrado' : profileOwner.telefono}" disabled />
+                      </div>
+                    </div>
+                    <div class="form-card card">
+                      <div class="form-card-header">Acceso</div>
+                      <div class="profile-access-card">
+                        <strong><c:out value="${profileRoleLabel}" /></strong>
+                        <p><c:out value="${profileAccessDescription}" /></p>
+                      </div>
+                    </div>
+                    <div class="form-card card">
+                      <div class="form-card-header">Permisos</div>
+                      <div class="profile-permissions-list">
+                        <c:choose>
+                          <c:when test="${isProfessorProfile}">
+                            <span>Edición de datos personales</span>
+                            <span>Gestión de Google Classroom</span>
+                            <span>Visualización de materias y asignaciones</span>
+                          </c:when>
+                          <c:when test="${isParentProfile}">
+                            <span>Consulta de información familiar</span>
+                            <span>Vista académica asociada a estudiantes</span>
+                          </c:when>
+                          <c:otherwise>
+                            <span>Consulta de perfil</span>
+                            <span>Acceso a seguridad y registros</span>
+                          </c:otherwise>
+                        </c:choose>
+                      </div>
+                    </div>
                   </div>
-                  <span id="profileSaveStatus" class="save-status profile-save-status" aria-live="polite">Guardado automático activo.</span>
-                </div>
-              </form>
-              <form id="googleDisconnectForm" action="${pageContext.request.contextPath}${googleDisconnectUrl}" method="post" style="display:none;"></form>
+                </c:otherwise>
+              </c:choose>
             </section>
 
             <section id="seguridad-panel" class="profile-panel" hidden>
@@ -219,30 +294,32 @@
               </form>
             </section>
 
-        <section id="materias-panel" class="profile-panel" hidden>
-          <div class="table-card table-card--wide card">
-            <div class="table-header">Asignaciones de materias</div>
-            <div class="subject-list-grid">
-              <c:choose>
-                <c:when test="${empty misAsignaciones}">
-                  <p class="empty-state">No hay asignaciones de materias registradas.</p>
-                </c:when>
-                <c:otherwise>
-                  <div class="subject-list-header">
-                    <span>Materia</span>
-                    <span>Curso</span>
-                  </div>
-                  <c:forEach var="asignacion" items="${misAsignaciones}">
-                    <div class="subject-item">
-                      <span class="subject-item__name"><c:out value="${asignacion.materiaNombre}" /></span>
-                      <span class="subject-item__course"><c:out value="${asignacion.cursoDescripcion}" /></span>
+        <c:if test="${showMateriasPanel}">
+          <section id="materias-panel" class="profile-panel" hidden>
+            <div class="table-card table-card--wide card">
+              <div class="table-header">Asignaciones de materias</div>
+              <div class="subject-list-grid">
+                <c:choose>
+                  <c:when test="${empty misAsignaciones}">
+                    <p class="empty-state">No hay asignaciones de materias registradas.</p>
+                  </c:when>
+                  <c:otherwise>
+                    <div class="subject-list-header">
+                      <span>Materia</span>
+                      <span>Curso</span>
                     </div>
-                  </c:forEach>
-                </c:otherwise>
-              </c:choose>
+                    <c:forEach var="asignacion" items="${misAsignaciones}">
+                      <div class="subject-item">
+                        <span class="subject-item__name"><c:out value="${asignacion.materiaNombre}" /></span>
+                        <span class="subject-item__course"><c:out value="${asignacion.cursoDescripcion}" /></span>
+                      </div>
+                    </c:forEach>
+                  </c:otherwise>
+                </c:choose>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </c:if>
 
         <section id="registros-panel" class="profile-panel" hidden>
           <div class="activity-log">

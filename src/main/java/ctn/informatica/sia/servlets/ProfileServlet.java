@@ -8,12 +8,14 @@ import ctn.informatica.sia.dao.AsignacionDao;
 import ctn.informatica.sia.dao.CursoDao;
 import ctn.informatica.sia.dao.EspecialidadDao;
 import ctn.informatica.sia.dao.MateriaDao;
+import ctn.informatica.sia.dao.PadreDao;
 import ctn.informatica.sia.dao.ProfesorDao;
 import ctn.informatica.sia.google.GoogleClassroomService;
 import ctn.informatica.sia.model.Curso;
 import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.Asignacion;
 import ctn.informatica.sia.model.Materia;
+import ctn.informatica.sia.model.Padre;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
 import ctn.informatica.sia.util.RememberMeTokenStore;
@@ -209,6 +211,42 @@ public class ProfileServlet extends HttpServlet {
         return names;
     }
 
+    private String roleLabel(User user) {
+        if (user == null) {
+            return "Usuario";
+        }
+        switch (user.getLevel()) {
+            case 1:
+                return "Profesor";
+            case 2:
+                return "Evaluador";
+            case 3:
+                return "Administrador";
+            case 4:
+                return "Familia";
+            default:
+                return "Usuario";
+        }
+    }
+
+    private String accessDescription(User user) {
+        if (user == null) {
+            return "Tu perfil se muestra en modo lectura.";
+        }
+        switch (user.getLevel()) {
+            case 1:
+                return "Podés editar tus datos de contacto, usuario, especialidad y conexión con Google Classroom.";
+            case 2:
+                return "Tu acceso está orientado a evaluación. Los datos personales se muestran en modo lectura.";
+            case 3:
+                return "Tu acceso está orientado a administración. Los datos personales se muestran en modo lectura.";
+            case 4:
+                return "Tu acceso familiar permite revisar la información académica asociada a tus estudiantes.";
+            default:
+                return "Tu perfil se muestra en modo lectura.";
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private void appendActivityLog(HttpSession session, String entry) {
         if (session == null) {
@@ -232,8 +270,14 @@ public class ProfileServlet extends HttpServlet {
         User user = session == null ? null : (User) session.getAttribute("user");
 
         Profesor profesor = null;
-        if (user != null) {
+        Padre padre = null;
+        boolean isProfessorProfile = user != null && user.getLevel() == 1;
+        boolean isStaffProfile = user != null && user.getLevel() >= 1 && user.getLevel() <= 3;
+        boolean isParentProfile = user != null && user.getLevel() == 4;
+        if (isStaffProfile) {
             profesor = new ProfesorDao().findById(user.getId());
+        } else if (isParentProfile) {
+            padre = new PadreDao().findById(user.getId());
         }
 
         List<Course> googleClassroomCourses = Collections.emptyList();
@@ -277,6 +321,17 @@ public class ProfileServlet extends HttpServlet {
         }
 
         req.setAttribute("profesor", profesor);
+        req.setAttribute("padre", padre);
+        req.setAttribute("profileOwner", profesor != null ? profesor : padre);
+        req.setAttribute("isProfessorProfile", isProfessorProfile);
+        req.setAttribute("isParentProfile", isParentProfile);
+        req.setAttribute("isStaffProfile", isStaffProfile);
+        req.setAttribute("profileRoleLabel", roleLabel(user));
+        req.setAttribute("profileAccessDescription", accessDescription(user));
+        req.setAttribute("showMateriasPanel", isProfessorProfile);
+        req.setAttribute("showGoogleClassroomPanel", isProfessorProfile);
+        req.setAttribute("showSecurityPanel", true);
+        req.setAttribute("showActivityPanel", true);
         req.setAttribute("googleClassroomConnected", googleClassroomConnected);
         req.setAttribute("googleClassroomCourses", googleClassroomCourses);
         req.setAttribute("teacherMaterias", teacherMaterias);
@@ -319,17 +374,33 @@ public class ProfileServlet extends HttpServlet {
             
             if (errors.isEmpty() && user != null) {
                 try {
-                    Profesor profesor = new ProfesorDao().findById(user.getId());
-                    if (profesor != null && profesor.getContrasenia().equals(currentPassword)) {
-                        profesor.setContrasenia(newPassword);
-                        new ProfesorDao().update(profesor);
+                    boolean passwordUpdated = false;
+                    if (user.getLevel() >= 1 && user.getLevel() <= 3) {
+                        Profesor profesor = new ProfesorDao().findById(user.getId());
+                        if (profesor != null && profesor.getContrasenia() != null && profesor.getContrasenia().equals(currentPassword)) {
+                            profesor.setContrasenia(newPassword);
+                            passwordUpdated = new ProfesorDao().update(profesor);
+                        } else {
+                            errors.add("La contraseña actual es incorrecta.");
+                        }
+                    } else if (user.getLevel() == 4) {
+                        Padre padre = new PadreDao().findById(user.getId());
+                        if (padre != null && padre.getContrasenia() != null && padre.getContrasenia().equals(currentPassword)) {
+                            padre.setContrasenia(newPassword);
+                            passwordUpdated = new PadreDao().update(padre);
+                        } else {
+                            errors.add("La contraseña actual es incorrecta.");
+                        }
+                    } else {
+                        errors.add("Este tipo de usuario no admite cambio de contraseña desde este perfil.");
+                    }
+
+                    if (passwordUpdated) {
                         RememberMeTokenStore.invalidateUserTokens(user.getId());
                         if (session != null) {
                             session.setAttribute("flashMessage", "Contraseña actualizada exitosamente.");
                             appendActivityLog(session, "Contraseña actualizada.");
                         }
-                    } else {
-                        errors.add("La contraseña actual es incorrecta.");
                     }
                 } catch (Exception ex) {
                     errors.add("Error al actualizar la contraseña: " + ex.getMessage());
