@@ -16,7 +16,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=207">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=208">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   </head>
 
@@ -85,19 +85,18 @@
     <div id="cookieConsent" class="cookie-consent-banner" role="banner">
       <div class="cookie-consent-content">
         <div class="cookie-consent-text">
-          <strong>Política de Cookies</strong>
-          <p>Este sitio utiliza cookies funcionales para mantener tu sesión y tu preferencia de tema. Las cookies son necesarias para que la aplicación funcione correctamente.</p>
+          <strong>Cookies funcionales</strong>
+          <p>Usamos cookies necesarias para iniciar sesión, mantener la sesión activa y recordar tu preferencia de tema. Si marcás “Mantener sesión”, estas cookies son obligatorias.</p>
         </div>
         <div class="cookie-consent-actions">
-          <button id="acceptCookies" class="cookie-consent-btn cookie-consent-btn-primary">Aceptar</button>
-          <button id="declineCookies" class="cookie-consent-btn cookie-consent-btn-secondary">Rechazar</button>
+          <button id="acceptCookies" class="cookie-consent-btn cookie-consent-btn-primary">Entendido</button>
         </div>
       </div>
     </div>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
   <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
-    <script src="${pageContext.request.contextPath}/scripts/cookie-consent.js?v=163"></script>
+    <script src="${pageContext.request.contextPath}/scripts/cookie-consent.js?v=164"></script>
   </body>
 
 </html>

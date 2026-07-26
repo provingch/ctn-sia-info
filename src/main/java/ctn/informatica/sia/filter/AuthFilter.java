@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author jonat
  */
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/HomeServlet", "/PlanillaServlet", "/TareaServlet", "/ProfileServlet", "/EvaluacionServlet", "/AdminServlet", "/AdminMateriasServlet", "/AdminUsuariosServlet", "/AdminAsignacionesServlet", "/ParentServlet"})
+@WebFilter(filterName = "AuthFilter", urlPatterns = {"/HomeServlet", "/PlanillaServlet", "/TareaServlet", "/ProfileServlet", "/EvaluacionServlet", "/AdminServlet", "/AdminMateriasServlet", "/AdminUsuariosServlet", "/AdminAsignacionesServlet", "/ParentServlet", "/index.jsp"})
 public class AuthFilter implements Filter {
 
         private static final Map<String, List<Integer>> AUTHORIZED_LEVELS = Map.of(
@@ -91,6 +91,8 @@ public class AuthFilter implements Filter {
 
         HttpSession session = request.getSession(false);
         Object user = (session == null) ? null : session.getAttribute("user");
+        String currentPath = request.getServletPath();
+        boolean isLoginPage = "/index.jsp".equals(currentPath);
 
         if (user == null) {
             User restoredUser = restoreUserFromRememberCookie(request, response);
@@ -125,10 +127,18 @@ public class AuthFilter implements Filter {
                     // no-op
                 }
                 user = restoredUser;
+            } else if (isLoginPage) {
+                chain.doFilter(req, res);
+                return;
             } else {
                 response.sendRedirect(ctx + "/index.jsp");
                 return; // stop processing
             }
+        }
+
+        if (isLoginPage) {
+            response.sendRedirect(ctx + getRedirectPathForLevel(user));
+            return;
         }
 
         // prevent caching of protected pages (helps with Back after logout)

@@ -2,9 +2,8 @@
   const CONSENT_KEY = 'SIA_COOKIE_CONSENT';
   const banner = document.getElementById('cookieConsent');
   const acceptBtn = document.getElementById('acceptCookies');
-  const declineBtn = document.getElementById('declineCookies');
 
-  if (!banner || !acceptBtn || !declineBtn) {
+  if (!banner || !acceptBtn) {
     return;
   }
 
@@ -16,7 +15,7 @@
   function readStoredConsent() {
     try {
       const stored = window.localStorage.getItem(CONSENT_KEY);
-      if (stored === 'accepted' || stored === 'declined') {
+      if (stored === 'accepted') {
         return stored;
       }
     } catch (error) {
@@ -24,11 +23,11 @@
     }
 
     const cookieValue = readCookie(CONSENT_KEY);
-    return cookieValue === 'accepted' || cookieValue === 'declined' ? cookieValue : null;
+    return cookieValue === 'accepted' ? cookieValue : null;
   }
 
-  function writeStoredConsent(accepted) {
-    const value = accepted ? 'accepted' : 'declined';
+  function writeStoredConsent() {
+    const value = 'accepted';
     try {
       window.localStorage.setItem(CONSENT_KEY, value);
     } catch (error) {
@@ -46,73 +45,42 @@
     banner.classList.remove('hidden');
   }
 
-  function hasConsentDecision() {
-    const stored = readStoredConsent();
-    return stored === 'accepted' || stored === 'declined';
-  }
-
   function hasConsent() {
     return readStoredConsent() === 'accepted';
   }
 
-  function updateBannerVisibility() {
+  function shouldShowBanner() {
     const rememberInput = document.querySelector('input[name="rememberMe"]');
-    if (!rememberInput) {
-      hideBanner();
-      return;
-    }
-
-    if (hasConsentDecision()) {
-      hideBanner();
-      return;
-    }
-
-    if (rememberInput.checked) {
-      showBanner();
-    } else {
-      hideBanner();
-    }
+    return rememberInput && rememberInput.checked && !hasConsent();
   }
 
-  function disableRememberIfDeclined() {
-    const rememberInput = document.querySelector('input[name="rememberMe"]');
-    if (!rememberInput) {
+  hideBanner();
+
+  const rememberInput = document.querySelector('input[name="rememberMe"]');
+
+  function updateBannerVisibility() {
+    if (shouldShowBanner()) {
+      showBanner();
       return;
     }
-    if (readStoredConsent() === 'declined') {
-      rememberInput.checked = false;
-    }
+
+    hideBanner();
   }
 
   updateBannerVisibility();
-  disableRememberIfDeclined();
-
-  const rememberInput = document.querySelector('input[name="rememberMe"]');
-  if (rememberInput) {
-    rememberInput.addEventListener('change', updateBannerVisibility);
-  }
 
   const loginForm = document.querySelector('.login-form');
   if (loginForm) {
     loginForm.addEventListener('submit', function (event) {
-      if (rememberInput && rememberInput.checked && !hasConsentDecision()) {
+      if (rememberInput && rememberInput.checked && !hasConsent()) {
         event.preventDefault();
         showBanner();
-      }
-      if (rememberInput && rememberInput.checked && readStoredConsent() === 'declined') {
-        rememberInput.checked = false;
       }
     });
   }
 
   acceptBtn.addEventListener('click', function () {
-    writeStoredConsent(true);
-    hideBanner();
-  });
-
-  declineBtn.addEventListener('click', function () {
-    writeStoredConsent(false);
-    disableRememberIfDeclined();
+    writeStoredConsent();
     hideBanner();
   });
 })();

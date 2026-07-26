@@ -11,7 +11,7 @@
   <meta charset="utf-8" />
   <title>Styleguide — Foundation</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=207">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=208">
   <style>body{padding:24px}</style>
 </head>
 <body>

@@ -901,26 +901,39 @@ input[type="checkbox"] {
 /* Cookie consent banner styling (fixed bottom) */
 .cookie-consent-banner {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1200;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2200;
+  width: min(420px, calc(100vw - 32px));
   background: var(--paper);
-  border-top: 1px solid var(--line);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
   box-shadow: var(--shadow-md);
-  padding: 12px 16px;
+  padding: 16px;
 }
 .cookie-consent-banner.hidden { display: none; }
 .cookie-consent-content {
-  max-width: 1080px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
   gap: 12px;
-  flex-wrap: wrap;
 }
-.cookie-consent-actions { display: flex; gap: 8px; }
+.cookie-consent-text strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-size: 14px;
+}
+.cookie-consent-text p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.cookie-consent-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
 
 .activity-log {
   padding: 16px;
@@ -1394,7 +1407,8 @@ hr {
 }
 
 .cookie-consent-banner {
-  border-top: 4px solid var(--accent);
+  border-top: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
 }
 
 html[data-theme="dark"] .card,
@@ -1631,6 +1645,12 @@ html[data-theme="dark"] .footer {
 @media (max-width: 640px) {
   body {
     padding: 112px 12px 12px;
+  }
+
+  .cookie-consent-banner {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
   }
 
   .ctn-navbar .container-fluid {
