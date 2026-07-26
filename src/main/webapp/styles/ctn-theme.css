@@ -260,6 +260,43 @@ section { margin-bottom: 28px; }
   border: 1px solid color-mix(in srgb, #f5b7b1 58%, var(--line));
 }
 
+.scale-summary,
+.grade-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--paper) 82%, #34495e 10%);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.scale-summary strong,
+.grade-chip strong {
+  font-weight: 900;
+}
+
+.grade-chip strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  min-height: 20px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--paper) 56%, #34495e 28%);
+}
+
+.grade-chip--five { background: color-mix(in srgb, #2ecc71 13%, var(--paper)); }
+.grade-chip--four { background: color-mix(in srgb, #8fd19e 12%, var(--paper)); }
+.grade-chip--three { background: color-mix(in srgb, #f1c40f 12%, var(--paper)); }
+.grade-chip--two { background: color-mix(in srgb, #f39c12 10%, var(--paper)); }
+.grade-chip--one { background: color-mix(in srgb, #f5b7b1 14%, var(--paper)); }
+
 .profile-sidebar {
   border: none;
   background: transparent;
@@ -724,6 +761,12 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   background: var(--paper);
   font-size: 12px;
 }
+.planilla-table {
+  --planilla-row: color-mix(in srgb, var(--paper) 96%, #34495e 4%);
+  --planilla-row-alt: color-mix(in srgb, var(--paper) 86%, #34495e 10%);
+  --planilla-row-fill: color-mix(in srgb, var(--paper) 82%, #34495e 12%);
+  --planilla-row-fill-alt: color-mix(in srgb, var(--paper) 74%, #34495e 18%);
+}
 .table-row { display: contents; }
 .table-heading {
   grid-column: 1 / -1;
@@ -753,13 +796,16 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   flex-direction: column;
   justify-content: center;
   gap: 3px;
-  background: var(--paper);
+  background: var(--planilla-row, var(--paper));
   color: var(--ink);
   font-size: 12px;
   line-height: 1.2;
 }
 .table-row:nth-child(odd) .cell {
-  background: color-mix(in srgb, var(--paper) 94%, var(--bg) 6%);
+  background: var(--planilla-row-alt, color-mix(in srgb, var(--paper) 94%, var(--bg) 6%));
+}
+.table-row:nth-child(odd) .cell input {
+  background: color-mix(in srgb, var(--paper) 88%, #34495e 6%);
 }
 .table .cell.col-index {
   min-width: 44px;
@@ -785,7 +831,10 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 .table .col-fill {
   min-width: 0;
   border-right: 0;
-  background: color-mix(in srgb, var(--paper) 88%, #34495e 6%);
+  background: var(--planilla-row-fill);
+}
+.table-row:nth-child(odd) .col-fill {
+  background: var(--planilla-row-fill-alt);
 }
 .table .table-column-head {
   position: sticky;
@@ -796,6 +845,9 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   color: var(--ink);
   font-size: 11px;
   font-weight: 900;
+}
+.table-row:nth-child(odd) .table-column-head {
+  background: color-mix(in srgb, var(--paper) 78%, #34495e 14%);
 }
 
 .table-responsive.freeze-alumnos .col-corner,
@@ -866,95 +918,6 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   padding-top: 2px;
 }
 
-.planilla-scale {
-  margin-top: 18px;
-}
-
-.planilla-scale .grade-table {
-  width: min(100%, 560px);
-  border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
-  border-radius: 4px;
-  overflow: hidden;
-  background: var(--paper);
-  box-shadow: none;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-.planilla-scale .grade-table thead td {
-  padding: 12px 14px;
-  border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
-  background: #34495e;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 900;
-  letter-spacing: 0;
-}
-
-.planilla-scale .grade-table th,
-.planilla-scale .grade-table td {
-  padding: 9px 14px;
-  border-bottom: 1px solid color-mix(in srgb, var(--line) 62%, transparent);
-  color: var(--ink);
-  font-size: 12px;
-  vertical-align: middle;
-}
-
-.planilla-scale .grade-table th {
-  background: color-mix(in srgb, var(--paper) 70%, #34495e 18%);
-  color: color-mix(in srgb, var(--ink) 86%, #ffffff);
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-}
-
-.planilla-scale .grade-table tbody tr:last-child td,
-.planilla-scale .grade-table tbody tr:last-child th {
-  border-bottom: 0;
-}
-
-.planilla-scale .grade-table tbody td:last-child {
-  width: 72px;
-  text-align: center;
-}
-
-.planilla-scale .grade-table tfoot td {
-  padding: 10px 14px;
-  border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
-  background: color-mix(in srgb, var(--paper) 74%, #34495e 16%);
-  color: var(--ink);
-  font-weight: 900;
-}
-
-.planilla-scale .scale-title {
-  display: table-cell;
-}
-
-.planilla-scale .scale-title span {
-  float: right;
-  color: color-mix(in srgb, #ffffff 82%, #34495e);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.planilla-scale .scale-grade {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 30px;
-  min-height: 24px;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--paper) 62%, #34495e 26%);
-  color: var(--ink);
-  font-weight: 900;
-}
-
-.planilla-scale .five-color td { background: color-mix(in srgb, #2ecc71 14%, var(--paper)); }
-.planilla-scale .four-color td { background: color-mix(in srgb, #8fd19e 13%, var(--paper)); }
-.planilla-scale .three-color td { background: color-mix(in srgb, #f1c40f 13%, var(--paper)); }
-.planilla-scale .two-color td { background: color-mix(in srgb, #f39c12 11%, var(--paper)); }
-.planilla-scale .one-color td { background: color-mix(in srgb, #f5b7b1 15%, var(--paper)); }
 .freeze-toggle {
   display: inline-flex;
   align-items: center;
@@ -1614,6 +1577,40 @@ html[data-theme="dark"] .badge,
 html[data-theme="dark"] .label {
   background: var(--color-bg-muted);
   color: var(--ink);
+}
+
+html[data-theme="dark"] .planilla-table {
+  --planilla-row: color-mix(in srgb, var(--paper) 90%, #111827 10%);
+  --planilla-row-alt: color-mix(in srgb, var(--paper) 76%, #111827 24%);
+  --planilla-row-fill: color-mix(in srgb, var(--paper) 68%, #111827 32%);
+  --planilla-row-fill-alt: color-mix(in srgb, var(--paper) 58%, #111827 42%);
+}
+
+html[data-theme="dark"] .table .cell {
+  border-color: var(--line);
+}
+
+html[data-theme="dark"] .table-row:nth-child(odd) .cell input {
+  background: color-mix(in srgb, var(--color-bg-input) 78%, #111827 22%);
+}
+
+html[data-theme="dark"] .table .table-column-head,
+html[data-theme="dark"] .table-row:nth-child(odd) .table-column-head {
+  background: color-mix(in srgb, var(--paper) 72%, #111827 28%);
+}
+
+html[data-theme="dark"] .table .col-corner {
+  background: color-mix(in srgb, var(--paper) 64%, #111827 36%);
+}
+
+html[data-theme="dark"] .scale-summary,
+html[data-theme="dark"] .grade-chip {
+  background: color-mix(in srgb, var(--paper) 76%, #111827 24%);
+  border-color: var(--line);
+}
+
+html[data-theme="dark"] .grade-chip strong {
+  background: color-mix(in srgb, var(--paper) 58%, #111827 42%);
 }
 
 .ctn-navbar.navbar {

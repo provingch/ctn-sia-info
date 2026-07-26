@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><c:out value="${not empty pageTitle ? pageTitle : planilla.nombre}" /></title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=212">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=214">
   <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=164"></script>
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
@@ -121,19 +121,18 @@
 
         <div class="planilla-info-bar">
           <div class="grade-ranges-container">
-            <span class="five-highlight">${gradeRanges['5'][0]} a ${gradeRanges['5'][1]}</span>
-            <span class="four-highlight">${gradeRanges['4'][0]} a ${gradeRanges['4'][1]}</span>
-            <span class="three-highlight">${gradeRanges['3'][0]} a ${gradeRanges['3'][1]}</span>
-            <span class="two-highlight">${gradeRanges['2'][0]} a ${gradeRanges['2'][1]}</span>
-            <span class="one-highlight">${gradeRanges['2'][0] - 1} y menos</span>
+            <span class="scale-summary">TP <strong>${totalPossiblePoints}</strong></span>
+            <span class="scale-summary">Exigencia <strong>${exigencia}&percnt;</strong></span>
+            <span class="grade-chip grade-chip--five" title="Desde ${gradeRanges['5'][0]} hasta ${gradeRanges['5'][1]}"><strong>5</strong>${gradeRanges['5'][0]}-${gradeRanges['5'][1]}</span>
+            <span class="grade-chip grade-chip--four" title="Desde ${gradeRanges['4'][0]} hasta ${gradeRanges['4'][1]}"><strong>4</strong>${gradeRanges['4'][0]}-${gradeRanges['4'][1]}</span>
+            <span class="grade-chip grade-chip--three" title="Desde ${gradeRanges['3'][0]} hasta ${gradeRanges['3'][1]}"><strong>3</strong>${gradeRanges['3'][0]}-${gradeRanges['3'][1]}</span>
+            <span class="grade-chip grade-chip--two" title="Desde ${gradeRanges['2'][0]} hasta ${gradeRanges['2'][1]}"><strong>2</strong>${gradeRanges['2'][0]}-${gradeRanges['2'][1]}</span>
+            <span class="grade-chip grade-chip--one" title="${gradeRanges['2'][0] - 1} puntos o menos"><strong>1</strong>${gradeRanges['2'][0] - 1} o menos</span>
 
             <label class="freeze-toggle" title="Fijar columnas # y Alumno">
               <input type="checkbox" id="freezeCheckbox" data-ignore-dirty/>
               Inmovilizar alumnos
             </label>
-          </div>
-          <div class="escala-info">
-            Escala: (Total de Puntos ${totalPossiblePoints}) - Porcentaje de Exigencia: ${exigencia}&percnt;
           </div>
           <button class="btn-primary save-button">
             <img class="save-icon" src="${pageContext.request.contextPath}/icons/save.svg">
@@ -218,53 +217,6 @@
         </div>
       </form>
 
-    </section>
-
-    <section class="container planilla-scale">
-      <table class="grade-table">
-        <thead>
-          <tr>
-            <td colspan="3" class="scale-title">Escala de notas <span>TP: ${totalPossiblePoints}</span></td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>DESDE</th>
-            <th>HASTA</th>
-            <th>NOTA</th>
-          </tr>
-          <tr class="five-color">
-            <td>${gradeRanges['5'][0]}</td>
-            <td>${gradeRanges['5'][1]}</td>
-            <td><span class="scale-grade">5</span></td>
-          </tr>
-          <tr class="four-color">
-            <td>${gradeRanges['4'][0]}</td>
-            <td>${gradeRanges['4'][1]}</td>
-            <td><span class="scale-grade">4</span></td>
-          </tr>
-          <tr class="three-color">
-            <td>${gradeRanges['3'][0]}</td>
-            <td>${gradeRanges['3'][1]}</td>
-            <td><span class="scale-grade">3</span></td>
-          </tr>
-          <tr class="two-color">
-            <td>${gradeRanges['2'][0]}</td>
-            <td>${gradeRanges['2'][1]}</td>
-            <td><span class="scale-grade">2</span></td>
-          </tr>
-          <tr class="one-color">
-            <td>${gradeRanges['2'][0] - 1}</td>
-            <td>y menos</td>
-            <td><span class="scale-grade">1</span></td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3">Exigencia: ${exigencia}&percnt;</td>
-          </tr>
-        </tfoot>
-      </table>
     </section>
 
     <footer class="footer">
