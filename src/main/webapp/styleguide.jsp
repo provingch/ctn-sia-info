@@ -6,11 +6,12 @@
   }
 %>
 <!doctype html>
-<html>
+<html data-theme="light">
 <head>
   <meta charset="utf-8" />
   <title>Styleguide — Foundation</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=200">
   <style>body{padding:24px}</style>
 </head>
 <body>
@@ -65,6 +66,9 @@
     </div>
   </section>
 
+  <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
+  <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
+  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
   <script>
     document.getElementById('specialtySelect').addEventListener('change', function(e){
       var val = e.target.value;

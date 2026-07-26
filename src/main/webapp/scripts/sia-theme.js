@@ -24,14 +24,14 @@
   function ensureThemeToggle() {
     const existing = document.querySelector('.theme-toggle-button');
     if (existing) return existing;
-    const rightSection = document.querySelector('.right-section');
-    if (rightSection) {
+    const themeItem = document.querySelector('.ctn-theme-item');
+    if (themeItem) {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'theme-toggle-button';
       button.setAttribute('aria-pressed', 'false');
       button.title = 'Cambiar tema';
-      rightSection.insertBefore(button, rightSection.firstChild);
+      themeItem.appendChild(button);
       return button;
     }
     return null;

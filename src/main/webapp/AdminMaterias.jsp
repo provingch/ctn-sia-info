@@ -5,32 +5,38 @@
         <title>Admin - Materias</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sia-base.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=200">
         <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg" />
 </head>
 <body data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
-<header class="site-header">
-    <div class="header-logo-container">
-        <a href="${pageContext.request.contextPath}/AdminServlet" aria-label="Ir a inicio">
-            <img class="header-logo" src="${pageContext.request.contextPath}/images/ctn-logo.svg">
-        </a>
-    </div>
-    <div class="header-school-name">Colegio Técnico Nacional</div>
-    <c:url var="profileUrl" value="/ProfileServlet" />
-    <c:url var="logoutUrl" value="/LogoutServlet" />
-    <div class="right-section">
-        <div class="manual-container">
-            <a class="manual-link" href="${pageContext.request.contextPath}/pdfs/manual.pdf" target="_blank">Manual</a>
-        </div>
-        <div class="session-dropdown" id="sessionDropdown">
-            <button class="session-button" id="sessionButton" aria-haspopup="true" aria-expanded="false" aria-controls="sessionMenu">
-                Sesión
-                <svg class="dropdown-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+<c:url var="profileUrl" value="/ProfileServlet" />
+<header class="navbar navbar-default navbar-fixed-top ctn-navbar" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#ctnNavbarMenu" aria-expanded="false">
+                <span class="sr-only">Abrir navegación</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </button>
-            <nav class="session-menu" id="sessionMenu" role="menu" aria-labelledby="sessionButton">
-                <a role="menuitem" class="session-item" href="${profileUrl}">Mi Perfil</a>
-                <a role="menuitem" class="session-item session-logout" href="${logoutUrl}">Cerrar Sesión</a>
-            </nav>
+            <a class="navbar-brand ctn-navbar-brand" href="${pageContext.request.contextPath}/AdminServlet" aria-label="Ir a inicio">
+                <img class="header-logo" src="${pageContext.request.contextPath}/images/ctn-logo.svg" alt="CTN">
+                <span>Colegio Técnico Nacional</span>
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="ctnNavbarMenu">
+            <ul class="nav navbar-nav navbar-right ctn-navbar-actions">
+                <li class="ctn-theme-item"></li>
+                <li><a class="manual-link" href="${pageContext.request.contextPath}/pdfs/manual.pdf" target="_blank" rel="noopener noreferrer">Manual</a></li>
+                <li class="dropdown">
+                    <a href="#" id="sessionButton" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sesión <span class="caret"></span></a>
+                    <ul class="dropdown-menu" id="sessionMenu" role="menu" aria-labelledby="sessionButton">
+                        <li><a role="menuitem" href="${profileUrl}">Mi Perfil</a></li>
+                        <li><a role="menuitem" class="session-logout" href="${pageContext.request.contextPath}/LogoutServlet">Cerrar Sesión</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
 </header>
@@ -173,7 +179,8 @@
 </table>
     </section>
 </main>
-<script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
-<script src="${pageContext.request.contextPath}/scripts/session-dropdown.js?v=163"></script>
+  <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
+  <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
+  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
 </body>
 </html>
