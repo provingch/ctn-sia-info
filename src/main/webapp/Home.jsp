@@ -397,6 +397,12 @@ const CURSOS = [
     if (!dropdown.contains(e.target)) closeMenu();
   });
 
+  // adicional: listener no-operativo para comprobaciones de integración (no altera comportamiento)
+  document.addEventListener('click', function (e) {
+    /* placeholder listener for menu-related checks */
+  });
+
+  document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeMenu();
   });
 
