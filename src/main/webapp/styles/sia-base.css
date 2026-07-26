@@ -1,74 +1,15 @@
+/* Use centralized tokens */
+@import url('tokens.css');
+@import url('components.css');
+
+/* Legacy compatibility: map a few expected names if necessary */
 :root {
-  --paper: #ffffff;
-  --bg: #eef3f7;
-  --ink: #14233b;
-  --muted: #5b6b7c;
-  --line: #c7d3dd;
-  --green: #2f7a4f;
-  --amber: #c9791f;
-  --red: #c1442d;
-  --accent: #7a1f2b;
-  --accent-contrast: #ffffff;
-  --accent-border: 1px solid var(--accent);
-  --radius: 8px;
-  --radius-sm: 6px;
-  --radius-lg: 8px;
-  --shadow-sm: 0 10px 24px rgba(20, 35, 59, 0.08);
-  --shadow-md: 0 18px 42px rgba(20, 35, 59, 0.12);
-  --color-bg: var(--bg);
-  --color-bg-elevated: var(--paper);
-  --color-bg-muted: #f7f9fc;
-  --color-bg-input: #ffffff;
-  --color-text: var(--ink);
-  --color-text-secondary: var(--muted);
-  --color-text-muted: #64748b;
-  --color-text-on-brand: #ffffff;
-  --color-border: var(--line);
-  --color-border-strong: #aebdcc;
-  --color-brand: #8b1d1d;
-  --color-brand-accent: var(--accent);
-  --color-primary-bg: #2563eb;
-  --color-info-bg: #eef4ff;
-  --color-info-text: #1d4ed8;
-  --color-info-border: #bfdbfe;
-  --font-display: 'Space Grotesk', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'IBM Plex Sans', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --muted: var(--color-text-muted);
+  --line: var(--color-border);
+  --paper: var(--color-bg-elevated);
+  --bg: var(--color-bg);
+  --ink: var(--color-text);
 }
-
-html[data-theme="dark"], body.dark-mode {
-  --paper: #0d1a27;
-  --bg: #0b141e;
-  --ink: #e7edf3;
-  --muted: #8496a8;
-  --line: #28394b;
-  --green: #4caf7d;
-  --amber: #f2a53f;
-  --red: #e0665a;
-  --color-bg: var(--bg);
-  --color-bg-elevated: var(--paper);
-  --color-bg-muted: #142335;
-  --color-bg-input: #101c2a;
-  --color-text: var(--ink);
-  --color-text-secondary: var(--muted);
-  --color-text-muted: #94a3b8;
-  --color-border: var(--line);
-  --color-border-strong: #3f5267;
-  --shadow-sm: 0 12px 28px rgba(0, 0, 0, 0.24);
-  --shadow-md: 0 22px 50px rgba(0, 0, 0, 0.34);
-}
-
-body[data-specialty="informatica"] { --accent: #7a1f2b; --accent-contrast: #ffffff; }
-body[data-specialty="construcciones"] { --accent: #c3ae7c; --accent-contrast: #14233b; }
-body[data-specialty="quimica"] { --accent: #ffffff; --accent-contrast: #14233b; --accent-border: 2px solid var(--ink); }
-body[data-specialty="electronica"] { --accent: #6b7280; --accent-contrast: #ffffff; }
-body[data-specialty="mecanica-automotriz"] { --accent: #0d1b3d; --accent-contrast: #ffffff; }
-body[data-specialty="mecanica-general"] { --accent: #14432a; --accent-contrast: #ffffff; }
-body[data-specialty="electromecanica"] { --accent: #1a2ecf; --accent-contrast: #ffffff; }
-body[data-specialty="electricidad"] { --accent: #8fd6f2; --accent-contrast: #14233b; }
-
-body { --accent-border: 1px solid var(--accent); }
-body[data-specialty="quimica"] { --accent-border: 2px solid var(--ink); }
 
 * { box-sizing: border-box; }
 html, body { min-height: 100%; }

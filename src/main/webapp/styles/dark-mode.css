@@ -1,4 +1,5 @@
-/* Dark mode overrides — most colors come from theme.css variables */
+/* Dark mode overrides — layered on top of centralized tokens */
+@import url('tokens.css');
 
 body.dark-mode input,
 body.dark-mode select,

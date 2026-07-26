@@ -1,0 +1,94 @@
+/* Design tokens inspired by Flat UI — canonical semantic variables */
+:root {
+  /* Palette */
+  --color-accent-informatica: #7a1f2b;
+  --color-accent-construcciones: #c3ae7c;
+  --color-accent-quimica: #ffffff;
+  --color-accent-electronica: #6b7280;
+  --color-accent-mecanica-automotriz: #0d1b3d;
+  --color-accent-mecanica-general: #14432a;
+  --color-accent-electromecanica: #1a2ecf;
+  --color-accent-electricidad: #8fd6f2;
+
+  --color-success: #2f7a4f; /* green */
+  --color-warning: #c9791f; /* amber */
+  --color-danger: #c1442d; /* pomegranate */
+  --color-info: #2563eb; /* peter river-ish */
+
+  /* Neutrals */
+  --color-clouds: #f8fafc;
+  --color-silver: #cfd8e3;
+  --color-concrete: #aebdcc;
+  --color-asbestos: #64748b;
+  --color-midnight: #14233b; /* ink */
+
+  /* Semantic surface */
+  --color-bg: #eef3f7;
+  --color-bg-elevated: #ffffff;
+  --color-bg-muted: #f7f9fc;
+  --color-bg-input: #ffffff;
+  --color-text: var(--color-midnight);
+  --color-text-muted: #64748b;
+  --color-border: var(--color-silver);
+  --color-border-strong: #aebdcc;
+
+  /* State colors */
+  --color-success-bg: rgba(47,122,79,0.08);
+  --color-danger-bg: rgba(193,68,45,0.08);
+  --color-info-bg: rgba(34,103,238,0.06);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Misc */
+  --focus-ring: 0 0 0 4px rgba(37,99,235,0.12);
+}
+
+/* Dark theme overrides — use tokens for parity */
+html[data-theme="dark"] {
+  --color-bg: #0b141e;
+  --color-bg-elevated: #0d1a27;
+  --color-bg-muted: #142335;
+  --color-text: #e7edf3;
+  --color-text-muted: #94a3b8;
+  --color-border: #28394b;
+}
+
+/* Institutional specialty accents (canonical single source) */
+body[data-specialty="informatica"] { --accent: var(--color-accent-informatica); --accent-contrast: #ffffff; }
+body[data-specialty="construcciones"] { --accent: var(--color-accent-construcciones); --accent-contrast: #14233b; }
+body[data-specialty="quimica"] { --accent: var(--color-accent-quimica); --accent-contrast: #14233b; --accent-border: 2px solid var(--color-midnight); }
+body[data-specialty="electronica"] { --accent: var(--color-accent-electronica); --accent-contrast: #ffffff; }
+body[data-specialty="mecanica-automotriz"] { --accent: var(--color-accent-mecanica-automotriz); --accent-contrast: #ffffff; }
+body[data-specialty="mecanica-general"] { --accent: var(--color-accent-mecanica-general); --accent-contrast: #ffffff; }
+body[data-specialty="electromecanica"] { --accent: var(--color-accent-electromecanica); --accent-contrast: #ffffff; }
+body[data-specialty="electricidad"] { --accent: var(--color-accent-electricidad); --accent-contrast: #14233b; }
+
+/* Utility mapping for legacy variable names used across codebase (kept minimal) */
+:root {
+  --paper: var(--color-bg-elevated);
+  --bg: var(--color-bg);
+  --ink: var(--color-text);
+  --muted: var(--color-text-muted);
+  --line: var(--color-border);
+  --accent-border: var(--accent) 1px solid;
+  --radius: var(--radius-md);
+}
