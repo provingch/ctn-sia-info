@@ -275,17 +275,9 @@ public class ProfileServlet extends HttpServlet {
         boolean isStaffProfile = user != null && user.getLevel() >= 1 && user.getLevel() <= 3;
         boolean isParentProfile = user != null && user.getLevel() == 4;
         if (isStaffProfile) {
-            try {
-                profesor = new ProfesorDao().findById(user.getId());
-            } catch (SQLException ex) {
-                log("Error loading professor profile for user " + (user != null ? user.getId() : -1), ex);
-            }
+            profesor = new ProfesorDao().findById(user.getId());
         } else if (isParentProfile) {
-            try {
-                padre = new PadreDao().findById(user.getId());
-            } catch (SQLException ex) {
-                log("Error loading parent profile for user " + (user != null ? user.getId() : -1), ex);
-            }
+            padre = new PadreDao().findById(user.getId());
         }
 
         List<Course> googleClassroomCourses = Collections.emptyList();
