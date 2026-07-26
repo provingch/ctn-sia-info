@@ -377,8 +377,6 @@
 (function () {
   const profileForm = document.getElementById('profileForm');
   const securityForm = document.getElementById('securityForm');
-  const subjectForm = document.getElementById('subjectForm');
-  const deleteSubjectForms = document.querySelectorAll('#teacherMateriaList form.inline-form');
 
   function resolveAjaxPayload(responseText, response) {
     const contentType = response.headers.get('content-type') || '';
@@ -392,127 +390,14 @@
     return { success: response.ok, message: responseText || 'Operación completada.' };
   }
 
-  function clearSimilarSubjectSuggestions() {
-    const container = document.getElementById('similarSubjectSuggestions');
-    if (!container) return;
-    container.innerHTML = '';
-  }
-
-  function renderSimilarSubjectSuggestions(payload) {
-    const container = document.getElementById('similarSubjectSuggestions');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const card = document.createElement('div');
-    card.className = 'card';
-
-    const header = document.createElement('div');
-    header.className = 'table-header';
-    header.textContent = 'Se encontraron materias similares';
-    card.appendChild(header);
-
-    const paragraph = document.createElement('p');
-    paragraph.textContent = payload.message || 'Se encontraron materias similares.';
-    card.appendChild(paragraph);
-
-    const list = document.createElement('ul');
-    (payload.similarMaterias || []).forEach(function (sm) {
-      const item = document.createElement('li');
-      item.textContent = sm.nombre + ' (' + sm.categoria + ') ';
-
-      const form = document.createElement('form');
-      form.method = 'post';
-      form.action = subjectForm.getAttribute('action');
-      form.style.display = 'inline-block';
-
-      const actionInput = document.createElement('input');
-      actionInput.type = 'hidden';
-      actionInput.name = 'action';
-      actionInput.value = 'linkExisting';
-      form.appendChild(actionInput);
-
-      const idInput = document.createElement('input');
-      idInput.type = 'hidden';
-      idInput.name = 'materiaId';
-      idInput.value = sm.id;
-      form.appendChild(idInput);
-
-      const button = document.createElement('button');
-      button.type = 'submit';
-      button.textContent = 'Vincularme';
-      form.appendChild(button);
-
-      item.appendChild(form);
-      list.appendChild(item);
-    });
-
-    card.appendChild(list);
-    container.appendChild(card);
-  }
-
   function setStatus(el, message, tone) {
     if (!el) return;
     el.textContent = message;
     el.className = 'save-status ' + tone;
   }
 
-  function normalizeSubjectName(value) {
-    return (value || '').trim().replace(/\s+/g, ' ');
-  }
-
-  function validateSubjectForm(form) {
-    const materiaInput = form.querySelector('#materiaNombre');
-    const categoriaSelect = form.querySelector('#categoria');
-    const materiaNombre = normalizeSubjectName(materiaInput ? materiaInput.value : '');
-    if (!materiaNombre) {
-      return 'Completa el nombre de la materia antes de guardar.';
-    }
-    if (materiaNombre.length < 2) {
-      return 'El nombre de la materia es demasiado corto.';
-    }
-    if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 .\-]+$/.test(materiaNombre)) {
-      return 'El nombre de la materia solo puede contener letras, números, espacios y guiones.';
-    }
-
-    const isCommon = categoriaSelect && categoriaSelect.value === 'comun';
-    const selectedSpecialties = Array.from(form.querySelectorAll('input[name="especialidades"]:checked'));
-    if (isCommon && selectedSpecialties.length < 1) {
-      return 'Las materias comunes deben tener al menos una especialidad asociada.';
-    }
-    if (!isCommon && selectedSpecialties.length !== 1) {
-      return 'Las materias específicas deben tener exactamente una especialidad asociada.';
-    }
-
-    return '';
-  }
-
-  function syncSubjectFormState(form) {
-    const categoriaSelect = form.querySelector('#categoria');
-    const isCommon = categoriaSelect && categoriaSelect.value === 'comun';
-    const specialtyChecks = Array.from(form.querySelectorAll('input[name="especialidades"]'));
-
-    specialtyChecks.forEach(function (checkbox) {
-      checkbox.disabled = false;
-      if (!isCommon && checkbox.checked) {
-        const checkedNodes = specialtyChecks.filter(function (item) {
-          return item.checked;
-        });
-        if (checkedNodes.length > 1) {
-          checkbox.checked = false;
-        }
-      }
-    });
-  }
-
-  function submitWithFetch(form, statusId, successMessage, isSubjectForm, isSecurityForm) {
+  function submitWithFetch(form, statusId, successMessage, isSecurityForm) {
     const statusEl = document.getElementById(statusId);
-    if (isSubjectForm) {
-      const validationError = validateSubjectForm(form);
-      if (validationError) {
-        setStatus(statusEl, validationError, 'is-error');
-        return;
-      }
-    }
 
     const formData = new FormData(form);
     const body = new URLSearchParams();
@@ -532,36 +417,7 @@
       const responseText = await response.text();
       const payload = resolveAjaxPayload(responseText, response);
       if (!response.ok || !payload.success) {
-        if (payload.needsDisambiguation && isSubjectForm) {
-          renderSimilarSubjectSuggestions(payload);
-          setStatus(statusEl, payload.message || 'Se encontraron materias similares.', 'is-error');
-          return;
-        }
         throw new Error(payload.message || 'No se pudo guardar la información.');
-      }
-
-      if (isSubjectForm) {
-        clearSimilarSubjectSuggestions();
-        const materiaInput = document.getElementById('materiaNombre');
-        const materiaNombre = normalizeSubjectName(materiaInput ? materiaInput.value : '');
-        if (materiaNombre) {
-          const container = document.getElementById('teacherMateriaList');
-          if (container) {
-            const emptyMessage = container.querySelector('.empty-state');
-            if (emptyMessage) emptyMessage.remove();
-            const existing = Array.from(container.querySelectorAll('.subject-item span')).some(function (node) {
-              return node.textContent.trim().toLowerCase() === materiaNombre.toLowerCase();
-            });
-            if (!existing) {
-              const subjectItem = document.createElement('div');
-              subjectItem.className = 'subject-item';
-              subjectItem.innerHTML = '<span>' + materiaNombre.replace(/[<>]/g, '') + '</span>';
-              container.appendChild(subjectItem);
-            }
-          }
-        }
-        subjectForm.reset();
-        syncSubjectFormState(subjectForm);
       }
 
       if (isSecurityForm) {
@@ -574,37 +430,6 @@
       setStatus(statusEl, payload.message || successMessage, 'is-success');
     }).catch(function (error) {
       setStatus(statusEl, error.message || 'No se pudo guardar.', 'is-error');
-    });
-  }
-
-  function submitInlineDeleteForm(form) {
-    const item = form.closest('.subject-item');
-    const formData = new FormData(form);
-    const body = new URLSearchParams();
-
-    for (const [key, value] of formData.entries()) {
-      body.append(key, value);
-    }
-
-    fetch(form.getAttribute('action'), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: body
-    }).then(async function (response) {
-      const responseText = await response.text();
-      const payload = resolveAjaxPayload(responseText, response);
-      if (!response.ok || !payload.success) {
-        throw new Error(payload.message || 'No se pudo eliminar la materia.');
-      }
-      if (item) {
-        item.remove();
-      }
-    }).catch(function (error) {
-      console.error(error);
-      alert(error.message || 'No se pudo eliminar la materia.');
     });
   }
 
@@ -631,39 +456,14 @@
     profileStatus && setStatus(profileStatus, 'Guardado automático activo.', 'is-success');
   }
 
-  if (subjectForm) {
-    const subjectStatus = document.getElementById('subjectSaveStatus');
-    syncSubjectFormState(subjectForm);
-
-    subjectForm.addEventListener('change', function (event) {
-      if (event.target && event.target.id === 'categoria') {
-        syncSubjectFormState(subjectForm);
-      }
-    });
-
-    subjectForm.addEventListener('submit', function (event) {
-      event.preventDefault();
-      submitWithFetch(subjectForm, 'subjectSaveStatus', 'Materia guardada.', true, false);
-    });
-
-    subjectStatus && setStatus(subjectStatus, 'Listo para guardar.', 'is-success');
-  }
-
   if (securityForm) {
     const securityStatus = document.getElementById('securitySaveStatus');
     securityForm.addEventListener('submit', function (event) {
       event.preventDefault();
-      submitWithFetch(securityForm, 'securitySaveStatus', 'Contraseña actualizada.', false, true);
+      submitWithFetch(securityForm, 'securitySaveStatus', 'Contraseña actualizada.', true);
     });
     securityStatus && setStatus(securityStatus, 'Listo para guardar.', 'is-success');
   }
-
-  deleteSubjectForms.forEach(function (form) {
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-      submitInlineDeleteForm(form);
-    });
-  });
 })();
 </script>
 
