@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=216">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=217">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg" />
 </head>
 <body class="admin-page" data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
@@ -101,9 +101,7 @@
         </c:forEach>
     </select>
     </div>
-    <div class="admin-form-actions">
-        <button class="btn-primary" type="submit">Crear usuario</button>
-    </div>
+    <button class="btn-primary admin-submit" type="submit">Crear usuario</button>
 </form>
 
 <c:if test="${editMode and not empty editProfesor}">
@@ -144,9 +142,7 @@
             </c:forEach>
         </select>
         </div>
-        <div class="admin-form-actions">
-            <button class="btn-primary" type="submit">Guardar cambios</button>
-        </div>
+        <button class="btn-primary admin-submit" type="submit">Guardar cambios</button>
     </form>
 </c:if>
 

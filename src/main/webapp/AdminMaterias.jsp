@@ -6,7 +6,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=216">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=217">
         <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg" />
 </head>
 <body class="admin-page" data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
@@ -85,7 +85,7 @@
         </div>
     </div>
     </div>
-    <div class="admin-form-actions"><button class="btn-primary" type="submit">Crear</button></div>
+    <button class="btn-primary admin-submit" type="submit">Crear</button>
 </form>
 
 <form class="admin-card admin-form" method="post" action="AdminMateriasServlet">
@@ -109,7 +109,7 @@
     </select>
 
     </div>
-    <div class="admin-form-actions"><button class="btn-secondary" type="submit">Comprobar conflictos</button></div>
+    <button class="btn-secondary admin-submit" type="submit">Comprobar conflictos</button>
 </form>
 
 <c:if test="${not empty conflicts}">
@@ -130,7 +130,7 @@
         <input type="hidden" name="fromId" value="${fromId}" />
         <input type="hidden" name="toId" value="${toId}" />
         <p class="admin-note">No se detectaron conflictos. Puede confirmar el merge.</p>
-        <div class="admin-form-actions"><button class="btn-primary" type="submit">Confirmar merge</button></div>
+        <button class="btn-primary admin-submit" type="submit">Confirmar merge</button>
     </form>
 </c:if>
 
@@ -163,7 +163,7 @@
             </div>
         </div>
         </div>
-        <div class="admin-form-actions"><button class="btn-primary" type="submit">Guardar cambios</button></div>
+        <button class="btn-primary admin-submit" type="submit">Guardar cambios</button>
     </form>
 </c:if>
 
