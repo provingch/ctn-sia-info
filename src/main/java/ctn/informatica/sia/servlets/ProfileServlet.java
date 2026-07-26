@@ -4,6 +4,7 @@
  */
 package ctn.informatica.sia.servlets;
 
+import ctn.informatica.sia.dao.AsignacionDao;
 import ctn.informatica.sia.dao.CursoDao;
 import ctn.informatica.sia.dao.EspecialidadDao;
 import ctn.informatica.sia.dao.MateriaDao;
@@ -11,6 +12,7 @@ import ctn.informatica.sia.dao.ProfesorDao;
 import ctn.informatica.sia.google.GoogleClassroomService;
 import ctn.informatica.sia.model.Curso;
 import ctn.informatica.sia.model.Especialidad;
+import ctn.informatica.sia.model.Asignacion;
 import ctn.informatica.sia.model.Materia;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
@@ -66,6 +68,13 @@ public class ProfileServlet extends HttpServlet {
             return Collections.emptyList();
         }
         return new MateriaDao().listByProfesor(profesor.getId());
+    }
+
+    private List<Asignacion> loadMisAsignaciones(Profesor profesor) throws SQLException {
+        if (profesor == null) {
+            return Collections.emptyList();
+        }
+        return new AsignacionDao().findByProfesor(profesor.getId());
     }
 
     private List<Materia> mergeManualTeacherMaterias(List<Materia> teacherMaterias, String manualTeacherSubjectsText) {
@@ -231,6 +240,7 @@ public class ProfileServlet extends HttpServlet {
         boolean googleClassroomConnected = false;
         List<Materia> teacherMaterias = Collections.emptyList();
         List<Materia> availableMaterias = Collections.emptyList();
+        List<Asignacion> misAsignaciones = Collections.emptyList();
         List<Especialidad> especialidades = loadEspecialidades();
         String manualTeacherSubjectsText = "";
         if (session != null) {
@@ -247,6 +257,7 @@ public class ProfileServlet extends HttpServlet {
             teacherMaterias = mergeManualTeacherMaterias(teacherMaterias, manualTeacherSubjectsText);
             if (profesor != null) {
                 availableMaterias = new MateriaDao().listAvailableForProfesor(profesor.getId());
+                misAsignaciones = loadMisAsignaciones(profesor);
             }
             especialidades = loadEspecialidades();
         } catch (SQLException ex) {
@@ -269,6 +280,7 @@ public class ProfileServlet extends HttpServlet {
         req.setAttribute("googleClassroomConnected", googleClassroomConnected);
         req.setAttribute("googleClassroomCourses", googleClassroomCourses);
         req.setAttribute("teacherMaterias", teacherMaterias);
+        req.setAttribute("misAsignaciones", misAsignaciones);
         req.setAttribute("availableMaterias", availableMaterias);
         req.setAttribute("especialidades", especialidades);
         req.setAttribute("profesorEspecialidadNombre", resolveProfesorEspecialidadNombre(profesor));
@@ -341,238 +353,6 @@ public class ProfileServlet extends HttpServlet {
             }
 
             resp.sendRedirect(req.getContextPath() + "/ProfileServlet");
-            return;
-        }
-        
-        if ("deleteSubject".equals(action)) {
-            List<String> errors = new ArrayList<>();
-            String subjectIdParam = req.getParameter("subjectId");
-            String subjectName = sanitizeMateriaNombre(req.getParameter("subjectName"));
-            int subjectId = -1;
-            if (subjectIdParam != null && !subjectIdParam.trim().isEmpty()) {
-                try {
-                    subjectId = Integer.parseInt(subjectIdParam.trim());
-                } catch (NumberFormatException ignored) {
-                    errors.add("La materia seleccionada es inválida.");
-                }
-            }
-
-            if (subjectName.isEmpty() && subjectId <= 0) {
-                errors.add("Debes seleccionar una materia para eliminar.");
-            }
-
-            if (errors.isEmpty()) {
-                try {
-                    if (subjectId > 0) {
-                        new MateriaDao().unlinkProfesorMateria(user.getId(), subjectId);
-                    }
-
-                    String existingManualText = "";
-                    if (session != null) {
-                        Object storedManualSubjects = session.getAttribute("manualTeacherSubjects");
-                        if (storedManualSubjects instanceof String) {
-                            existingManualText = (String) storedManualSubjects;
-                        }
-                    }
-                    if (user != null && existingManualText.isBlank()) {
-                        existingManualText = new ProfesorDao().findManualSubjectsText(user.getId());
-                    }
-
-                    List<String> remainingSubjects = new ArrayList<>();
-                    for (String token : existingManualText.split("[,\r\n;]+")) {
-                        String normalized = token == null ? "" : token.trim();
-                        if (normalized.isEmpty()) {
-                            continue;
-                        }
-                        if (subjectName.isBlank() || !subjectName.equalsIgnoreCase(normalized)) {
-                            remainingSubjects.add(normalized);
-                        }
-                    }
-                    String normalizedManualSubjects = String.join(", ", remainingSubjects);
-                    if (session != null) {
-                        session.setAttribute("manualTeacherSubjects", normalizedManualSubjects);
-                    }
-                    if (user != null) {
-                        new ProfesorDao().updateManualSubjectsText(user.getId(), normalizedManualSubjects);
-                    }
-                    if (session != null) {
-                        session.setAttribute("flashMessage", "Materia eliminada correctamente.");
-                    }
-                    if (isAjaxRequest(req)) {
-                        writeJsonResponse(resp, true, "Materia eliminada correctamente.");
-                        return;
-                    }
-                    resp.sendRedirect(req.getContextPath() + "/ProfileServlet");
-                    return;
-                } catch (SQLException ex) {
-                    errors.add("No se pudo eliminar la materia. Intente de nuevo más tarde.");
-                }
-            }
-
-            req.setAttribute("errors", errors);
-            if (isAjaxRequest(req)) {
-                writeJsonResponse(resp, false, String.join("; ", errors));
-                return;
-            }
-            doGet(req, resp);
-            return;
-        }
-
-        if ("linkExisting".equals(action)) {
-            String materiaIdParam = req.getParameter("materiaId");
-            try {
-                int materiaId = Integer.parseInt(materiaIdParam == null ? "-1" : materiaIdParam);
-                if (user != null && user.getLevel() >= 1) {
-                    new MateriaDao().linkProfesorMateria(user.getId(), materiaId);
-                    if (session != null) session.setAttribute("flashMessage", "Vinculado a la materia existente correctamente.");
-                }
-            } catch (NumberFormatException | SQLException ex) {
-                if (session != null) session.setAttribute("errors", java.util.List.of("No se pudo vincular a la materia seleccionada."));
-            }
-            resp.sendRedirect(req.getContextPath() + "/ProfileServlet");
-            return;
-        }
-
-        if ("saveManualSubjects".equals(action)) {
-            // Server-side guard: only profesor (1) and admin (3) may create or persist materias
-            if (user == null || (user.getLevel() != 1 && user.getLevel() != 3)) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
-            List<String> errors = new ArrayList<>();
-            String materiaNombre = sanitizeMateriaNombre(req.getParameter("materiaNombre"));
-            String categoria = normalizeCategoria(req.getParameter("categoria"));
-            List<Integer> especialidadIds = parseEspecialidadIds(req.getParameterValues("especialidades"));
-            if ("especifico".equals(categoria) && especialidadIds.size() > 1) {
-                especialidadIds = new ArrayList<>(especialidadIds.subList(0, 1));
-            }
-
-            if (materiaNombre.isEmpty()) {
-                String manualSubjects = req.getParameter("manualSubjects");
-                if (manualSubjects == null || manualSubjects.trim().isEmpty()) {
-                    errors.add("Debes ingresar el nombre de la materia antes de guardar.");
-                }
-            } else if (materiaNombre.length() < 2) {
-                errors.add("El nombre de la materia es demasiado corto.");
-            } else if (!materiaNombre.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 .\\-]+$")) {
-                errors.add("El nombre de la materia solo puede contener letras, números, espacios y guiones.");
-            }
-
-            if (!errors.isEmpty()) {
-                req.setAttribute("errors", errors);
-                if (isAjaxRequest(req)) {
-                    writeJsonResponse(resp, false, String.join("; ", errors));
-                    return;
-                }
-                doGet(req, resp);
-                return;
-            }
-
-            if ("comun".equals(categoria) && especialidadIds.isEmpty()) {
-                errors.add("Las materias comunes deben tener al menos una especialidad asociada.");
-            }
-            if ("especifico".equals(categoria) && especialidadIds.isEmpty()) {
-                errors.add("Las materias específicas deben tener una especialidad asociada.");
-            }
-
-            if (errors.isEmpty()) {
-                try {
-                    MateriaDao materiaDao = new MateriaDao();
-                    Materia materia = materiaDao.findByNombre(materiaNombre);
-                    // If materia doesn't exist, suggest similar materias to nivel 1 (profesor)
-                    if (materia == null && user.getLevel() == 1) {
-                        java.util.List<Materia> similar = materiaDao.findSimilarByName(materiaNombre);
-                        if (!similar.isEmpty()) {
-                            if (isAjaxRequest(req)) {
-                                writeJsonResponse(resp, false,
-                                        "Se encontraron materias similares a \"" + materiaNombre + "\". Elegí una para vincularte o corrige el nombre.",
-                                        similar);
-                                return;
-                            }
-                            req.setAttribute("similarMaterias", similar);
-                            req.setAttribute("pendingMateriaNombre", materiaNombre);
-                            req.setAttribute("categoria", categoria);
-                            req.setAttribute("especialidadesSelected", especialidadIds);
-                            doGet(req, resp);
-                            return;
-                        }
-                    }
-
-                    // If materia exists and this is a profesor, disallow changing category/especialidades
-                    if (materia != null && user.getLevel() == 1) {
-                        int others = materiaDao.countOtherProfesores(materia.getId(), user.getId());
-                        if (others > 0) {
-                            // link only, do not change category/especialidades
-                            materiaDao.linkProfesorMateria(user.getId(), materia.getId());
-                            if (session != null) session.setAttribute("flashMessage", "Se ha vinculado a la materia existente. Para cambiar categoría/especialidades, contactá al admin.");
-                            if (isAjaxRequest(req)) {
-                                writeJsonResponse(resp, true,
-                                        "Se ha vinculado a la materia existente. Para cambiar categoría/especialidades, contactá al admin.");
-                                return;
-                            }
-                            doGet(req, resp);
-                            return;
-                        }
-                    }
-                    if (materia == null) {
-                        int createdId = materiaDao.create(materiaNombre, categoria);
-                        if (createdId > 0) {
-                            materia = materiaDao.findById(createdId);
-                        }
-                    } else {
-                        // Only update category if allowed (admins or no other professors)
-                        if (user.getLevel() == 3 || materiaDao.countOtherProfesores(materia.getId(), user.getId()) == 0) {
-                            materiaDao.updateCategoria(materia.getId(), categoria);
-                        }
-                    }
-
-                    if (materia != null) {
-                        List<Integer> persistedEspecialidadIds = "comun".equals(categoria)
-                                ? especialidadIds
-                                : especialidadIds.isEmpty() ? Collections.emptyList() : List.of(especialidadIds.get(0));
-                        materiaDao.replaceEspecialidades(materia.getId(), persistedEspecialidadIds);
-                        if (user != null) {
-                            materiaDao.linkProfesorMateria(user.getId(), materia.getId());
-                        }
-                    }
-
-                    String existingManualText = "";
-                    if (session != null) {
-                        Object storedManualSubjects = session.getAttribute("manualTeacherSubjects");
-                        if (storedManualSubjects instanceof String) {
-                            existingManualText = (String) storedManualSubjects;
-                        }
-                    }
-                    if (user != null && existingManualText.isBlank()) {
-                        existingManualText = new ProfesorDao().findManualSubjectsText(user.getId());
-                    }
-                    String normalizedManualSubjects = normalizeManualSubjects(existingManualText + ", " + materiaNombre);
-                    if (session != null) {
-                        session.setAttribute("manualTeacherSubjects", normalizedManualSubjects);
-                    }
-                    if (user != null) {
-                        new ProfesorDao().updateManualSubjectsText(user.getId(), normalizedManualSubjects);
-                    }
-                    if (session != null) {
-                        session.setAttribute("flashMessage", "Materia guardada correctamente.");
-                    }
-                    if (isAjaxRequest(req)) {
-                        writeJsonResponse(resp, true, "Materia guardada correctamente.");
-                        return;
-                    }
-                    doGet(req, resp);
-                    return;
-                } catch (SQLException ex) {
-                    errors.add("No se pudo guardar la materia. Intente de nuevo más tarde.");
-                }
-            }
-
-            req.setAttribute("errors", errors);
-            if (isAjaxRequest(req)) {
-                writeJsonResponse(resp, false, String.join("; ", errors));
-                return;
-            }
-            doGet(req, resp);
             return;
         }
 

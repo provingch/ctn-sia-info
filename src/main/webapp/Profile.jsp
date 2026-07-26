@@ -230,86 +230,28 @@
             </section>
 
         <section id="materias-panel" class="profile-panel">
-          <form id="subjectForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" class="subject-list" data-status-target="subjectSaveStatus">
-            <input type="hidden" name="action" value="saveManualSubjects" />
-            <div class="table-card table-card--wide card">
-              <div class="table-header">Cargar materia</div>
-              <div class="subject-form-grid">
-                <div class="cell subject-form-cell">
-                  <label for="materiaNombre" class="selection-hint">Nombre de la materia</label>
-                  <input id="materiaNombre" name="materiaNombre" type="text" placeholder="Ej. Programación" autocomplete="off" maxlength="120" required style="width:100%;" />
-                </div>
-                <div class="cell subject-form-cell">
-                  <label for="categoria" class="selection-hint">Categoría</label>
-                  <select id="categoria" name="categoria" style="width:100%;">
-                    <option value="comun">Común</option>
-                    <option value="especifico">Específica</option>
-                  </select>
-                </div>
-                <div class="cell subject-form-cell subject-form-cell--wide">
-                  <label class="selection-hint">Especialidades</label>
-                  <div id="especialidadesContainer" class="checkbox-grid">
-                    <c:forEach var="especialidad" items="${especialidades}">
-                      <label class="checkbox-item">
-                        <input type="checkbox" name="especialidades" value="${especialidad.id}" />
-                        <span><c:out value="${especialidad.nombre}" /></span>
-                      </label>
-                    </c:forEach>
+          <div class="table-card table-card--wide card">
+            <div class="table-header">Asignaciones de materias</div>
+            <div class="subject-list-grid">
+              <c:choose>
+                <c:when test="${empty misAsignaciones}">
+                  <p class="empty-state">No hay asignaciones de materias registradas.</p>
+                </c:when>
+                <c:otherwise>
+                  <div class="subject-list-header" style="display:grid;grid-template-columns:1.5fr 1fr;gap:1rem;font-weight:600;padding:0.75rem 1rem;border-bottom:1px solid var(--line);">
+                    <span>Materia</span>
+                    <span>Curso</span>
                   </div>
-                  <div class="selection-hint">Si la materia es común, selecciona al menos una especialidad.</div>
-                </div>
-                <div class="cell subject-form-cell subject-form-cell--actions">
-                  <button class="btn-primary save-button" type="submit">Guardar materia</button>
-                  <span id="subjectSaveStatus" class="save-status" aria-live="polite">Listo para guardar.</span>
-                </div>
-              </div>
-            </div>
-          </form>
-
-          <div id="similarSubjectSuggestions">
-            <c:if test="${not empty similarMaterias}">
-              <div class="card">
-                <div class="table-header">Se encontraron materias similares</div>
-                <p>Se detectaron materias parecidas a "${pendingMateriaNombre}". Seleccioná una para vincularte o volvé atrás para crear una nueva:</p>
-                <ul>
-                  <c:forEach var="sm" items="${similarMaterias}">
-                    <li>
-                      ${sm.nombre} (${sm.categoria})
-                      <form method="post" action="${pageContext.request.contextPath}/ProfileServlet" style="display:inline-block;">
-                        <input type="hidden" name="action" value="linkExisting" />
-                        <input type="hidden" name="materiaId" value="${sm.id}" />
-                        <button type="submit">Vincularme</button>
-                      </form>
-                    </li>
+                  <c:forEach var="asignacion" items="${misAsignaciones}">
+                    <div class="subject-item" style="display:grid;grid-template-columns:1.5fr 1fr;gap:1rem;align-items:center;padding:0.9rem 1rem;border-bottom:1px solid var(--line);">
+                      <span><c:out value="${asignacion.materiaNombre}" /></span>
+                      <span><c:out value="${asignacion.cursoDescripcion}" /></span>
+                    </div>
                   </c:forEach>
-                </ul>
-              </div>
-            </c:if>
-          </div>
-
-            <div class="table-card table-card--wide card">
-              <div class="table-header">Materias disponibles</div>
-              <div id="teacherMateriaList" class="subject-list-grid">
-                <c:choose>
-                  <c:when test="${empty teacherMaterias}">
-                    <p class="empty-state">Todavía no hay materias registradas.</p>
-                  </c:when>
-                  <c:otherwise>
-                    <c:forEach var="subject" items="${teacherMaterias}">
-                      <div class="subject-item">
-                        <span><c:out value="${subject.nombre}" /></span>
-                        <form method="post" action="${pageContext.request.contextPath}/ProfileServlet" class="inline-form">
-                          <input type="hidden" name="action" value="deleteSubject" />
-                          <input type="hidden" name="subjectId" value="${subject.id}" />
-                          <input type="hidden" name="subjectName" value="${subject.nombre}" />
-                          <button class="btn-danger" type="submit">Eliminar</button>
-                        </form>
-                      </div>
-                    </c:forEach>
-                  </c:otherwise>
-                </c:choose>
-              </div>
+                </c:otherwise>
+              </c:choose>
             </div>
+          </div>
         </section>
 
         <section id="registros-panel" class="profile-panel">

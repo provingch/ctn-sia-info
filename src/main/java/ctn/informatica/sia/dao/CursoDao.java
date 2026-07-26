@@ -45,11 +45,13 @@ public class CursoDao extends conexion {
                 + "       JOIN materia_especialidad me ON me.materia_id = pm.materia_id "
                 + "       WHERE pm.profesor_id = ? "
                 + "   ) "
+                + "   OR c.id IN (SELECT curso_id FROM asignacion WHERE profesor_id = ?) "
                 + "ORDER BY e.nombre, c.promocion, c.seccion";
         try (Connection con = getCon(); PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setInt(1, userId);
             stm.setInt(2, userId);
             stm.setInt(3, userId);
+            stm.setInt(4, userId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 int curso_id = rs.getInt("id");

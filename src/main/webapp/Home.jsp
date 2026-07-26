@@ -83,17 +83,15 @@
           </div>
         </div>
         <div class="menu-container">
-          <form action="HomeServlet" method="get">
-            <label for="cursoSelect" style="font-weight:600;margin-right:0.5rem;">Selecciona un curso:</label>
-            <select id="cursoSelect" class="selCurso" name="cursoId" onchange="this.form.submit()">
-              <option value="">--Seleccione un curso--</option>
-              <c:forEach var="c" items="${cursos}">
-                  <option value="${c.id}"
-                          ${c.id == selCurso.id ? 'selected="selected"' : ''}>
-                    ${c.toString()}
-                  </option>
-              </c:forEach>
-            </select>
+          <form id="cursoSelectionForm" action="HomeServlet" method="get" class="curso-selection-form">
+            <label for="selEspecialidad" style="font-weight:600;margin-right:0.5rem;">Especialidad</label>
+            <select id="selEspecialidad" name="especialidad"></select>
+            <label for="selPromocion" style="font-weight:600;margin-right:0.5rem;">Año</label>
+            <select id="selPromocion" name="promocion" disabled></select>
+            <label for="selSeccion" style="font-weight:600;margin-right:0.5rem;">Sección</label>
+            <select id="selSeccion" name="seccion" disabled></select>
+            <input type="hidden" name="cursoId" id="cursoIdHidden" value="${empty selCurso ? '' : selCurso.id}" />
+            <input type="hidden" name="etapa" value="${selEtapa}" />
           </form>
         </div>
       </div>
@@ -264,12 +262,119 @@
   </main>
 
 <script>
+const CURSOS = [
+    <c:forEach var="cu" items="${cursos}" varStatus="s">
+        {"id": ${cu.id}, "especialidad": "<c:out value='${cu.especialidad}'/>", "promocion": ${cu.promocion}, "seccion": "<c:out value='${cu.seccion}'/>"}<c:if test="${!s.last}">,</c:if>
+    </c:forEach>
+];
+
 (function () {
   const dropdown = document.getElementById('sessionDropdown');
   if (!dropdown) return;
 
   const button = document.getElementById('sessionButton');
   const menu = document.getElementById('sessionMenu');
+  const selEspecialidad = document.getElementById('selEspecialidad');
+  const selPromocion = document.getElementById('selPromocion');
+  const selSeccion = document.getElementById('selSeccion');
+  const cursoIdHidden = document.getElementById('cursoIdHidden');
+  const selectedCursoId = ${empty selCurso ? 0 : selCurso.id};
+
+  function uniqueEspecialidades() {
+    const seen = new Set();
+    const out = [];
+    CURSOS.forEach(c => {
+      if (!seen.has(c.especialidad)) {
+        seen.add(c.especialidad);
+        out.push(c.especialidad);
+      }
+    });
+    return out;
+  }
+
+  function populateEspecialidad() {
+    selEspecialidad.innerHTML = '';
+    selEspecialidad.appendChild(new Option('--Seleccione especialidad--',''));
+    uniqueEspecialidades().forEach(e => selEspecialidad.appendChild(new Option(e,e)));
+    selPromocion.innerHTML = '<option value="">--Seleccione año--</option>';
+    selPromocion.disabled = true;
+    selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
+    selSeccion.disabled = true;
+  }
+
+  function populatePromocion() {
+    const esp = selEspecialidad.value;
+    selPromocion.innerHTML = '';
+    selPromocion.appendChild(new Option('--Seleccione año--',''));
+    if (!esp) {
+      selPromocion.disabled = true;
+      selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
+      selSeccion.disabled = true;
+      return;
+    }
+    const promos = [...new Set(CURSOS.filter(c => c.especialidad === esp).map(c => c.promocion))].sort((a,b)=>a-b);
+    promos.forEach(p => selPromocion.appendChild(new Option(p,p)));
+    selPromocion.disabled = false;
+    selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
+    selSeccion.disabled = true;
+  }
+
+  function populateSeccion() {
+    const esp = selEspecialidad.value;
+    const promo = parseInt(selPromocion.value);
+    selSeccion.innerHTML = '';
+    selSeccion.appendChild(new Option('--Seleccione sección--',''));
+    if (!esp || !promo) {
+      selSeccion.disabled = true;
+      return;
+    }
+    const secciones = [...new Set(CURSOS.filter(c => c.especialidad === esp && c.promocion === promo).map(c => c.seccion))];
+    secciones.forEach(s => selSeccion.appendChild(new Option(s,s)));
+    selSeccion.disabled = false;
+  }
+
+  function updateHiddenCursoId(submit) {
+    const esp = selEspecialidad.value;
+    const promo = parseInt(selPromocion.value);
+    const seccion = selSeccion.value;
+    cursoIdHidden.value = '';
+    if (!esp || !promo || !seccion) {
+      return;
+    }
+    const found = CURSOS.find(c => c.especialidad === esp && c.promocion === promo && c.seccion === seccion);
+    if (found) {
+      cursoIdHidden.value = found.id;
+      if (submit) {
+        document.getElementById('cursoSelectionForm').submit();
+      }
+    }
+  }
+
+  function preselectCurso() {
+    if (!selectedCursoId) return;
+    const found = CURSOS.find(c => c.id === selectedCursoId);
+    if (!found) return;
+    selEspecialidad.value = found.especialidad;
+    populatePromocion();
+    selPromocion.value = found.promocion;
+    populateSeccion();
+    selSeccion.value = found.seccion;
+    updateHiddenCursoId(false);
+  }
+
+  populateEspecialidad();
+  preselectCurso();
+  selEspecialidad.addEventListener('change', function () {
+    populatePromocion();
+    updateHiddenCursoId(false);
+  });
+  selPromocion.addEventListener('change', function () {
+    populateSeccion();
+    updateHiddenCursoId(false);
+  });
+  selSeccion.addEventListener('change', function () {
+    updateHiddenCursoId(true);
+  });
 
   function openMenu() {
     dropdown.classList.add('open');
@@ -282,20 +387,16 @@
     button.setAttribute('aria-expanded', 'false');
   }
 
-  // toggle on click
   button.addEventListener('click', function (e) {
     e.stopPropagation();
     if (dropdown.classList.contains('open')) closeMenu();
     else openMenu();
   });
 
-  // close when clicking anywhere else
   document.addEventListener('click', function (e) {
     if (!dropdown.contains(e.target)) closeMenu();
   });
 
-  // close on escape
-  document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeMenu();
   });
 

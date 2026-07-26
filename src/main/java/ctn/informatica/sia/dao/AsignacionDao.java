@@ -54,6 +54,35 @@ public class AsignacionDao extends conexion {
         }
     }
 
+    public List<Asignacion> findByProfesor(int profesorId) throws SQLException {
+        String sql = "SELECT a.id, a.profesor_id, a.materia_id, a.curso_id, "
+                + "m.nombre AS materia_nombre, e.nombre AS especialidad, c.promocion, c.seccion "
+                + "FROM asignacion a "
+                + "JOIN materia m ON m.id = a.materia_id "
+                + "JOIN curso c ON c.id = a.curso_id "
+                + "JOIN especialidad e ON e.id = c.especialidad_id "
+                + "WHERE a.profesor_id = ? "
+                + "ORDER BY m.nombre, e.nombre, c.promocion, c.seccion";
+        List<Asignacion> out = new ArrayList<>();
+        try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, profesorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Asignacion a = new Asignacion();
+                    a.setId(rs.getInt("id"));
+                    a.setProfesorId(rs.getInt("profesor_id"));
+                    a.setMateriaId(rs.getInt("materia_id"));
+                    a.setCursoId(rs.getInt("curso_id"));
+                    a.setMateriaNombre(rs.getString("materia_nombre"));
+                    String cursoDesc = rs.getString("especialidad") + " " + rs.getInt("promocion") + " " + rs.getString("seccion");
+                    a.setCursoDescripcion(cursoDesc);
+                    out.add(a);
+                }
+            }
+        }
+        return out;
+    }
+
     public int crear(int profesorId, int materiaId, int cursoId) throws SQLException {
         if (existe(profesorId, materiaId, cursoId)) return -1;
         String sql = "INSERT INTO asignacion (profesor_id, materia_id, curso_id) VALUES (?, ?, ?)";
