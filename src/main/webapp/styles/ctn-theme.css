@@ -920,6 +920,16 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   font-size: 12px;
   font-weight: 700;
 }
+
+/* Grade chip color palette */
+.grade-chip { display: inline-block; margin-left: 8px; padding: 6px 8px; border-radius: 6px; color: #fff; font-weight: 800; }
+.grade-chip--five { background: #16a34a; } /* green */
+.grade-chip--four { background: #f59e0b; } /* amber/yellow */
+.grade-chip--three { background: #f59e0b; } /* amber/yellow */
+.grade-chip--two { background: #f97316; } /* orange */
+.grade-chip--one { background: #ef4444; } /* red */
+
+.grade-chip strong { margin-right: 6px; }
 .subject-list, .subject-form-grid, .checkbox-grid { display: grid; gap: 10px; }
 .checkbox-item { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 8px 10px; background: var(--paper); border-radius: var(--radius-sm); }
 .checkbox-item input { width: auto; }

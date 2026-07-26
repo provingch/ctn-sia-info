@@ -33,6 +33,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -168,6 +169,25 @@ public class PlanillaServlet extends HttpServlet {
                 }
             }
             request.setAttribute("tareas", tareas);
+
+            // compute planilla date range (desde/hasta) from task start/end dates
+            LocalDate minStart = null;
+            LocalDate maxEnd = null;
+            for (Tarea t : tareas) {
+                if (t.getFechaInicio() != null) {
+                    if (minStart == null || t.getFechaInicio().isBefore(minStart)) {
+                        minStart = t.getFechaInicio();
+                    }
+                }
+                if (t.getFechaLimite() != null) {
+                    if (maxEnd == null || t.getFechaLimite().isAfter(maxEnd)) {
+                        maxEnd = t.getFechaLimite();
+                    }
+                }
+            }
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            request.setAttribute("planillaDesde", minStart != null ? minStart.format(df) : "--");
+            request.setAttribute("planillaHasta", maxEnd != null ? maxEnd.format(df) : "--");
 
             // Diagnostic output: if ?diag=1 is provided, return a small JSON
             String diag = request.getParameter("diag");

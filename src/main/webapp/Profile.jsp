@@ -126,7 +126,7 @@
           <div class="profile-panels">
             <section id="perfil-panel" class="profile-panel active">
               <c:choose>
-                <c:when test="${isProfessorProfile}">
+                <c:when test="${isStaffProfile}">
                   <form id="profileForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="profileSaveStatus">
                     <input type="hidden" name="action" value="saveProfile" />
                     <div class="profile-grid profile-grid-layout">
@@ -198,6 +198,43 @@
                     </div>
                   </form>
                   <form id="googleDisconnectForm" action="${pageContext.request.contextPath}${googleDisconnectUrl}" method="post" style="display:none;"></form>
+                </c:when>
+                <c:when test="${isParentProfile}">
+                  <form id="profileForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="profileSaveStatus">
+                    <input type="hidden" name="action" value="saveProfile" />
+                    <div class="profile-grid profile-grid-layout">
+                      <div class="form-card card">
+                        <div class="form-card-header">Información Personal</div>
+                        <div class="form-field">
+                          <label for="padreName">Nombre</label>
+                          <input type="text" id="padreName" value="${empty profileOwner.fullName ? sessionScope.user.fullName : profileOwner.fullName}" disabled />
+                        </div>
+                        <div class="form-field">
+                          <label for="padreCI">Cédula</label>
+                          <input type="text" id="padreCI" value="${empty profileOwner.ci ? 'No registrada' : profileOwner.ci}" disabled />
+                        </div>
+                      </div>
+                      <div class="form-card card">
+                        <div class="form-card-header">Contacto</div>
+                        <div class="form-field">
+                          <label for="correo">Correo electrónico</label>
+                          <input type="email" id="correo" name="correo" value="${empty profileOwner.correo ? '' : profileOwner.correo}" />
+                        </div>
+                        <div class="form-field">
+                          <label for="telefono">Teléfono</label>
+                          <input type="text" id="telefono" name="telefono" value="${empty profileOwner.telefono ? '' : profileOwner.telefono}" />
+                        </div>
+                      </div>
+                      <div class="form-card card">
+                        <div class="form-card-header">Cuenta</div>
+                        <div class="form-field">
+                          <label for="usuario">Usuario</label>
+                          <input type="text" id="usuario" name="usuario" value="${empty profileOwner.usuario ? sessionScope.user.username : profileOwner.usuario}" />
+                        </div>
+                      </div>
+                      <span id="profileSaveStatus" class="save-status profile-save-status" aria-live="polite">Guardado automático activo.</span>
+                    </div>
+                  </form>
                 </c:when>
                 <c:otherwise>
                   <div class="profile-grid profile-grid-layout">

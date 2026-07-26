@@ -109,7 +109,7 @@
             </select>
           </form>
 
-          <span id="date-range"><i><b>Desde:</b> -- <b>Hasta:</b> --</i></span>
+          <span id="date-range"><i><b>Desde:</b> <c:out value="${planillaDesde}"/> <b>Hasta:</b> <c:out value="${planillaHasta}"/></i></span>
         </div>
       </div>
 
