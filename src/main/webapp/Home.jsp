@@ -86,7 +86,7 @@
           <form id="cursoSelectionForm" action="HomeServlet" method="get" class="curso-selection-form">
             <label for="selEspecialidad" style="font-weight:600;margin-right:0.5rem;">Especialidad</label>
             <select id="selEspecialidad" name="especialidad"></select>
-            <label for="selPromocion" style="font-weight:600;margin-right:0.5rem;">Año</label>
+            <label for="selPromocion" style="font-weight:600;margin-right:0.5rem;">Curso</label>
             <select id="selPromocion" name="promocion" disabled></select>
             <label for="selSeccion" style="font-weight:600;margin-right:0.5rem;">Sección</label>
             <select id="selSeccion" name="seccion" disabled></select>
@@ -296,16 +296,20 @@ const CURSOS = [
     selEspecialidad.innerHTML = '';
     selEspecialidad.appendChild(new Option('--Seleccione especialidad--',''));
     uniqueEspecialidades().forEach(e => selEspecialidad.appendChild(new Option(e,e)));
-    selPromocion.innerHTML = '<option value="">--Seleccione año--</option>';
+    selPromocion.innerHTML = '<option value="">--Seleccione curso--</option>';
     selPromocion.disabled = true;
     selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
     selSeccion.disabled = true;
   }
 
+  function formatPromocion(p) {
+    return p + 'º';
+  }
+
   function populatePromocion() {
     const esp = selEspecialidad.value;
     selPromocion.innerHTML = '';
-    selPromocion.appendChild(new Option('--Seleccione año--',''));
+    selPromocion.appendChild(new Option('--Seleccione curso--',''));
     if (!esp) {
       selPromocion.disabled = true;
       selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
@@ -313,7 +317,7 @@ const CURSOS = [
       return;
     }
     const promos = [...new Set(CURSOS.filter(c => c.especialidad === esp).map(c => c.promocion))].sort((a,b)=>a-b);
-    promos.forEach(p => selPromocion.appendChild(new Option(p,p)));
+    promos.forEach(p => selPromocion.appendChild(new Option(formatPromocion(p), p)));
     selPromocion.disabled = false;
     selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
     selSeccion.disabled = true;
