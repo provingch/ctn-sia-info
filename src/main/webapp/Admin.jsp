@@ -52,9 +52,10 @@
         <div class="cell">Especialidades</div>
         <div class="cell"><c:out value="${especialidadCount}" /></div>
       </div>
-      <div style="margin-top:1rem">
+        <div style="margin-top:1rem">
         <a class="btn-primary" href="${pageContext.request.contextPath}/AdminMateriasServlet">Gestionar Materias</a>
         <a class="btn-primary" href="${pageContext.request.contextPath}/AdminUsuariosServlet">Gestionar Usuarios</a>
+        <a class="btn-primary" href="${pageContext.request.contextPath}/AdminAsignacionesServlet">Gestionar Asignaciones</a>
       </div>
     </section>
     <footer class="footer">

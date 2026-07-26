@@ -90,4 +90,24 @@ public class CursoDao extends conexion {
             return null;
         }
     }
+
+    public ArrayList<Curso> findAll() throws SQLException {
+        ArrayList<Curso> cursos = new ArrayList<>();
+        String sql = "SELECT c.id, e.nombre AS especialidad, c.promocion, c.seccion "
+                + "FROM curso c JOIN especialidad e ON c.especialidad_id = e.id "
+                + "ORDER BY e.nombre, c.promocion, c.seccion";
+        try (Connection con = getCon(); PreparedStatement stm = con.prepareStatement(sql)) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    int curso_id = rs.getInt("id");
+                    String especialidad = rs.getString("especialidad");
+                    int promocion = rs.getInt("promocion");
+                    String seccion = rs.getString("seccion");
+                    Curso c = new Curso(curso_id, especialidad, promocion, seccion);
+                    cursos.add(c);
+                }
+            }
+        }
+        return cursos;
+    }
 }

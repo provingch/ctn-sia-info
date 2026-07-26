@@ -80,6 +80,20 @@ CREATE TABLE profesor_materia (
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE asignacion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    profesor_id INT NOT NULL,
+    materia_id INT NOT NULL,
+    curso_id INT NOT NULL,
+    UNIQUE KEY uq_asignacion (profesor_id, materia_id, curso_id),
+    CONSTRAINT fk_asig_profesor FOREIGN KEY (profesor_id)
+        REFERENCES profesor (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_asig_materia FOREIGN KEY (materia_id)
+        REFERENCES materia (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_asig_curso FOREIGN KEY (curso_id)
+        REFERENCES curso (id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 -- Relación N:M: una materia 'comun' puede pertenecer a varias especialidades,
 -- una 'especifico' típicamente a una sola.
 CREATE TABLE materia_especialidad (
