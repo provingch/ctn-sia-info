@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><c:out value="${not empty pageTitle ? pageTitle : planilla.nombre}" /></title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=208">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=210">
   <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=164"></script>
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
@@ -143,23 +143,26 @@
 
         <c:set var="taskColumns" value="" />
         <c:forEach var="t" items="${tareas}">
-          <c:set var="taskColumns" value="${taskColumns} 110px" />
+          <c:set var="taskColumns" value="${taskColumns} 88px" />
         </c:forEach>
 
         <div class="table-container">
           <div class="table-responsive">
-            <div class="table" style="grid-template-columns: 40px 260px 140px${taskColumns};">
+            <div class="table planilla-table" style="grid-template-columns: 44px 220px 112px${taskColumns};">
               <div class="table-row">
                 <div class="table-heading">
                   Tareas - ${planilla.nombre}
                 </div>
               </div>
               <div class="table-row">
-                <div class="cell col-index">#</div>
-                <div class="cell col-alumno">Alumno</div>
-                <div class="cell">Total de Puntos (${totalPossiblePoints})</div>
-                <c:forEach var="t" items="${tareas}">
-                  <div class="cell">
+                <div class="cell col-corner">
+                  <img src="${pageContext.request.contextPath}/images/ctn-logo.svg" alt="CTN">
+                </div>
+                <div class="cell col-alumno table-column-head">Alumno</div>
+                <div class="cell table-column-head">Total (${totalPossiblePoints})</div>
+                <c:forEach var="t" items="${tareas}" varStatus="ts">
+                  <div class="cell table-column-head task-column-head">
+                    <span class="task-identifier">T${ts.index + 1}</span>
                     <c:choose>
                       <c:when test="${not empty t.googleCourseworkUrl}">
                         <a class="tarea-edit-link"
@@ -167,18 +170,19 @@
                            target="_blank"
                            rel="noopener noreferrer"
                            title="${t.tooltipText}">
-                          <c:out value="${t.titulo}" /> (TP:<c:out value="${t.total}" />)
+                          <c:out value="${t.titulo}" />
                         </a>
                       </c:when>
                       <c:otherwise>
                         <a class="tarea-edit-link"
                            href="${pageContext.request.contextPath}/TareaServlet?planillaId=${planilla.id}&amp;tareaId=${t.id}&amp;etapa=${etapa}"
                            title="${t.tooltipText}">
-                          <c:out value="${t.titulo}" /> (TP:<c:out value="${t.total}" />)
+                          <c:out value="${t.titulo}" />
                         </a>
                       </c:otherwise>
                     </c:choose>
                     <div class="task-meta">
+                      TP: <c:out value="${t.total}" />
                       <c:if test="${not empty t.fechaInicio}">Inicio: <c:out value="${t.fechaInicio}" /></c:if>
                     </div>
                   </div>

@@ -255,9 +255,9 @@ section { margin-bottom: 28px; }
   border-radius: 12px;
   font-family: var(--font-mono);
   font-size: 10.5px;
-  background: color-mix(in srgb, var(--red) 15%, var(--paper));
-  color: var(--red);
-  border: 1px solid var(--red);
+  background: color-mix(in srgb, #f5b7b1 22%, var(--paper));
+  color: color-mix(in srgb, var(--ink) 78%, #f5b7b1);
+  border: 1px solid color-mix(in srgb, #f5b7b1 58%, var(--line));
 }
 
 .profile-sidebar {
@@ -706,55 +706,129 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 }
 .grade-ok { color: var(--green); }
 .grade-warn { color: var(--amber); }
-.grade-bad { color: var(--red); }
+.grade-bad { color: #f5b7b1; }
 
-.table-responsive { overflow: auto; border: 1px solid var(--line); background: var(--paper); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+.table-responsive {
+  overflow: auto;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
+}
 .table-container { margin-top: 16px; }
 .table {
   display: grid;
-  min-width: 760px;
+  width: max-content;
+  min-width: max-content;
   background: var(--paper);
+  font-size: 12px;
 }
 .table-row { display: contents; }
 .table-heading {
   grid-column: 1 / -1;
-  padding: 10px 12px;
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 72%, var(--ink)));
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 12;
+  width: 100%;
+  min-width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  background: #34495e;
   color: var(--accent-contrast);
   font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .06em;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .04em;
   text-transform: uppercase;
+  border-bottom: 1px solid var(--line);
 }
 .table .cell {
-  padding: 8px 10px;
+  padding: 7px 8px;
   border-bottom: 1px solid var(--line);
   border-right: 1px solid var(--line);
-  min-height: 44px;
+  min-height: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.2;
 }
 .table-row:nth-child(odd) .cell {
   background: color-mix(in srgb, var(--paper) 94%, var(--bg) 6%);
 }
-.table .cell:last-child { border-right: 0; }
 .table .cell.col-index {
-  min-width: 40px;
+  min-width: 44px;
   justify-content: center;
   font-family: var(--font-mono);
   color: var(--muted);
+  font-size: 11px;
 }
 .table .cell.col-alumno {
-  min-width: 260px;
-  font-weight: 600;
+  min-width: 220px;
+  font-weight: 800;
   color: var(--ink);
+}
+.table .col-corner {
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--paper) 72%, #34495e 18%);
+}
+.table .col-corner img {
+  width: 26px;
+  height: 26px;
+}
+.table .table-column-head {
+  position: sticky;
+  top: 33px;
+  z-index: 11;
+  min-height: 58px;
+  background: color-mix(in srgb, var(--paper) 78%, #34495e 14%);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.table-responsive.freeze-alumnos .col-corner,
+.table-responsive.freeze-alumnos .col-index {
+  position: sticky;
+  left: 0;
+  z-index: 9;
+}
+
+.table-responsive.freeze-alumnos .col-alumno {
+  position: sticky;
+  left: 44px;
+  z-index: 9;
+}
+
+.table-responsive.freeze-alumnos .table-column-head.col-alumno,
+.table-responsive.freeze-alumnos .col-corner {
+  z-index: 13;
+}
+.table .task-column-head {
+  align-items: flex-start;
+}
+.task-identifier {
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--paper) 62%, #34495e 24%);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
 }
 .table .row-summary {
   gap: 4px;
+  font-size: 11px;
 }
 .table .row-total,
 .table .row-porcentaje,
@@ -767,17 +841,25 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 }
 .table input {
   width: 100%;
-  min-width: 70px;
+  min-width: 58px;
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 12px;
 }
 .tarea-edit-link {
   color: var(--ink);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 800;
+  font-size: 11px;
+  line-height: 1.2;
 }
 .tarea-edit-link:hover { color: var(--accent); }
 .task-meta {
-  font-size: .8rem;
+  font-size: 10px;
   color: var(--muted);
+  border-top: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+  margin: 2px 0 0;
+  padding-top: 2px;
 }
 .freeze-toggle {
   display: inline-flex;
