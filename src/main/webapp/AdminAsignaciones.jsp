@@ -7,10 +7,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=210">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=216">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg" />
 </head>
-<body data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
+<body class="admin-page" data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
 <c:url var="profileUrl" value="/ProfileServlet" />
 <header class="navbar navbar-default navbar-fixed-top ctn-navbar" role="navigation">
     <div class="container-fluid">
@@ -43,15 +43,23 @@
 </header>
 <main>
     <section class="container page-shell">
-        <div class="info-bar"><span>Administrar Asignaciones (Profesor + Materia + Curso)</span></div>
+        <div class="admin-hero">
+            <div>
+                <span class="admin-eyebrow">Administración</span>
+                <h1>Asignaciones</h1>
+                <p>Vincula profesores con materias y cursos.</p>
+            </div>
+            <a class="btn-secondary" href="${pageContext.request.contextPath}/AdminServlet">Volver al panel</a>
+        </div>
 
         <c:if test="${not empty errors}">
             <div class="errors"><ul><c:forEach var="e" items="${errors}"><li>${e}</li></c:forEach></ul></div>
         </c:if>
         <c:if test="${not empty flashMessage}"><div class="flash">${flashMessage}</div></c:if>
 
-        <h2>Crear asignación</h2>
-        <form method="post" action="AdminAsignacionesServlet" id="createForm">
+        <form class="admin-card admin-form" method="post" action="AdminAsignacionesServlet" id="createForm">
+            <div class="admin-card-header"><h2>Crear asignación</h2></div>
+            <div class="admin-form-grid">
             <input type="hidden" name="action" value="crear" />
             <label>Profesor</label>
             <select name="profesorId" required>
@@ -79,12 +87,14 @@
             <select id="selSeccion"></select>
 
             <input type="hidden" name="cursoId" id="cursoIdHidden" />
-            <div style="margin-top:0.5rem"><button type="submit" id="createBtn">Crear asignación</button></div>
+            </div>
+            <div class="admin-form-actions"><button class="btn-primary" type="submit" id="createBtn">Crear asignación</button></div>
         </form>
 
-        <hr/>
-        <h2>Asignaciones existentes</h2>
-        <table>
+        <div class="admin-card admin-table-card">
+        <div class="admin-card-header"><h2>Asignaciones existentes</h2></div>
+        <div class="admin-table-wrap">
+        <table class="admin-table">
             <thead>
                 <tr><th>ID</th><th>Profesor</th><th>Materia</th><th>Curso</th><th>Acciones</th></tr>
             </thead>
@@ -96,16 +106,18 @@
                         <td>${a.materiaNombre}</td>
                         <td>${a.cursoDescripcion}</td>
                         <td>
-                            <form method="post" action="AdminAsignacionesServlet" style="display:inline;">
+                            <form class="admin-inline-form" method="post" action="AdminAsignacionesServlet">
                                 <input type="hidden" name="action" value="eliminar" />
                                 <input type="hidden" name="id" value="${a.id}" />
-                                <button type="submit" onclick="return confirm('Eliminar asignación?');">Eliminar</button>
+                                <button class="btn-danger btn-compact" type="submit" onclick="return confirm('Eliminar asignación?');">Eliminar</button>
                             </form>
                         </td>
                     </tr>
                 </c:forEach>
             </tbody>
         </table>
+        </div>
+        </div>
 
     </section>
     <footer class="footer">

@@ -6,10 +6,10 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=210">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=216">
         <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg" />
 </head>
-<body data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
+<body class="admin-page" data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
 <c:url var="profileUrl" value="/ProfileServlet" />
 <header class="navbar navbar-default navbar-fixed-top ctn-navbar" role="navigation">
     <div class="container-fluid">
@@ -42,8 +42,13 @@
 </header>
 <main>
     <section class="container page-shell">
-        <div class="info-bar">
-            <span>Administrar materias</span>
+        <div class="admin-hero">
+            <div>
+                <span class="admin-eyebrow">Administración</span>
+                <h1>Materias</h1>
+                <p>Gestiona catálogo, categorías, especialidades y merges.</p>
+            </div>
+            <a class="btn-secondary" href="${pageContext.request.contextPath}/AdminServlet">Volver al panel</a>
         </div>
 
 <c:if test="${not empty errors}">
@@ -60,8 +65,9 @@
     <div class="flash">${flashMessage}</div>
 </c:if>
 
-<h2>Crear nueva materia</h2>
-<form method="post" action="AdminMateriasServlet">
+<form class="admin-card admin-form" method="post" action="AdminMateriasServlet">
+    <div class="admin-card-header"><h2>Crear nueva materia</h2></div>
+    <div class="admin-form-grid">
     <input type="hidden" name="action" value="create" />
     <label>Nombre:</label>
     <input type="text" name="nombre" required />
@@ -70,18 +76,21 @@
         <option value="comun">comun</option>
         <option value="especifico">especifico</option>
     </select>
-    <div>
+    <div class="admin-field-wide">
         <label>Especialidades:</label>
+        <div class="admin-check-grid">
         <c:forEach var="e" items="${especialidades}">
             <label><input type="checkbox" name="especialidades" value="${e.id}" /> ${e.nombre}</label>
         </c:forEach>
+        </div>
     </div>
-    <button type="submit">Crear</button>
+    </div>
+    <div class="admin-form-actions"><button class="btn-primary" type="submit">Crear</button></div>
 </form>
 
-<hr/>
-
-<form method="post" action="AdminMateriasServlet">
+<form class="admin-card admin-form" method="post" action="AdminMateriasServlet">
+    <div class="admin-card-header"><h2>Comprobar merge</h2></div>
+    <div class="admin-form-grid">
     <input type="hidden" name="action" value="check" />
     <label>From (source) materia:</label>
     <select name="fromId" required>
@@ -99,32 +108,36 @@
         </c:forEach>
     </select>
 
-    <button type="submit">Comprobar conflictos</button>
+    </div>
+    <div class="admin-form-actions"><button class="btn-secondary" type="submit">Comprobar conflictos</button></div>
 </form>
 
 <c:if test="${not empty conflicts}">
-    <h3>Conflictos detectados (merge BLOQUEADO)</h3>
-    <ul>
+    <div class="admin-card admin-card-warning">
+    <div class="admin-card-header"><h2>Conflictos detectados</h2></div>
+    <ul class="admin-list">
         <c:forEach var="c" items="${conflicts}">
             <li>${c}</li>
         </c:forEach>
     </ul>
+    </div>
 </c:if>
 
 <c:if test="${empty conflicts && not empty fromId && not empty toId}">
-    <form method="post" action="AdminMateriasServlet">
+    <form class="admin-card admin-form" method="post" action="AdminMateriasServlet">
+        <div class="admin-card-header"><h2>Confirmar merge</h2></div>
         <input type="hidden" name="action" value="merge" />
         <input type="hidden" name="fromId" value="${fromId}" />
         <input type="hidden" name="toId" value="${toId}" />
-        <p>No se detectaron conflictos. Puede confirmar el merge.</p>
-        <button type="submit">Confirmar Merge</button>
+        <p class="admin-note">No se detectaron conflictos. Puede confirmar el merge.</p>
+        <div class="admin-form-actions"><button class="btn-primary" type="submit">Confirmar merge</button></div>
     </form>
 </c:if>
 
-<hr/>
 <c:if test="${editMode and not empty editMateria}">
-    <h2>Editar materia</h2>
-    <form method="post" action="${pageContext.request.contextPath}/AdminMateriasServlet">
+    <form class="admin-card admin-form" method="post" action="${pageContext.request.contextPath}/AdminMateriasServlet">
+        <div class="admin-card-header"><h2>Editar materia</h2></div>
+        <div class="admin-form-grid">
         <input type="hidden" name="action" value="edit" />
         <input type="hidden" name="materiaId" value="${editMateria.id}" />
         <label>Nombre:</label>
@@ -135,8 +148,9 @@
             <option value="comun" ${editMateria.categoria eq 'comun' ? 'selected' : ''}>comun</option>
             <option value="especifico" ${editMateria.categoria eq 'especifico' ? 'selected' : ''}>especifico</option>
         </select>
-        <div>
+        <div class="admin-field-wide">
             <label>Especialidades:</label>
+            <div class="admin-check-grid">
             <c:forEach var="e" items="${especialidades}">
                 <c:set var="isChecked" value="false" />
                 <c:forEach var="selectedId" items="${editEspecialidadIds}">
@@ -146,14 +160,17 @@
                 </c:forEach>
                 <label><input type="checkbox" name="especialidades" value="${e.id}" ${isChecked ? 'checked' : ''} /> ${e.nombre}</label>
             </c:forEach>
+            </div>
         </div>
-        <button type="submit">Guardar cambios</button>
+        </div>
+        <div class="admin-form-actions"><button class="btn-primary" type="submit">Guardar cambios</button></div>
     </form>
-    <hr/>
 </c:if>
 
-<h2>Catálogo</h2>
-<table>
+<div class="admin-card admin-table-card">
+<div class="admin-card-header"><h2>Catálogo</h2></div>
+<div class="admin-table-wrap">
+<table class="admin-table">
     <thead><tr><th>ID</th><th>Nombre</th><th>Categoria</th><th>Especialidades</th><th>Profesores</th><th>Acciones</th></tr></thead>
     <tbody>
     <c:forEach var="m" items="${materias}">
@@ -171,12 +188,14 @@
             </td>
             <td><c:out value="${profCounts[m.id] != null ? profCounts[m.id] : 0}" /></td>
             <td>
-                <a href="${pageContext.request.contextPath}/AdminMateriasServlet?editId=${m.id}">Editar</a>
+                <a class="btn-secondary btn-compact" href="${pageContext.request.contextPath}/AdminMateriasServlet?editId=${m.id}">Editar</a>
             </td>
         </tr>
     </c:forEach>
     </tbody>
 </table>
+</div>
+</div>
     </section>
     <footer class="footer">
       <hr>

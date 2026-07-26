@@ -7,10 +7,10 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=210">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=216">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
-<body data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
+<body class="admin-page" data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
   <c:url var="profileUrl" value="/ProfileServlet" />
   <c:url var="logoutUrl" value="/LogoutServlet" />
   <header class="navbar navbar-default navbar-fixed-top ctn-navbar" role="navigation">
@@ -44,23 +44,22 @@
   </header>
   <main>
     <section class="container page-shell">
-      <div class="info-bar">
-        <span>Bienvenido/a ${sessionScope.user.fullName}</span>
+      <div class="admin-hero">
+        <div>
+          <span class="admin-eyebrow">Administración</span>
+          <h1>Panel general</h1>
+          <p>Bienvenido/a ${sessionScope.user.fullName}</p>
+        </div>
       </div>
-      <div class="table-card card tareas-grid">
-        <div class="table-header">Métrica</div>
-        <div class="table-header">Valor</div>
-        <div class="cell">Profesores</div>
-        <div class="cell"><c:out value="${profesorCount}" /></div>
-        <div class="cell">Cursos</div>
-        <div class="cell"><c:out value="${cursoCount}" /></div>
-        <div class="cell">Especialidades</div>
-        <div class="cell"><c:out value="${especialidadCount}" /></div>
+      <div class="admin-metric-grid">
+        <div class="admin-metric"><span>Profesores</span><strong><c:out value="${profesorCount}" /></strong></div>
+        <div class="admin-metric"><span>Cursos</span><strong><c:out value="${cursoCount}" /></strong></div>
+        <div class="admin-metric"><span>Especialidades</span><strong><c:out value="${especialidadCount}" /></strong></div>
       </div>
-        <div style="margin-top:1rem">
-        <a class="btn-primary" href="${pageContext.request.contextPath}/AdminMateriasServlet">Gestionar Materias</a>
-        <a class="btn-primary" href="${pageContext.request.contextPath}/AdminUsuariosServlet">Gestionar Usuarios</a>
-        <a class="btn-primary" href="${pageContext.request.contextPath}/AdminAsignacionesServlet">Gestionar Asignaciones</a>
+      <div class="admin-nav-grid">
+        <a class="admin-nav-card" href="${pageContext.request.contextPath}/AdminMateriasServlet"><strong>Materias</strong><span>Catálogo, categorías y merges</span></a>
+        <a class="admin-nav-card" href="${pageContext.request.contextPath}/AdminUsuariosServlet"><strong>Usuarios</strong><span>Altas, roles y contraseñas</span></a>
+        <a class="admin-nav-card" href="${pageContext.request.contextPath}/AdminAsignacionesServlet"><strong>Asignaciones</strong><span>Profesor, materia y curso</span></a>
       </div>
     </section>
     <footer class="footer">

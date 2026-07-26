@@ -31,6 +31,7 @@
           <li class="dropdown">
             <a href="#" id="sessionButton" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sesión <span class="caret"></span></a>
             <ul class="dropdown-menu" id="sessionMenu" role="menu" aria-labelledby="sessionButton">
+              <li><a role="menuitem" href="${pageContext.request.contextPath}/ProfileServlet">Mi Perfil</a></li>
               <li><a role="menuitem" href="${pageContext.request.contextPath}/LogoutServlet">Cerrar Sesión</a></li>
             </ul>
           </li>

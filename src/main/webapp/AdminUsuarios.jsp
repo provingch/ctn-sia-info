@@ -6,10 +6,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=210">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=216">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg" />
 </head>
-<body data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
+<body class="admin-page" data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
 <c:url var="profileUrl" value="/ProfileServlet" />
 <header class="navbar navbar-default navbar-fixed-top ctn-navbar" role="navigation">
     <div class="container-fluid">
@@ -42,8 +42,13 @@
 </header>
 <main>
     <section class="container page-shell">
-        <div class="info-bar">
-            <span>Administrar usuarios</span>
+        <div class="admin-hero">
+            <div>
+                <span class="admin-eyebrow">Administración</span>
+                <h1>Usuarios</h1>
+                <p>Gestiona altas, roles, especialidades y accesos.</p>
+            </div>
+            <a class="btn-secondary" href="${pageContext.request.contextPath}/AdminServlet">Volver al panel</a>
         </div>
 
 <c:if test="${not empty errors}">
@@ -60,8 +65,11 @@
     <div class="flash">${flashMessage}</div>
 </c:if>
 
-<h2>Crear usuario</h2>
-<form method="post" action="AdminUsuariosServlet">
+<form class="admin-card admin-form" method="post" action="AdminUsuariosServlet">
+    <div class="admin-card-header">
+        <h2>Crear usuario</h2>
+    </div>
+    <div class="admin-form-grid">
     <input type="hidden" name="action" value="create" />
     <label>Nombre</label>
     <input type="text" name="nombre" required />
@@ -92,13 +100,18 @@
             <option value="${e.id}">${e.nombre}</option>
         </c:forEach>
     </select>
-    <button type="submit">Crear usuario</button>
+    </div>
+    <div class="admin-form-actions">
+        <button class="btn-primary" type="submit">Crear usuario</button>
+    </div>
 </form>
 
-<hr/>
 <c:if test="${editMode and not empty editProfesor}">
-    <h2>Editar usuario</h2>
-    <form method="post" action="${pageContext.request.contextPath}/AdminUsuariosServlet">
+    <form class="admin-card admin-form" method="post" action="${pageContext.request.contextPath}/AdminUsuariosServlet">
+        <div class="admin-card-header">
+            <h2>Editar usuario</h2>
+        </div>
+        <div class="admin-form-grid">
         <input type="hidden" name="action" value="edit" />
         <input type="hidden" name="profesorId" value="${editProfesor.id}" />
         <label>Nombre</label>
@@ -130,13 +143,19 @@
                 <option value="${e.id}" ${editProfesor.especialidadId == e.id ? 'selected' : ''}>${e.nombre}</option>
             </c:forEach>
         </select>
-        <button type="submit">Guardar cambios</button>
+        </div>
+        <div class="admin-form-actions">
+            <button class="btn-primary" type="submit">Guardar cambios</button>
+        </div>
     </form>
-    <hr/>
 </c:if>
 
-<h2>Usuarios</h2>
-<table>
+<div class="admin-card admin-table-card">
+<div class="admin-card-header">
+    <h2>Usuarios</h2>
+</div>
+<div class="admin-table-wrap">
+<table class="admin-table">
     <thead>
         <tr>
             <th>ID</th>
@@ -172,22 +191,26 @@
                     </c:choose>
                 </td>
                 <td>
-                    <a href="${pageContext.request.contextPath}/AdminUsuariosServlet?editId=${profesor.id}">Editar</a>
-                    <form method="post" action="${pageContext.request.contextPath}/AdminUsuariosServlet" style="display:inline; margin-left:0.5rem;">
+                    <div class="admin-row-actions">
+                    <a class="btn-secondary btn-compact" href="${pageContext.request.contextPath}/AdminUsuariosServlet?editId=${profesor.id}">Editar</a>
+                    <form class="admin-inline-form" method="post" action="${pageContext.request.contextPath}/AdminUsuariosServlet">
                         <input type="hidden" name="action" value="delete" />
                         <input type="hidden" name="profesorId" value="${profesor.id}" />
-                        <button type="submit" onclick="return confirm('Eliminar usuario ${profesor.fullName}?');">Eliminar</button>
+                        <button class="btn-danger btn-compact" type="submit" onclick="return confirm('Eliminar usuario ${profesor.fullName}?');">Eliminar</button>
                     </form>
-                    <form method="post" action="${pageContext.request.contextPath}/AdminUsuariosServlet" style="display:inline; margin-left:0.5rem;">
+                    <form class="admin-inline-form" method="post" action="${pageContext.request.contextPath}/AdminUsuariosServlet">
                         <input type="hidden" name="action" value="reset" />
                         <input type="hidden" name="profesorId" value="${profesor.id}" />
-                        <button type="submit">Restablecer contraseña</button>
+                        <button class="btn-secondary btn-compact" type="submit">Restablecer</button>
                     </form>
+                    </div>
                 </td>
             </tr>
         </c:forEach>
     </tbody>
 </table>
+</div>
+</div>
     </section>
     <footer class="footer">
       <hr>

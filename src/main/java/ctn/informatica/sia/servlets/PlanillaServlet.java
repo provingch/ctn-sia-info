@@ -399,44 +399,8 @@ public class PlanillaServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/PlanillaServlet?planillaId=" + planilla.getId());
                 return;
             }
-            // Map alumnoId -> registro_id for this planilla (only for alumnos we have grades for)
-            Set<Integer> alumnoIds = gradesByAlumno.keySet();
-            RegistroDao registroDao = new RegistroDao();
-            Map<Integer, Integer> alumnoToRegistro = registroDao.getRegistroIdsForPlanilla(planilla.getId(), alumnoIds);
 
-            // Build grades keyed by registro_id (puntaje table uses registro_id)
-            Map<Integer, Map<Integer, Integer>> gradesByRegistro = new HashMap<>();
-            for (Map.Entry<Integer, Map<Integer, Integer>> e : gradesByAlumno.entrySet()) {
-                int alumnoId = e.getKey();
-                Integer registroId = alumnoToRegistro.get(alumnoId);
-                if (registroId == null) {
-                    // No registro found for that alumno in this planilla: warn and skip
-                    paramErrors.add("Alumno " + alumnoId + " no está registrado en esta planilla; calificación omitida.");
-                    continue;
-                }
-                gradesByRegistro.put(registroId, e.getValue());
-            }
-
-            if (gradesByRegistro.isEmpty()) {
-                session.setAttribute("flashMessage", "No se encontraron registros válidos para guardar (ver advertencias).");
-                session.setAttribute("flashErrors", paramErrors);
-                response.sendRedirect(request.getContextPath() + "/PlanillaServlet?planillaId=" + planilla.getId());
-                return;
-            }
-
-            // Persist in a single transaction using GradeDao (puntaje table)
-            GradeDao gradeDao = new GradeDao();
-            try {
-                gradeDao.saveGradesBatch(planilla.getId(), gradesByRegistro);
-            } catch (SQLException sqle) {
-                log("Error saving grades for planilla " + planilla.getId(), sqle);
-                throw new ServletException("Error saving calificaciones", sqle);
-            }
-
-            // optionally recalculate totals/percentages server-side (if you persist them)
-            // planillaDao.recalculateTotals(planilla.getId()); // implement if needed
-            // Build flash message
-            String msg = "Cambios guardados correctamente.";
+            String msg = "Los cambios se reflejarán desde Classroom.";
             if (!paramErrors.isEmpty()) {
                 session.setAttribute("flashErrors", paramErrors);
                 msg += " (con advertencias)";

@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><c:out value="${not empty pageTitle ? pageTitle : planilla.nombre}" /></title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=214">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=215">
   <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=164"></script>
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
@@ -134,9 +134,9 @@
               Inmovilizar alumnos
             </label>
           </div>
-          <button class="btn-primary save-button">
+          <button class="btn-primary save-button" type="button" disabled>
             <img class="save-icon" src="${pageContext.request.contextPath}/icons/save.svg">
-            Guardar Cambios
+            Sin edición en planilla
           </button>
         </div>
 
@@ -198,14 +198,13 @@
                     <div>Nota: <span class="row-nota">${row.nota}</span></div>
                   </div>
                   <c:forEach var="t" items="${tareas}">
-                    <div class="cell">
-                      <input class="no-spinner"
-                             type="number"
-                             min="0"
-                             max="${t.total}"
-                             data-max="${t.total}"
-                             name="grade_${row.alumnoId}_${t.id}"
-                             value="${row.grades[t.id] != null ? row.grades[t.id] : ''}" />
+                    <div class="cell grade-cell">
+                      <span class="grade-readonly">
+                        <c:choose>
+                          <c:when test="${row.grades[t.id] != null}">${row.grades[t.id]}</c:when>
+                          <c:otherwise>—</c:otherwise>
+                        </c:choose>
+                      </span>
                     </div>
                   </c:forEach>
                   <div class="cell col-fill" aria-hidden="true"></div>
