@@ -277,7 +277,11 @@ public class ProfileServlet extends HttpServlet {
         if (isStaffProfile) {
             profesor = new ProfesorDao().findById(user.getId());
         } else if (isParentProfile) {
-            padre = new PadreDao().findById(user.getId());
+            try {
+                padre = new PadreDao().findById(user.getId());
+            } catch (SQLException ex) {
+                log("Error loading parent profile for user " + (user != null ? user.getId() : -1), ex);
+            }
         }
 
         List<Course> googleClassroomCourses = Collections.emptyList();
