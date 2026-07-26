@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><c:out value="${not empty pageTitle ? pageTitle : planilla.nombre}" /></title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=210">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=211">
   <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=164"></script>
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
@@ -148,7 +148,7 @@
 
         <div class="table-container">
           <div class="table-responsive">
-            <div class="table planilla-table" style="grid-template-columns: 44px 220px 112px${taskColumns};">
+            <div class="table planilla-table" style="grid-template-columns: 44px 220px 112px${taskColumns} minmax(0, 1fr);">
               <div class="table-row">
                 <div class="table-heading">
                   Tareas - ${planilla.nombre}
@@ -187,6 +187,7 @@
                     </div>
                   </div>
                 </c:forEach>
+                <div class="cell table-column-head col-fill" aria-hidden="true"></div>
               </div>
 
               <c:forEach var="row" items="${rows}" varStatus="rs">
@@ -208,6 +209,7 @@
                              value="${row.grades[t.id] != null ? row.grades[t.id] : ''}" />
                     </div>
                   </c:forEach>
+                  <div class="cell col-fill" aria-hidden="true"></div>
                 </div>
               </c:forEach>
 
@@ -218,7 +220,7 @@
 
     </section>
 
-    <section class="container">
+    <section class="container planilla-scale">
       <table class="grade-table">
         <thead>
           <tr>

@@ -710,8 +710,7 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 
 .table-responsive {
   overflow: auto;
-  width: fit-content;
-  max-width: 100%;
+  width: 100%;
   border: 1px solid var(--line);
   background: var(--paper);
   border-radius: 4px;
@@ -720,7 +719,7 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 .table-container { margin-top: 16px; }
 .table {
   display: grid;
-  width: max-content;
+  width: 100%;
   min-width: max-content;
   background: var(--paper);
   font-size: 12px;
@@ -782,6 +781,11 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 .table .col-corner img {
   width: 26px;
   height: 26px;
+}
+.table .col-fill {
+  min-width: 0;
+  border-right: 0;
+  background: color-mix(in srgb, var(--paper) 88%, #34495e 6%);
 }
 .table .table-column-head {
   position: sticky;
@@ -861,6 +865,65 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   margin: 2px 0 0;
   padding-top: 2px;
 }
+
+.planilla-scale {
+  margin-top: 18px;
+}
+
+.planilla-scale .grade-table {
+  width: min(100%, 520px);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: none;
+}
+
+.planilla-scale .grade-table thead td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  background: #34495e;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .04em;
+}
+
+.planilla-scale .grade-table th,
+.planilla-scale .grade-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.planilla-scale .grade-table th {
+  background: color-mix(in srgb, var(--paper) 78%, #34495e 14%);
+  color: var(--ink);
+  font-size: 10px;
+}
+
+.planilla-scale .grade-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.planilla-scale .grade-table tbody td:last-child {
+  width: 72px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.planilla-scale .grade-table tfoot td {
+  padding: 9px 12px;
+  background: color-mix(in srgb, var(--paper) 82%, #34495e 10%);
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.planilla-scale .five-color td { background: color-mix(in srgb, #2ecc71 10%, var(--paper)); }
+.planilla-scale .four-color td { background: color-mix(in srgb, #8fd19e 9%, var(--paper)); }
+.planilla-scale .three-color td { background: color-mix(in srgb, #f1c40f 10%, var(--paper)); }
+.planilla-scale .two-color td { background: color-mix(in srgb, #f39c12 9%, var(--paper)); }
+.planilla-scale .one-color td { background: color-mix(in srgb, #f5b7b1 12%, var(--paper)); }
 .freeze-toggle {
   display: inline-flex;
   align-items: center;
