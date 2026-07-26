@@ -275,9 +275,17 @@ public class ProfileServlet extends HttpServlet {
         boolean isStaffProfile = user != null && user.getLevel() >= 1 && user.getLevel() <= 3;
         boolean isParentProfile = user != null && user.getLevel() == 4;
         if (isStaffProfile) {
-            profesor = new ProfesorDao().findById(user.getId());
+            try {
+                profesor = new ProfesorDao().findById(user.getId());
+            } catch (SQLException ex) {
+                log("Error loading professor profile for user " + (user != null ? user.getId() : -1), ex);
+            }
         } else if (isParentProfile) {
-            padre = new PadreDao().findById(user.getId());
+            try {
+                padre = new PadreDao().findById(user.getId());
+            } catch (SQLException ex) {
+                log("Error loading parent profile for user " + (user != null ? user.getId() : -1), ex);
+            }
         }
 
         List<Course> googleClassroomCourses = Collections.emptyList();
@@ -294,11 +302,7 @@ public class ProfileServlet extends HttpServlet {
             }
         }
         if (profesor != null && manualTeacherSubjectsText.isEmpty()) {
-            try {
-                manualTeacherSubjectsText = new ProfesorDao().findManualSubjectsText(profesor.getId());
-            } catch (SQLException ex) {
-                log("Error loading manual teacher subjects for profile user " + (user != null ? user.getId() : -1), ex);
-            }
+            manualTeacherSubjectsText = new ProfesorDao().findManualSubjectsText(profesor.getId());
         }
         try {
             teacherMaterias = loadTeacherMaterias(profesor);
