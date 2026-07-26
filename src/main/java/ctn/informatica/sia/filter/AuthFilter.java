@@ -146,7 +146,6 @@ public class AuthFilter implements Filter {
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
 
-        String currentPath = request.getServletPath();
         if (!isAuthorized(currentPath, user)) {
             response.sendRedirect(ctx + getRedirectPathForLevel(user));
             return;
