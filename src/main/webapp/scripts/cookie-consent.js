@@ -42,12 +42,67 @@
     banner.classList.add('hidden');
   }
 
+  function showBanner() {
+    banner.classList.remove('hidden');
+  }
+
+  function hasConsentDecision() {
+    const stored = readStoredConsent();
+    return stored === 'accepted' || stored === 'declined';
+  }
+
   function hasConsent() {
     return readStoredConsent() === 'accepted';
   }
 
-  if (hasConsent()) {
-    hideBanner();
+  function updateBannerVisibility() {
+    const rememberInput = document.querySelector('input[name="rememberMe"]');
+    if (!rememberInput) {
+      hideBanner();
+      return;
+    }
+
+    if (hasConsentDecision()) {
+      hideBanner();
+      return;
+    }
+
+    if (rememberInput.checked) {
+      showBanner();
+    } else {
+      hideBanner();
+    }
+  }
+
+  function disableRememberIfDeclined() {
+    const rememberInput = document.querySelector('input[name="rememberMe"]');
+    if (!rememberInput) {
+      return;
+    }
+    if (readStoredConsent() === 'declined') {
+      rememberInput.checked = false;
+    }
+  }
+
+  updateBannerVisibility();
+  disableRememberIfDeclined();
+
+  const rememberInput = document.querySelector('input[name="rememberMe"]');
+  if (rememberInput) {
+    rememberInput.addEventListener('change', updateBannerVisibility);
+  }
+
+  const loginForm = document.querySelector('.login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', function (event) {
+      if (rememberInput && rememberInput.checked && !hasConsentDecision()) {
+        event.preventDefault();
+        showBanner();
+      }
+      if (rememberInput && rememberInput.checked && readStoredConsent() === 'declined') {
+        rememberInput.checked = false;
+      }
+    });
   }
 
   acceptBtn.addEventListener('click', function () {
@@ -57,6 +112,7 @@
 
   declineBtn.addEventListener('click', function () {
     writeStoredConsent(false);
+    disableRememberIfDeclined();
     hideBanner();
   });
 })();
