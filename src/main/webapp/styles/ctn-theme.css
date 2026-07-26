@@ -546,13 +546,12 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 }
 .admin-form-grid {
   display: grid;
-  grid-template-columns: minmax(120px, 180px) minmax(0, 1fr);
-  gap: 8px 12px;
+  grid-template-columns: 1fr;
+  gap: 6px;
   padding: 14px 0 10px;
-  align-items: center;
 }
 .admin-form-grid label {
-  margin: 0;
+  margin: 4px 0 0;
   color: var(--muted);
   font-size: 12px;
   font-weight: 900;
@@ -583,8 +582,7 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   color: var(--ink);
 }
 .admin-submit {
-  margin-top: 2px;
-  justify-self: end;
+  margin-top: 0;
 }
 .admin-table-wrap {
   overflow-x: auto;
@@ -597,13 +595,13 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   background: #34495e;
   color: #ffffff;
   font-size: 11px;
-  padding: 7px 10px;
+  padding: 6px 10px;
   text-transform: uppercase;
 }
 .admin-table td {
   color: var(--ink);
   background: var(--paper);
-  padding: 7px 10px;
+  padding: 6px 10px;
   vertical-align: middle;
   font-size: 12.5px;
   line-height: 1.25;
@@ -1486,7 +1484,8 @@ button,
 .back-button,
 .delete-button,
 .cookie-consent-btn,
-.manual-link {
+.manual-link,
+.theme-toggle-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1508,13 +1507,15 @@ button:hover,
 .btn:hover,
 .btn-primary:hover,
 .btn-secondary:hover,
+.btn-danger:hover,
 .form-submit:hover,
 .save-button:hover,
 .download-button:hover,
 .back-button:hover,
 .delete-button:hover,
 .cookie-consent-btn:hover,
-.manual-link:hover {
+.manual-link:hover,
+.theme-toggle-button:hover {
   box-shadow: 0 8px 16px rgba(20, 35, 59, 0.16);
   filter: brightness(1.03);
   transform: translateY(-2px);
@@ -1524,13 +1525,15 @@ button:active,
 .btn:active,
 .btn-primary:active,
 .btn-secondary:active,
+.btn-danger:active,
 .form-submit:active,
 .save-button:active,
 .download-button:active,
 .back-button:active,
 .delete-button:active,
 .cookie-consent-btn:active,
-.manual-link:active {
+.manual-link:active,
+.theme-toggle-button:active {
   box-shadow: 0 3px 8px rgba(20, 35, 59, 0.12);
   transform: translateY(0);
 }
@@ -1539,12 +1542,15 @@ button:focus-visible,
 .btn:focus-visible,
 .btn-primary:focus-visible,
 .btn-secondary:focus-visible,
+.btn-danger:focus-visible,
 .form-submit:focus-visible,
 .save-button:focus-visible,
 .download-button:focus-visible,
 .back-button:focus-visible,
 .delete-button:focus-visible,
-.cookie-consent-btn:focus-visible {
+.cookie-consent-btn:focus-visible,
+.manual-link:focus-visible,
+.theme-toggle-button:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
