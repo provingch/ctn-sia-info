@@ -871,59 +871,90 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 }
 
 .planilla-scale .grade-table {
-  width: min(100%, 520px);
-  border: 1px solid var(--line);
+  width: min(100%, 560px);
+  border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
   border-radius: 4px;
   overflow: hidden;
   background: var(--paper);
   box-shadow: none;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .planilla-scale .grade-table thead td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--line);
+  padding: 12px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
   background: #34495e;
   color: #ffffff;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 900;
-  letter-spacing: .04em;
+  letter-spacing: 0;
 }
 
 .planilla-scale .grade-table th,
 .planilla-scale .grade-table td {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--line);
+  padding: 9px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 62%, transparent);
+  color: var(--ink);
   font-size: 12px;
+  vertical-align: middle;
 }
 
 .planilla-scale .grade-table th {
-  background: color-mix(in srgb, var(--paper) 78%, #34495e 14%);
-  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 70%, #34495e 18%);
+  color: color-mix(in srgb, var(--ink) 86%, #ffffff);
   font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }
 
-.planilla-scale .grade-table tbody tr:last-child td {
+.planilla-scale .grade-table tbody tr:last-child td,
+.planilla-scale .grade-table tbody tr:last-child th {
   border-bottom: 0;
 }
 
 .planilla-scale .grade-table tbody td:last-child {
   width: 72px;
-  font-weight: 900;
   text-align: center;
 }
 
 .planilla-scale .grade-table tfoot td {
-  padding: 9px 12px;
-  background: color-mix(in srgb, var(--paper) 82%, #34495e 10%);
+  padding: 10px 14px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+  background: color-mix(in srgb, var(--paper) 74%, #34495e 16%);
   color: var(--ink);
   font-weight: 900;
 }
 
-.planilla-scale .five-color td { background: color-mix(in srgb, #2ecc71 10%, var(--paper)); }
-.planilla-scale .four-color td { background: color-mix(in srgb, #8fd19e 9%, var(--paper)); }
-.planilla-scale .three-color td { background: color-mix(in srgb, #f1c40f 10%, var(--paper)); }
-.planilla-scale .two-color td { background: color-mix(in srgb, #f39c12 9%, var(--paper)); }
-.planilla-scale .one-color td { background: color-mix(in srgb, #f5b7b1 12%, var(--paper)); }
+.planilla-scale .scale-title {
+  display: table-cell;
+}
+
+.planilla-scale .scale-title span {
+  float: right;
+  color: color-mix(in srgb, #ffffff 82%, #34495e);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.planilla-scale .scale-grade {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 24px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--paper) 62%, #34495e 26%);
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.planilla-scale .five-color td { background: color-mix(in srgb, #2ecc71 14%, var(--paper)); }
+.planilla-scale .four-color td { background: color-mix(in srgb, #8fd19e 13%, var(--paper)); }
+.planilla-scale .three-color td { background: color-mix(in srgb, #f1c40f 13%, var(--paper)); }
+.planilla-scale .two-color td { background: color-mix(in srgb, #f39c12 11%, var(--paper)); }
+.planilla-scale .one-color td { background: color-mix(in srgb, #f5b7b1 15%, var(--paper)); }
 .freeze-toggle {
   display: inline-flex;
   align-items: center;

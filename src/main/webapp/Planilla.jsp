@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><c:out value="${not empty pageTitle ? pageTitle : planilla.nombre}" /></title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=211">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=212">
   <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=164"></script>
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
@@ -224,7 +224,7 @@
       <table class="grade-table">
         <thead>
           <tr>
-            <td colspan="3" class="text-uppercase">Escala: (TP: ${totalPossiblePoints})</td>
+            <td colspan="3" class="scale-title">Escala de notas <span>TP: ${totalPossiblePoints}</span></td>
           </tr>
         </thead>
         <tbody>
@@ -236,27 +236,27 @@
           <tr class="five-color">
             <td>${gradeRanges['5'][0]}</td>
             <td>${gradeRanges['5'][1]}</td>
-            <td>5</td>
+            <td><span class="scale-grade">5</span></td>
           </tr>
           <tr class="four-color">
             <td>${gradeRanges['4'][0]}</td>
             <td>${gradeRanges['4'][1]}</td>
-            <td>4</td>
+            <td><span class="scale-grade">4</span></td>
           </tr>
           <tr class="three-color">
             <td>${gradeRanges['3'][0]}</td>
             <td>${gradeRanges['3'][1]}</td>
-            <td>3</td>
+            <td><span class="scale-grade">3</span></td>
           </tr>
           <tr class="two-color">
             <td>${gradeRanges['2'][0]}</td>
             <td>${gradeRanges['2'][1]}</td>
-            <td>2</td>
+            <td><span class="scale-grade">2</span></td>
           </tr>
           <tr class="one-color">
             <td>${gradeRanges['2'][0] - 1}</td>
             <td>y menos</td>
-            <td>1</td>
+            <td><span class="scale-grade">1</span></td>
           </tr>
         </tbody>
         <tfoot>
