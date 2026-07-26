@@ -32,12 +32,12 @@
                     if (userId != null) {
                         User restoredUser = new UserDao().findById(userId);
                         if (restoredUser != null) {
-                            HttpSession session = request.getSession(true);
-                            session.setMaxInactiveInterval(60 * 60 * 24 * 7);
-                            session.setAttribute("user", restoredUser);
+                            HttpSession restoredSession = request.getSession(true);
+                            restoredSession.setMaxInactiveInterval(60 * 60 * 24 * 7);
+                            restoredSession.setAttribute("user", restoredUser);
                             try {
                                 Profesor profesor = new ProfesorDao().findById(restoredUser.getId());
-                                session.setAttribute("profesor", profesor);
+                                restoredSession.setAttribute("profesor", profesor);
                                 String specialty = "informatica";
                                 if (profesor != null && profesor.getEspecialidadId() != null) {
                                     Especialidad especialidad = new EspecialidadDao().findById(profesor.getEspecialidadId());
@@ -45,14 +45,14 @@
                                         specialty = SiaUiContext.normalizeSpecialty(especialidad.getNombre());
                                     }
                                 }
-                                session.setAttribute("siaSpecialty", specialty);
+                                restoredSession.setAttribute("siaSpecialty", specialty);
                             } catch (Exception ignored) {
                                 // no-op
                             }
                             try {
                                 Padre padre = new PadreDao().findById(restoredUser.getId());
                                 if (padre != null) {
-                                    session.setAttribute("padre", padre);
+                                    restoredSession.setAttribute("padre", padre);
                                 }
                             } catch (Exception ignored) {
                                 // no-op
