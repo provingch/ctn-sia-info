@@ -92,8 +92,7 @@ header {
 .tb-cell { border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 6px 10px; }
 .tb-cell b { display: block; color: var(--muted); font-weight: 500; font-size: 9px; text-transform: uppercase; }
 
-.badge { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 10.5px; padding: 4px 9px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 18%, var(--paper)); border: 1px solid var(--accent); color: var(--accent-contrast); }
-.badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); border: var(--accent-border); }
+/* Badges are centralized in components.css */
 
 .planilla-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
 .planilla-toolbar form { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }

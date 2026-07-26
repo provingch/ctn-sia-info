@@ -50,9 +50,9 @@ input[type="checkbox"], input[type="radio"] { width:16px; height:16px; accent-co
 .badge-neutral { background: var(--color-bg-muted); color: var(--color-text); }
 
 /* Tabs */
-.tabs { display:flex; gap:0.5rem; border-bottom:1px solid var(--color-border); }
-.tab { padding:0.5rem 0.8rem; cursor:pointer; border-radius:var(--radius-sm) var(--radius-sm) 0 0; background:transparent; color:var(--color-text); }
-.tab.active { background:var(--color-bg-elevated); border:1px solid var(--color-border); border-bottom-color: var(--color-bg-elevated); }
+.tabs, .profile-tabs { display:flex; gap:0.5rem; border-bottom:1px solid var(--color-border); }
+.tab, .profile-tab { padding:0.5rem 0.8rem; cursor:pointer; border-radius:var(--radius-sm) var(--radius-sm) 0 0; background:transparent; color:var(--color-text); }
+.tab.active, .profile-tab.active { background:var(--color-bg-elevated); border:1px solid var(--color-border); border-bottom-color: var(--color-bg-elevated); }
 
 /* Tables — simple flat style */
 .table-responsive { overflow:auto; border:1px solid var(--color-border); background:var(--color-bg-elevated); border-radius:var(--radius-sm); }
@@ -66,7 +66,7 @@ input[type="checkbox"], input[type="radio"] { width:16px; height:16px; accent-co
 
 /* Flash / alerts */
 .flash { padding:0.75rem 1rem; border-radius:var(--radius-sm); border:1px solid var(--color-border); background:var(--color-info-bg); color:var(--color-info); }
-.flash-error { background: var(--color-danger-bg); color: var(--color-danger); border-color: color-mix(in srgb, var(--color-danger) 18%, transparent); }
+.flash-errors, .flash-error { background: var(--color-danger-bg); color: var(--color-danger); border-color: color-mix(in srgb, var(--color-danger) 18%, transparent); }
 .flash-success { background: var(--color-success-bg); color: var(--color-success); border-color: color-mix(in srgb, var(--color-success) 18%, transparent); }
 
 @media (max-width: 768px) {

@@ -227,62 +227,8 @@ section { margin-bottom: 28px; }
 }
 .note b, .selection-hint strong { color: var(--ink); }
 
-.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
-button, .btn-primary, .btn-secondary, .btn-danger, .save-button, .back-button, .google-connect-button, .google-disconnect-button, .form-submit, .cookie-consent-btn {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  padding: 9px 14px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 38px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, border-color .15s ease;
-}
-.btn-primary, .save-button, .form-submit, .google-connect-button, .cookie-consent-btn-primary {
-  background: var(--accent);
-  color: var(--accent-contrast);
-  border: var(--accent-border);
-}
-.btn-secondary, .back-button, .cookie-consent-btn-secondary {
-  background: var(--paper);
-  color: var(--ink);
-  border: 1px solid var(--line);
-}
-.btn-danger, .google-disconnect-button, .cookie-consent-btn-danger {
-  background: var(--paper);
-  color: var(--red);
-  border: 1px solid var(--red);
-}
-button:hover,
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-danger:hover,
-.save-button:hover,
-.back-button:hover,
-.google-connect-button:hover,
-.google-disconnect-button:hover,
-.form-submit:hover,
-.cookie-consent-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(20, 35, 59, 0.12);
-}
-button:active,
-.btn-primary:active,
-.btn-secondary:active,
-.btn-danger:active,
-.save-button:active,
-.back-button:active,
-.google-connect-button:active,
-.google-disconnect-button:active,
-.form-submit:active,
-.cookie-consent-btn:active {
-  transform: translateY(0);
-}
+/* Buttons moved to components.css — keep markup compatibility but avoid duplicate rules here */
+.btn-row { display:flex; gap:10px; flex-wrap:wrap; }
 
 .back-icon, .download-icon, .save-icon, .delete-icon {
   width: 14px;
@@ -333,27 +279,9 @@ button:active,
   border: 1px solid var(--red);
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  padding: 4px 9px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--accent) 18%, var(--paper));
-  border: 1px solid var(--accent);
-}
-.badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); border: var(--accent-border); }
+/* Badges moved to components.css */
 
-.card, .planilla-card, .table-card, .section-block, .login-card, .empty-state-card {
-  border: 1px solid var(--line);
-  background: var(--paper);
-  border-left: 4px solid var(--accent);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-}
+/* Cards and panes moved to components.css */
 .profile-sidebar {
   border: none;
   background: transparent;
@@ -501,29 +429,12 @@ body.login-page .login-wrapper { display: flex; justify-content: center; align-i
   overflow-y: auto;
   max-height: calc(100vh - 232px);
 }
-.profile-tabs { display: grid; gap: 8px; }
-.profile-tab {
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--ink);
-  padding: 9px 10px;
-  text-align: left;
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-}
-.profile-tab.active {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, var(--paper));
-  box-shadow: inset 3px 0 0 var(--accent);
-}
+/* Profile tabs styling moved to components.css (aliases supported) */
 
 .subject-list, .subject-form-grid, .checkbox-grid { display: grid; gap: 10px; }
 .checkbox-item { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 8px 10px; background: var(--paper); border-radius: var(--radius-sm); }
 .checkbox-item input { width: auto; }
-.table-card { padding-bottom: 8px; }
-.table-card .cell { border-top: 1px solid var(--line); }
-.table-card .cell:first-child { border-top: none; }
-.table-card .table-header { margin-bottom: 0; }
+/* Table-card cell rules moved to components.css */
 
 .planilla-card-link { display: block; color: inherit; }
 .planilla-card {
