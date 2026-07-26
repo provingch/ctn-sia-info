@@ -708,7 +708,7 @@ html[data-theme="dark"] {
 }
 
 body {
-  padding: 86px 24px 24px;
+  padding: 76px 24px 24px;
   background: var(--bg);
   font-size: 15px;
   display: flex;
@@ -1147,7 +1147,7 @@ html[data-theme="dark"] .label {
 }
 
 .ctn-navbar.navbar {
-  min-height: 64px;
+  min-height: 56px;
   margin: 0;
   border: 0;
   border-bottom: 4px solid var(--accent);
@@ -1171,21 +1171,21 @@ html[data-theme="dark"] .label {
 .ctn-navbar .navbar-brand,
 .ctn-navbar .navbar-nav > li > a,
 .ctn-navbar .ctn-theme-item {
-  min-height: 60px;
+  min-height: 52px;
 }
 
 .ctn-navbar-brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 0;
+  padding: 6px 0;
   color: var(--ink) !important;
   font-weight: 900;
 }
 
 .ctn-navbar-brand .header-logo {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
 }
 
 .ctn-navbar .navbar-nav {
@@ -1218,6 +1218,7 @@ html[data-theme="dark"] .label {
 
 .ctn-navbar .navbar-nav > li > a,
 .ctn-navbar .manual-link {
+  height: 42px;
   padding-top: 0;
   padding-bottom: 0;
   color: #34495e;
@@ -1247,7 +1248,7 @@ html[data-theme="dark"] .label {
 }
 
 .ctn-navbar .manual-link {
-  margin: 9px 4px;
+  margin: 5px 4px;
   min-height: 42px;
   padding: 0 14px;
   border-radius: 6px;
@@ -1259,13 +1260,15 @@ html[data-theme="dark"] .label {
 
 .ctn-navbar .dropdown-menu {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 2px);
   right: 0;
   left: auto;
   border: 0;
   border-radius: 6px;
   box-shadow: 0 12px 28px rgba(20, 35, 59, 0.14);
-  min-width: 180px;
+  width: max-content;
+  min-width: 176px;
+  padding: 6px 0;
 }
 
 .ctn-navbar .dropdown.open > .dropdown-menu {
@@ -1273,8 +1276,12 @@ html[data-theme="dark"] .label {
 }
 
 .ctn-navbar .dropdown-menu > li > a {
+  display: block;
   color: #34495e;
   font-weight: 700;
+  line-height: 1.2;
+  padding: 8px 16px;
+  white-space: nowrap;
 }
 
 .ctn-navbar .dropdown-menu > li > a:hover {
@@ -1286,7 +1293,7 @@ html[data-theme="dark"] .label {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 9px 4px;
+  padding: 5px 4px;
 }
 
 .ctn-theme-item .theme-toggle-button {
@@ -1342,7 +1349,7 @@ html[data-theme="dark"] .footer {
 
 @media (max-width: 640px) {
   body {
-    padding: 128px 12px 12px;
+    padding: 112px 12px 12px;
   }
 
   .ctn-navbar .container-fluid {
