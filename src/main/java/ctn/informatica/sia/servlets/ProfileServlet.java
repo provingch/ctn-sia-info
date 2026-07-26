@@ -237,11 +237,11 @@ public class ProfileServlet extends HttpServlet {
             case 1:
                 return "Podés editar tus datos de contacto, usuario, especialidad y conexión con Google Classroom.";
             case 2:
-                return "Tu acceso está orientado a evaluación. Los datos personales se muestran en modo lectura.";
+                return "Podés editar tus datos de contacto y cuenta desde este perfil.";
             case 3:
-                return "Tu acceso está orientado a administración. Los datos personales se muestran en modo lectura.";
+                return "Podés editar tus datos de contacto y cuenta desde este perfil.";
             case 4:
-                return "Tu acceso familiar permite revisar la información académica asociada a tus estudiantes.";
+                return "Podés editar tus datos de contacto y cuenta desde este perfil.";
             default:
                 return "Tu perfil se muestra en modo lectura.";
         }
@@ -433,13 +433,23 @@ public class ProfileServlet extends HttpServlet {
 
         ProfesorDao profesorDao = new ProfesorDao();
         Profesor profesor = null;
+        Padre padre = null;
+        List<String> errors = new ArrayList<>();
         if (user != null) {
-            profesor = profesorDao.findById(user.getId());
+            if (user.getLevel() == 4) {
+                try {
+                    padre = new PadreDao().findById(user.getId());
+                } catch (SQLException ex) {
+                    errors.add("No se pudo cargar el perfil familiar.");
+                    log("Error loading parent profile for update", ex);
+                }
+            } else if (user.getLevel() >= 1 && user.getLevel() <= 3) {
+                profesor = profesorDao.findById(user.getId());
+            }
         }
 
-        List<String> errors = new ArrayList<>();
-        if (profesor == null) {
-            errors.add("No se pudo cargar el perfil del profesor.");
+        if (profesor == null && padre == null) {
+            errors.add("No se pudo cargar el perfil del usuario.");
             req.setAttribute("errors", errors);
             req.getRequestDispatcher("/Profile.jsp").forward(req, resp);
             return;
@@ -455,32 +465,44 @@ public class ProfileServlet extends HttpServlet {
             errors.add("El nombre de usuario no puede estar vacío.");
         }
 
-        try {
-            if (telefono != null && !telefono.trim().isEmpty()) {
-                profesor.setTelefono(Integer.valueOf(telefono.trim()));
+        if (profesor != null) {
+            try {
+                if (telefono != null && !telefono.trim().isEmpty()) {
+                    profesor.setTelefono(Integer.valueOf(telefono.trim()));
+                }
+            } catch (NumberFormatException ex) {
+                errors.add("Teléfono inválido: debe contener sólo dígitos.");
             }
-        } catch (NumberFormatException ex) {
-            errors.add("Teléfono inválido: debe contener sólo dígitos.");
-        }
-        try {
-            if (celular != null && !celular.trim().isEmpty()) {
-                profesor.setCelular(Integer.valueOf(celular.trim()));
+            try {
+                if (celular != null && !celular.trim().isEmpty()) {
+                    profesor.setCelular(Integer.valueOf(celular.trim()));
+                }
+            } catch (NumberFormatException ex) {
+                errors.add("Celular inválido: debe contener sólo dígitos.");
             }
-        } catch (NumberFormatException ex) {
-            errors.add("Celular inválido: debe contener sólo dígitos.");
+
+            profesor.setUsuario(usuario != null ? usuario.trim() : null);
+            if (correo != null) {
+                profesor.setCorreo(correo.trim());
+            }
+            if (especialidadIdParam == null || especialidadIdParam.trim().isEmpty()) {
+                profesor.setEspecialidadId(null);
+            } else {
+                try {
+                    profesor.setEspecialidadId(Integer.valueOf(especialidadIdParam.trim()));
+                } catch (NumberFormatException ex) {
+                    errors.add("Especialidad inválida.");
+                }
+            }
         }
 
-        profesor.setUsuario(usuario);
-        if (correo != null) {
-            profesor.setCorreo(correo);
-        }
-        if (especialidadIdParam == null || especialidadIdParam.trim().isEmpty()) {
-            profesor.setEspecialidadId(null);
-        } else {
-            try {
-                profesor.setEspecialidadId(Integer.valueOf(especialidadIdParam.trim()));
-            } catch (NumberFormatException ex) {
-                errors.add("Especialidad inválida.");
+        if (padre != null) {
+            padre.setUsuario(usuario != null ? usuario.trim() : null);
+            if (correo != null) {
+                padre.setCorreo(correo.trim());
+            }
+            if (telefono != null) {
+                padre.setTelefono(telefono.trim());
             }
         }
 
@@ -493,13 +515,26 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
-        boolean ok = profesorDao.update(profesor);
+        boolean ok = false;
+        if (profesor != null) {
+            ok = profesorDao.update(profesor);
+        } else if (padre != null) {
+            try {
+                ok = new PadreDao().update(padre);
+            } catch (SQLException ex) {
+                errors.add("No se pudo guardar la información del perfil familiar.");
+                log("Error updating parent profile", ex);
+            }
+        }
+
         if (ok) {
             if (session != null) {
                 appendActivityLog(session, "Datos del perfil actualizados");
                 session.setAttribute("flashMessage", "Datos guardados correctamente.");
-                String specialtyName = resolveProfesorEspecialidadNombre(profesor);
-                session.setAttribute("siaSpecialty", SiaUiContext.normalizeSpecialty(specialtyName));
+                if (profesor != null) {
+                    String specialtyName = resolveProfesorEspecialidadNombre(profesor);
+                    session.setAttribute("siaSpecialty", SiaUiContext.normalizeSpecialty(specialtyName));
+                }
             }
             if (isAjaxRequest(req)) {
                 writeJsonResponse(resp, true, "Datos guardados correctamente.");
