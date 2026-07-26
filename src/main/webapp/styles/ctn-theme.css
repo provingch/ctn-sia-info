@@ -63,9 +63,12 @@ body[data-specialty="electromecanica"] { --accent: var(--color-accent-electromec
 body[data-specialty="electricidad"] { --accent: var(--color-accent-electricidad); --accent-contrast: #14233b; }
 
 * { box-sizing: border-box; }
-html, body { min-height: 100%; }
+html, body { height: 100%; }
 body {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   background:
     radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent) 0 280px, transparent 281px),
     linear-gradient(color-mix(in srgb, var(--line) 42%, transparent) 1px, transparent 1px) 0 0/100% 32px,
@@ -78,7 +81,7 @@ body {
 }
 
 main {
-  display: block;
+  flex: 1 1 auto;
 }
 
 .page-shell,
@@ -315,9 +318,11 @@ input:focus, select:focus, textarea:focus {
 input.no-spinner { appearance: textfield; -moz-appearance: textfield; }
 input.no-spinner::-webkit-inner-spin-button, input.no-spinner::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
-body.login-page .login-main { min-height: calc(100vh - 72px); display: grid; align-items: center; }
-body.login-page .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: auto; }
-.login-card { max-width: 420px; width: 100%; padding: 28px; border-radius: var(--radius); }
+body.login-page .login-main { min-height: calc(100vh - 72px); display: flex; align-items: center; justify-content: center; }
+body.login-page .login-wrapper { display: block; min-height: auto; }
+.login-card { max-width: 420px; width: 100%; padding: 28px; border-radius: var(--radius); overflow: visible; }
+.login-form { overflow: visible; }
+.login-card, .login-form { min-height: 0; }
 .login-logo-container { display: flex; justify-content: center; margin-bottom: 16px; }
 .login-logo { width: 70px; height: 70px; }
 .login-heading { text-align: center; margin-bottom: 18px; }
@@ -722,7 +727,17 @@ button,
   line-height: 1.2;
 }
 
-.manual-link,
+.manual-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 0;
+  background: #ecf0f1;
+  color: #34495e;
+  border-radius: 6px;
+  margin: 6px 8px;
+}
+
 .theme-toggle-button {
   display: inline-flex;
   align-items: center;
@@ -1134,6 +1149,9 @@ html[data-theme="dark"] .label {
 
 .ctn-navbar .container-fluid {
   max-width: 1180px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .ctn-navbar .navbar-header,
@@ -1165,6 +1183,18 @@ html[data-theme="dark"] .label {
   padding-bottom: 0;
   color: #34495e;
   font-weight: 700;
+}
+
+.ctn-navbar .navbar-right {
+  margin-left: auto;
+}
+
+.ctn-navbar .ctn-theme-item {
+  margin-left: auto;
+}
+
+.ctn-navbar .ctn-theme-item .theme-toggle-button {
+  margin-right: 16px;
 }
 
 .ctn-navbar .navbar-nav > li > a:hover,
@@ -1232,6 +1262,30 @@ html[data-theme="dark"] .ctn-navbar .dropdown-menu > li > a:hover {
   background: var(--color-bg-muted);
   color: var(--ink);
 }
+
+/* Dark-mode: ensure dropdowns and footer use dark variables */
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .dropdown-menu > li > a {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] footer,
+html[data-theme="dark"] .footer {
+  background: var(--paper) !important;
+  color: var(--muted) !important;
+}
+
+/* Ensure navbar menus render above other content */
+.ctn-navbar .dropdown-menu {
+  position: absolute;
+  z-index: 2000;
+}
+
+/* Make nav list align right reliably */
+.ctn-navbar .navbar-nav { margin-left: auto; }
 
 @media (max-width: 640px) {
   body {
