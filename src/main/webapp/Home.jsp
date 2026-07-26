@@ -22,7 +22,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=203">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=204">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
 
@@ -118,21 +118,16 @@
               <div class="section-heading">Planillas del curso</div>
               <div class="planilla-grid">
                 <c:forEach var="planilla" items="${planillas}">
-                  <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?planillaId=${planilla.id}&cursoId=${selCurso.id}&materiaId=${planilla.materiaId}&etapa=${selEtapa}" style="display:block;color:inherit;text-decoration:none;">
-                    <div class="card-surface" style="border:none;border-left:4px solid var(--accent);cursor:pointer;transition:transform 120ms ease,border-color 120ms ease;">
-                      <div class="head" style="padding:10px 14px;font-weight:600;border-bottom:1px solid var(--color-border);background:transparent;display:flex;justify-content:space-between;align-items:center;color:inherit;">
-                        <c:out value="${planilla.nombre}" />
+                  <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?planillaId=${planilla.id}&cursoId=${selCurso.id}&materiaId=${planilla.materiaId}&etapa=${selEtapa}">
+                    <div class="subject-card">
+                      <div class="subject-card__header">
+                        <div class="subject-card__title"><c:out value="${planilla.nombre}" /></div>
                       </div>
-                      <div class="body">
-                        <div class="info-grid">
-                          <span class="total-tareas label">Periodo</span>
-                          <span class="total-tareas colon">:</span>
-                          <span class="total-tareas value"><c:out value="${planilla.periodo}" /></span>
-                          <span class="total-tareas label">Tareas</span>
-                          <span class="total-tareas colon">:</span>
-                          <span class="total-tareas value"><c:out value="${planilla.tareasCount}" /></span>
-                        </div>
+                      <div class="subject-card__meta">
+                        <span class="subject-card__chip">Periodo <strong><c:out value="${planilla.periodo}" /></strong></span>
+                        <span class="subject-card__chip">Tareas <strong><c:out value="${planilla.tareasCount}" /></strong></span>
                       </div>
+                      <span class="subject-card__action">Abrir planilla</span>
                     </div>
                   </a>
                 </c:forEach>
@@ -154,21 +149,16 @@
           <div class="section-heading">Materias disponibles para asignar</div>
           <div class="planilla-grid">
             <c:forEach var="materia" items="${materiasDetectadas}">
-              <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${materia.id}&etapa=${selEtapa}" style="display:block;color:inherit;text-decoration:none;">
-                <div class="card-surface" style="border:none;border-left:4px solid var(--accent);">
-                  <div class="head" style="padding:10px 14px;font-weight:600;border-bottom:1px solid var(--color-border);display:flex;justify-content:space-between;align-items:center;">
-                    <div class="card-title-row">
-                      <c:out value="${materia.nombre}" />
-                      <span class="badge-warning">Sin planilla creada</span>
-                    </div>
+              <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${materia.id}&etapa=${selEtapa}">
+                <div class="subject-card">
+                  <div class="subject-card__header">
+                    <div class="subject-card__title"><c:out value="${materia.nombre}" /></div>
+                    <span class="subject-card__status">Sin planilla</span>
                   </div>
-                  <div class="body">
-                    <div class="info-grid">
-                      <span class="total-tareas label">Categoría</span>
-                      <span class="total-tareas colon">:</span>
-                      <span class="total-tareas value"><c:out value="${materia.categoria}" /></span>
-                    </div>
+                  <div class="subject-card__meta">
+                    <span class="subject-card__chip">Categoría <strong><c:out value="${materia.categoria}" /></strong></span>
                   </div>
+                  <span class="subject-card__action">Crear planilla</span>
                 </div>
               </a>
             </c:forEach>
