@@ -294,7 +294,11 @@ public class ProfileServlet extends HttpServlet {
             }
         }
         if (profesor != null && manualTeacherSubjectsText.isEmpty()) {
-            manualTeacherSubjectsText = new ProfesorDao().findManualSubjectsText(profesor.getId());
+            try {
+                manualTeacherSubjectsText = new ProfesorDao().findManualSubjectsText(profesor.getId());
+            } catch (SQLException ex) {
+                log("Error loading manual teacher subjects for profile user " + (user != null ? user.getId() : -1), ex);
+            }
         }
         try {
             teacherMaterias = loadTeacherMaterias(profesor);
