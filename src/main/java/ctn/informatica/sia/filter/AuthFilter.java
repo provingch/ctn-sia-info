@@ -38,7 +38,7 @@ public class AuthFilter implements Filter {
             "/HomeServlet", List.of(1),
             "/PlanillaServlet", List.of(1),
             "/TareaServlet", List.of(1),
-            "/ProfileServlet", List.of(1, 3),
+            "/ProfileServlet", List.of(1, 2, 3, 4),
             "/EvaluacionServlet", List.of(2),
             "/AdminServlet", List.of(3),
             "/AdminMateriasServlet", List.of(3),

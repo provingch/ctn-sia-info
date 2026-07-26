@@ -5,33 +5,58 @@
   const declineBtn = document.getElementById('declineCookies');
 
   if (!banner || !acceptBtn || !declineBtn) {
-    return; // Elements not found, skip
+    return;
   }
 
-  function hasConsent() {
-    const stored = localStorage.getItem(CONSENT_KEY);
-    return stored === 'accepted';
+  function readCookie(name) {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  function readStoredConsent() {
+    try {
+      const stored = window.localStorage.getItem(CONSENT_KEY);
+      if (stored === 'accepted' || stored === 'declined') {
+        return stored;
+      }
+    } catch (error) {
+      // Ignore storage access issues and fall back to cookies.
+    }
+
+    const cookieValue = readCookie(CONSENT_KEY);
+    return cookieValue === 'accepted' || cookieValue === 'declined' ? cookieValue : null;
+  }
+
+  function writeStoredConsent(accepted) {
+    const value = accepted ? 'accepted' : 'declined';
+    try {
+      window.localStorage.setItem(CONSENT_KEY, value);
+    } catch (error) {
+      // Ignore storage access issues and keep the cookie fallback.
+    }
+
+    document.cookie = `${CONSENT_KEY}=${encodeURIComponent(value)}; path=/; max-age=31536000; SameSite=Lax`;
   }
 
   function hideBanner() {
     banner.classList.add('hidden');
   }
 
-  function saveConsent(accepted) {
-    localStorage.setItem(CONSENT_KEY, accepted ? 'accepted' : 'declined');
-    hideBanner();
+  function hasConsent() {
+    return readStoredConsent() === 'accepted';
   }
 
-  // Check if user has already given consent
   if (hasConsent()) {
     hideBanner();
   }
 
   acceptBtn.addEventListener('click', function () {
-    saveConsent(true);
+    writeStoredConsent(true);
+    hideBanner();
   });
 
   declineBtn.addEventListener('click', function () {
-    saveConsent(false);
+    writeStoredConsent(false);
+    hideBanner();
   });
 })();
