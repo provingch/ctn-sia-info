@@ -78,13 +78,14 @@
         <div class="planilla-hero__header">
           <div class="planilla-hero__info">
             <span class="badge"><span class="dot"></span>${selCurso.especialidad}</span>
-            <h1>Materias de ${selCurso.especialidad} ${selCurso.getCurso()}.<sup>o</sup> "${selCurso.seccion}"</h1>
-            <p class="planilla-subtitle">Panel principal para abrir planillas, revisar cursos y gestionar tareas.</p>
+            <h1>Panel del curso</h1>
+            <p class="planilla-subtitle">Gestiona planillas, revisa cursos y tareas de tu especialidad.</p>
           </div>
         </div>
         <div class="menu-container">
           <form action="HomeServlet" method="get">
-            <select class="selCurso" name="cursoId" onchange="this.form.submit()">
+            <label for="cursoSelect" style="font-weight:600;margin-right:0.5rem;">Selecciona un curso:</label>
+            <select id="cursoSelect" class="selCurso" name="cursoId" onchange="this.form.submit()">
               <option value="">--Seleccione un curso--</option>
               <c:forEach var="c" items="${cursos}">
                   <option value="${c.id}"
@@ -94,11 +95,6 @@
               </c:forEach>
             </select>
           </form>
-
-          <p class="selection-hint">
-            Curso seleccionado: <strong>${selCurso.especialidad} ${selCurso.getCurso()}.<sup>o</sup> "${selCurso.seccion}"</strong>
-          </p>
-          <span id="date-range"><i><b>Desde:</b> - <b>Hasta:</b></i></span>
         </div>
       </div>
 
@@ -129,9 +125,9 @@
               <div class="section-heading">Planillas del curso</div>
               <div class="planilla-grid">
                 <c:forEach var="planilla" items="${planillas}">
-                  <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?planillaId=${planilla.id}&cursoId=${selCurso.id}&materiaId=${planilla.materiaId}&etapa=${selEtapa}">
-                    <div class="planilla-card card">
-                      <div class="head">
+                  <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?planillaId=${planilla.id}&cursoId=${selCurso.id}&materiaId=${planilla.materiaId}&etapa=${selEtapa}" style="display:block;color:inherit;text-decoration:none;">
+                    <div class="card-surface" style="border:none;border-left:4px solid var(--accent);cursor:pointer;transition:transform 120ms ease,border-color 120ms ease;">
+                      <div class="head" style="padding:10px 14px;font-weight:600;border-bottom:1px solid var(--color-border);background:transparent;display:flex;justify-content:space-between;align-items:center;color:inherit;">
                         <c:out value="${planilla.nombre}" />
                       </div>
                       <div class="body">
@@ -165,9 +161,9 @@
           <div class="section-heading">Materias disponibles para asignar</div>
           <div class="planilla-grid">
             <c:forEach var="materia" items="${materiasDetectadas}">
-              <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${materia.id}&etapa=${selEtapa}">
-                <div class="planilla-card card">
-                  <div class="head">
+              <a class="planilla-card-link" href="${pageContext.request.contextPath}/PlanillaServlet?cursoId=${selCurso.id}&materiaId=${materia.id}&etapa=${selEtapa}" style="display:block;color:inherit;text-decoration:none;">
+                <div class="card-surface" style="border:none;border-left:4px solid var(--accent);">
+                  <div class="head" style="padding:10px 14px;font-weight:600;border-bottom:1px solid var(--color-border);display:flex;justify-content:space-between;align-items:center;">
                     <div class="card-title-row">
                       <c:out value="${materia.nombre}" />
                       <span class="badge-warning">Sin planilla creada</span>
@@ -217,9 +213,9 @@
               </c:choose>
               <c:choose>
                 <c:when test="${not empty planillaId or not empty materiaId}">
-                  <a class="planilla-card-link" href="${courseLink}">
-                    <div class="planilla-card card">
-                      <div class="head">
+                  <a class="planilla-card-link" href="${courseLink}" style="display:block;color:inherit;text-decoration:none;">
+                    <div class="card-surface" style="border:none;border-left:4px solid var(--accent);cursor:pointer;transition:transform 120ms ease,border-color 120ms ease;">
+                      <div class="head" style="padding:10px 14px;font-weight:600;border-bottom:1px solid var(--color-border);background:transparent;display:flex;justify-content:space-between;align-items:center;color:inherit;">
                         <c:out value="${course.name}" />
                       </div>
                       <div class="body">
@@ -233,8 +229,8 @@
                   </a>
                 </c:when>
                 <c:otherwise>
-                  <div class="planilla-card card" aria-disabled="true">
-                    <div class="head">
+                  <div class="card-surface" style="border:none;border-left:4px solid var(--accent);opacity:0.6;" aria-disabled="true">
+                    <div class="head" style="padding:10px 14px;font-weight:600;border-bottom:1px solid var(--color-border);background:transparent;display:flex;justify-content:space-between;align-items:center;color:inherit;">
                       <div class="card-title-row">
                         <c:out value="${course.name}" />
                         <span class="badge-warning">Sin vincular</span>
