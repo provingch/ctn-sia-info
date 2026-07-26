@@ -162,6 +162,20 @@ public class ProfileServlet extends HttpServlet {
         return "XMLHttpRequest".equals(req.getHeader("X-Requested-With"));
     }
 
+    boolean canModifyField(String fieldName, User currentUser) {
+        if (currentUser == null || fieldName == null) {
+            return false;
+        }
+        if (currentUser.getLevel() == 3) {
+            return true;
+        }
+        String normalized = fieldName.trim().toLowerCase();
+        return !"nombre".equals(normalized)
+                && !"apellido".equals(normalized)
+                && !"ci".equals(normalized)
+                && !"nivel".equals(normalized);
+    }
+
     private void writeJsonResponse(HttpServletResponse resp, boolean success, String message) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
         resp.setCharacterEncoding("UTF-8");
@@ -336,6 +350,7 @@ public class ProfileServlet extends HttpServlet {
         req.setAttribute("showGoogleClassroomPanel", isProfessorProfile);
         req.setAttribute("showSecurityPanel", true);
         req.setAttribute("showActivityPanel", true);
+        req.setAttribute("canEditAdminOnlyProfileFields", canModifyField("nombre", user));
         req.setAttribute("googleClassroomConnected", googleClassroomConnected);
         req.setAttribute("googleClassroomCourses", googleClassroomCourses);
         req.setAttribute("teacherMaterias", teacherMaterias);
@@ -451,6 +466,7 @@ public class ProfileServlet extends HttpServlet {
         if (profesor == null && padre == null) {
             errors.add("No se pudo cargar el perfil del usuario.");
             req.setAttribute("errors", errors);
+            req.setAttribute("canEditAdminOnlyProfileFields", canModifyField("nombre", user));
             req.getRequestDispatcher("/Profile.jsp").forward(req, resp);
             return;
         }
@@ -460,6 +476,10 @@ public class ProfileServlet extends HttpServlet {
         String celular = req.getParameter("celular");
         String usuario = req.getParameter("usuario");
         String especialidadIdParam = req.getParameter("especialidadId");
+        String nombre = req.getParameter("nombre");
+        String apellido = req.getParameter("apellido");
+        String ciParam = req.getParameter("ci");
+        String nivelParam = req.getParameter("nivel");
 
         if (usuario == null || usuario.trim().isEmpty()) {
             errors.add("El nombre de usuario no puede estar vacío.");
@@ -494,6 +514,43 @@ public class ProfileServlet extends HttpServlet {
                     errors.add("Especialidad inválida.");
                 }
             }
+
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                if (canModifyField("nombre", user)) {
+                    profesor.setNombre(nombre.trim());
+                } else {
+                    errors.add("Solo el administrador puede modificar el nombre.");
+                }
+            }
+            if (apellido != null && !apellido.trim().isEmpty()) {
+                if (canModifyField("apellido", user)) {
+                    profesor.setApellido(apellido.trim());
+                } else {
+                    errors.add("Solo el administrador puede modificar el apellido.");
+                }
+            }
+            if (ciParam != null && !ciParam.trim().isEmpty()) {
+                if (canModifyField("ci", user)) {
+                    try {
+                        profesor.setCi(Integer.valueOf(ciParam.trim()));
+                    } catch (NumberFormatException ex) {
+                        errors.add("Cédula inválida.");
+                    }
+                } else {
+                    errors.add("Solo el administrador puede modificar la cédula.");
+                }
+            }
+            if (nivelParam != null && !nivelParam.trim().isEmpty()) {
+                if (canModifyField("nivel", user)) {
+                    try {
+                        profesor.setNivel(Integer.parseInt(nivelParam.trim()));
+                    } catch (NumberFormatException ex) {
+                        errors.add("Nivel inválido.");
+                    }
+                } else {
+                    errors.add("Solo el administrador puede modificar el nivel.");
+                }
+            }
         }
 
         if (padre != null) {
@@ -504,6 +561,31 @@ public class ProfileServlet extends HttpServlet {
             if (telefono != null) {
                 padre.setTelefono(telefono.trim());
             }
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                if (canModifyField("nombre", user)) {
+                    padre.setNombre(nombre.trim());
+                } else {
+                    errors.add("Solo el administrador puede modificar el nombre.");
+                }
+            }
+            if (apellido != null && !apellido.trim().isEmpty()) {
+                if (canModifyField("apellido", user)) {
+                    padre.setApellido(apellido.trim());
+                } else {
+                    errors.add("Solo el administrador puede modificar el apellido.");
+                }
+            }
+            if (ciParam != null && !ciParam.trim().isEmpty()) {
+                if (canModifyField("ci", user)) {
+                    try {
+                        padre.setCi(Integer.valueOf(ciParam.trim()));
+                    } catch (NumberFormatException ex) {
+                        errors.add("Cédula inválida.");
+                    }
+                } else {
+                    errors.add("Solo el administrador puede modificar la cédula.");
+                }
+            }
         }
 
         if (!errors.isEmpty()) {
@@ -511,6 +593,7 @@ public class ProfileServlet extends HttpServlet {
             req.setAttribute("profesor", profesor);
             req.setAttribute("especialidades", loadEspecialidades());
             req.setAttribute("profesorEspecialidadNombre", resolveProfesorEspecialidadNombre(profesor));
+            req.setAttribute("canEditAdminOnlyProfileFields", canModifyField("nombre", user));
             req.getRequestDispatcher("/Profile.jsp").forward(req, resp);
             return;
         }

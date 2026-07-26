@@ -133,12 +133,52 @@
                       <div class="form-card card">
                         <div class="form-card-header">Información Personal</div>
                         <div class="form-field">
-                          <label for="profesorName">Nombre</label>
-                          <input type="text" id="profesorName" value="${profesor.fullName}" disabled />
+                          <label for="nombre">Nombre</label>
+                          <c:choose>
+                            <c:when test="${canEditAdminOnlyProfileFields}">
+                              <input type="text" id="nombre" name="nombre" value="${profesor.nombre}" />
+                            </c:when>
+                            <c:otherwise>
+                              <input type="text" id="nombre" value="${profesor.nombre}" disabled />
+                            </c:otherwise>
+                          </c:choose>
                         </div>
                         <div class="form-field">
-                          <label for="profesorCI">Cédula</label>
-                          <input type="text" id="profesorCI" value="${profesor.ci}" disabled />
+                          <label for="apellido">Apellido</label>
+                          <c:choose>
+                            <c:when test="${canEditAdminOnlyProfileFields}">
+                              <input type="text" id="apellido" name="apellido" value="${profesor.apellido}" />
+                            </c:when>
+                            <c:otherwise>
+                              <input type="text" id="apellido" value="${profesor.apellido}" disabled />
+                            </c:otherwise>
+                          </c:choose>
+                        </div>
+                        <div class="form-field">
+                          <label for="ci">Cédula</label>
+                          <c:choose>
+                            <c:when test="${canEditAdminOnlyProfileFields}">
+                              <input type="text" id="ci" name="ci" value="${profesor.ci}" />
+                            </c:when>
+                            <c:otherwise>
+                              <input type="text" id="ci" value="${profesor.ci}" disabled />
+                            </c:otherwise>
+                          </c:choose>
+                        </div>
+                        <div class="form-field">
+                          <label for="nivel">Nivel</label>
+                          <c:choose>
+                            <c:when test="${canEditAdminOnlyProfileFields}">
+                              <select id="nivel" name="nivel">
+                                <option value="1" ${profesor.nivel == 1 ? 'selected' : ''}>1</option>
+                                <option value="2" ${profesor.nivel == 2 ? 'selected' : ''}>2</option>
+                                <option value="3" ${profesor.nivel == 3 ? 'selected' : ''}>3</option>
+                              </select>
+                            </c:when>
+                            <c:otherwise>
+                              <input type="text" id="nivel" value="${profesor.nivel}" disabled />
+                            </c:otherwise>
+                          </c:choose>
                         </div>
                       </div>
                       <div class="form-card card">
@@ -206,12 +246,37 @@
                       <div class="form-card card">
                         <div class="form-card-header">Información Personal</div>
                         <div class="form-field">
-                          <label for="padreName">Nombre</label>
-                          <input type="text" id="padreName" value="${empty profileOwner.fullName ? sessionScope.user.fullName : profileOwner.fullName}" disabled />
+                          <label for="padreNombre">Nombre</label>
+                          <c:choose>
+                            <c:when test="${canEditAdminOnlyProfileFields}">
+                              <input type="text" id="padreNombre" name="nombre" value="${empty profileOwner.nombre ? '' : profileOwner.nombre}" />
+                            </c:when>
+                            <c:otherwise>
+                              <input type="text" id="padreNombre" value="${empty profileOwner.fullName ? sessionScope.user.fullName : profileOwner.fullName}" disabled />
+                            </c:otherwise>
+                          </c:choose>
+                        </div>
+                        <div class="form-field">
+                          <label for="padreApellido">Apellido</label>
+                          <c:choose>
+                            <c:when test="${canEditAdminOnlyProfileFields}">
+                              <input type="text" id="padreApellido" name="apellido" value="${empty profileOwner.apellido ? '' : profileOwner.apellido}" />
+                            </c:when>
+                            <c:otherwise>
+                              <input type="text" id="padreApellido" value="${empty profileOwner.apellido ? '' : profileOwner.apellido}" disabled />
+                            </c:otherwise>
+                          </c:choose>
                         </div>
                         <div class="form-field">
                           <label for="padreCI">Cédula</label>
-                          <input type="text" id="padreCI" value="${empty profileOwner.ci ? 'No registrada' : profileOwner.ci}" disabled />
+                          <c:choose>
+                            <c:when test="${canEditAdminOnlyProfileFields}">
+                              <input type="text" id="padreCI" name="ci" value="${empty profileOwner.ci ? '' : profileOwner.ci}" />
+                            </c:when>
+                            <c:otherwise>
+                              <input type="text" id="padreCI" value="${empty profileOwner.ci ? 'No registrada' : profileOwner.ci}" disabled />
+                            </c:otherwise>
+                          </c:choose>
                         </div>
                       </div>
                       <div class="form-card card">
@@ -510,12 +575,12 @@
     }
 
     profileForm.addEventListener('input', function (event) {
-      if (!['correo', 'telefono', 'celular', 'usuario', 'especialidadId'].includes(event.target.name)) return;
+      if (!['correo', 'telefono', 'celular', 'usuario', 'especialidadId', 'nombre', 'apellido', 'ci', 'nivel'].includes(event.target.name)) return;
       scheduleProfileSave();
     });
 
     profileForm.addEventListener('change', function (event) {
-      if (!['correo', 'telefono', 'celular', 'usuario', 'especialidadId'].includes(event.target.name)) return;
+      if (!['correo', 'telefono', 'celular', 'usuario', 'especialidadId', 'nombre', 'apellido', 'ci', 'nivel'].includes(event.target.name)) return;
       scheduleProfileSave();
     });
 
