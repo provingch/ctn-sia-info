@@ -264,7 +264,7 @@
 <script>
 const CURSOS = [
     <c:forEach var="cu" items="${cursos}" varStatus="s">
-        {"id": ${cu.id}, "especialidad": "<c:out value='${cu.especialidad}'/>", "promocion": ${cu.promocion}, "seccion": "<c:out value='${cu.seccion}'/>"}<c:if test="${!s.last}">,</c:if>
+        {"id": ${cu.id}, "especialidad": "<c:out value='${cu.especialidad}'/>", "nivel": ${cu.curso}, "seccion": "<c:out value='${cu.seccion}'/>"}<c:if test="${!s.last}">,</c:if>
     </c:forEach>
 ];
 
@@ -316,7 +316,7 @@ const CURSOS = [
       selSeccion.disabled = true;
       return;
     }
-    const promos = [...new Set(CURSOS.filter(c => c.especialidad === esp).map(c => c.promocion))].sort((a,b)=>a-b);
+    const promos = [...new Set(CURSOS.filter(c => c.especialidad === esp).map(c => c.nivel))].sort((a,b)=>a-b);
     promos.forEach(p => selPromocion.appendChild(new Option(formatPromocion(p), p)));
     selPromocion.disabled = false;
     selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
@@ -332,7 +332,7 @@ const CURSOS = [
       selSeccion.disabled = true;
       return;
     }
-    const secciones = [...new Set(CURSOS.filter(c => c.especialidad === esp && c.promocion === promo).map(c => c.seccion))];
+    const secciones = [...new Set(CURSOS.filter(c => c.especialidad === esp && c.nivel === promo).map(c => c.seccion))];
     secciones.forEach(s => selSeccion.appendChild(new Option(s,s)));
     selSeccion.disabled = false;
   }
@@ -345,7 +345,7 @@ const CURSOS = [
     if (!esp || !promo || !seccion) {
       return;
     }
-    const found = CURSOS.find(c => c.especialidad === esp && c.promocion === promo && c.seccion === seccion);
+    const found = CURSOS.find(c => c.especialidad === esp && c.nivel === promo && c.seccion === seccion);
     if (found) {
       cursoIdHidden.value = found.id;
       if (submit) {
@@ -360,7 +360,7 @@ const CURSOS = [
     if (!found) return;
     selEspecialidad.value = found.especialidad;
     populatePromocion();
-    selPromocion.value = found.promocion;
+    selPromocion.value = found.nivel;
     populateSeccion();
     selSeccion.value = found.seccion;
     updateHiddenCursoId(false);
