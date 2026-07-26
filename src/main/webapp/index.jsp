@@ -16,7 +16,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=200">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=201">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   </head>
 
@@ -76,6 +76,11 @@
       </div>
     </main>
 
+    <footer class="footer">
+      <hr>
+      <p>Colegio Técnico Nacional</p>
+    </footer>
+
     <!-- Cookie Consent Banner -->
     <div id="cookieConsent" class="cookie-consent-banner" role="banner">
       <div class="cookie-consent-content">
@@ -91,7 +96,7 @@
     </div>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
-  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
+  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
     <script src="${pageContext.request.contextPath}/scripts/cookie-consent.js?v=163"></script>
   </body>
 

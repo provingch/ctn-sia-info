@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=200">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=201">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg" />
 </head>
 <body data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
@@ -108,6 +108,10 @@
         </table>
 
     </section>
+    <footer class="footer">
+      <hr>
+      <p>Colegio Técnico Nacional</p>
+    </footer>
 </main>
 
 <!-- Dump cursos to JS for cascaded selector -->
@@ -175,6 +179,6 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
-  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
+  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
 </body>
 </html>

@@ -48,6 +48,35 @@
     }
   }
 
+  function ensureSessionDropdown() {
+    const button = document.getElementById('sessionButton');
+    if (!button) return;
+    const dropdown = button.closest('.dropdown');
+    const menu = document.getElementById('sessionMenu');
+    if (!dropdown || !menu) return;
+    if (window.jQuery && window.jQuery.fn && window.jQuery.fn.dropdown) return;
+
+    function closeMenu() {
+      dropdown.classList.remove('open');
+      button.setAttribute('aria-expanded', 'false');
+    }
+
+    button.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const isOpen = dropdown.classList.toggle('open');
+      button.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!dropdown.contains(event.target)) closeMenu();
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeMenu();
+    });
+  }
+
   const initial = (() => {
     const saved = localStorage.getItem('ctnDarkMode');
     if (saved === 'true') return true;
@@ -74,5 +103,6 @@
       }
     }
     applyThemeFromAttr();
+    ensureSessionDropdown();
   });
 })();

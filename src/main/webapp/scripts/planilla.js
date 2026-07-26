@@ -276,9 +276,9 @@
 
     // --------------- session dropdown ---------------
     (function sessionDropdown() {
-      const dropdown = document.getElementById('sessionDropdown');
-      if (!dropdown) return;
       const button = document.getElementById('sessionButton');
+      const dropdown = document.getElementById('sessionDropdown') || (button && button.closest('.dropdown'));
+      if (!dropdown) return;
       const menu = document.getElementById('sessionMenu');
       if (!button) return;
 

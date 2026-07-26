@@ -16,8 +16,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><c:out value="${not empty pageTitle ? pageTitle : planilla.nombre}" /></title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=200">
-  <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=163"></script>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=201">
+  <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=164"></script>
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
 </head>
 
@@ -281,7 +281,7 @@
   </c:if>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
-  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
+  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
 </body>
 
 </html>

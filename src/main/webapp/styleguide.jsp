@@ -11,7 +11,7 @@
   <meta charset="utf-8" />
   <title>Styleguide — Foundation</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=200">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=201">
   <style>body{padding:24px}</style>
 </head>
 <body>
@@ -66,9 +66,14 @@
     </div>
   </section>
 
+  <footer class="footer">
+    <hr>
+    <p>Colegio Técnico Nacional</p>
+  </footer>
+
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
-  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=163"></script>
+  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
   <script>
     document.getElementById('specialtySelect').addEventListener('change', function(e){
       var val = e.target.value;
