@@ -132,6 +132,7 @@ h1, h2, h3 { font-family: var(--font-display); margin: 0; }
 }
 
 section { margin-bottom: 28px; }
+.page-shell { margin-bottom: 0; }
 .section-title {
   font-size: 11px;
   text-transform: uppercase;
@@ -339,7 +340,7 @@ section { margin-bottom: 28px; }
   overflow: visible;
 }
 .card .head, .table-header, .section-heading {
-  padding: 10px 14px;
+  padding: 8px 12px;
   font-size: 13px;
   font-weight: 600;
   border-bottom: 1px solid var(--line);
@@ -350,7 +351,7 @@ section { margin-bottom: 28px; }
   color: var(--ink);
 }
 .card .body, .table-card .cell, .planilla-card .card-body, .profile-panel, .section-block .section-heading {
-  padding: 12px 14px;
+  padding: 10px 12px;
   font-size: 12.5px;
   color: var(--muted);
 }
@@ -651,7 +652,7 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);
   gap: 0;
-  min-height: calc(100vh - 180px);
+  min-height: auto;
   border: 1px solid var(--line);
   background: var(--paper);
   border-left: 4px solid var(--accent);
@@ -665,8 +666,8 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   align-self: flex-start;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 180px);
-  padding: 24px 18px 20px;
+  min-height: auto;
+  padding: 20px 16px 16px;
   border: none;
   background: color-mix(in srgb, var(--paper) 86%, #6b7280 14%);
   box-shadow: none;
@@ -719,7 +720,7 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 }
 .profile-panel.active {
   display: block;
-  padding: 24px;
+  padding: 20px;
   overflow-y: auto;
   max-height: calc(100vh - 232px);
 }
@@ -732,16 +733,17 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 
 .profile-tab {
   display: grid;
-  gap: 3px;
+  gap: 2px;
   width: 100%;
-  min-height: 58px;
-  padding: 10px 12px;
+  min-height: 50px;
+  padding: 10px 12px 10px 10px;
   border: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
   border-left: 4px solid color-mix(in srgb, #6b7280 62%, var(--line));
   border-radius: 6px;
   background: color-mix(in srgb, var(--paper) 74%, #6b7280 10%);
   color: color-mix(in srgb, var(--ink) 72%, var(--muted));
   text-align: left;
+  justify-items: start;
 }
 
 .profile-tab span {

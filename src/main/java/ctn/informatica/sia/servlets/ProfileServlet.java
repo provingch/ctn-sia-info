@@ -475,7 +475,6 @@ public class ProfileServlet extends HttpServlet {
         String telefono = req.getParameter("telefono");
         String celular = req.getParameter("celular");
         String usuario = req.getParameter("usuario");
-        String especialidadIdParam = req.getParameter("especialidadId");
         String nombre = req.getParameter("nombre");
         String apellido = req.getParameter("apellido");
         String ciParam = req.getParameter("ci");
@@ -505,16 +504,6 @@ public class ProfileServlet extends HttpServlet {
             if (correo != null) {
                 profesor.setCorreo(correo.trim());
             }
-            if (especialidadIdParam == null || especialidadIdParam.trim().isEmpty()) {
-                profesor.setEspecialidadId(null);
-            } else {
-                try {
-                    profesor.setEspecialidadId(Integer.valueOf(especialidadIdParam.trim()));
-                } catch (NumberFormatException ex) {
-                    errors.add("Especialidad inválida.");
-                }
-            }
-
             if (nombre != null && !nombre.trim().isEmpty()) {
                 if (canModifyField("nombre", user)) {
                     profesor.setNombre(nombre.trim());

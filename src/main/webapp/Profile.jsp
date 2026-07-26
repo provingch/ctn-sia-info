@@ -165,21 +165,6 @@
                             </c:otherwise>
                           </c:choose>
                         </div>
-                        <div class="form-field">
-                          <label for="nivel">Nivel</label>
-                          <c:choose>
-                            <c:when test="${canEditAdminOnlyProfileFields}">
-                              <select id="nivel" name="nivel">
-                                <option value="1" ${profesor.nivel == 1 ? 'selected' : ''}>1</option>
-                                <option value="2" ${profesor.nivel == 2 ? 'selected' : ''}>2</option>
-                                <option value="3" ${profesor.nivel == 3 ? 'selected' : ''}>3</option>
-                              </select>
-                            </c:when>
-                            <c:otherwise>
-                              <input type="text" id="nivel" value="${profesor.nivel}" disabled />
-                            </c:otherwise>
-                          </c:choose>
-                        </div>
                       </div>
                       <div class="form-card card">
                         <div class="form-card-header">Contacto</div>
@@ -201,17 +186,6 @@
                         <div class="form-field">
                           <label for="usuario">Usuario</label>
                           <input type="text" id="usuario" name="usuario" value="${profesor.usuario}" />
-                        </div>
-                        <div class="form-field">
-                          <label for="especialidadId">Especialidad personal</label>
-                          <select id="especialidadId" name="especialidadId">
-                            <option value="">-- Sin especialidad --</option>
-                            <c:forEach var="e" items="${especialidades}">
-                              <option value="${e.id}" ${profesor.especialidadId != null && profesor.especialidadId == e.id ? 'selected' : ''}>
-                                <c:out value="${e.nombre}" />
-                              </option>
-                            </c:forEach>
-                          </select>
                         </div>
                       </div>
                       <c:if test="${showGoogleClassroomPanel}">
@@ -442,9 +416,6 @@
       </div>
     </div>
   </div>
-  </div>
-
-
     </section>
 
     <footer class="footer">
