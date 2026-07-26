@@ -16,7 +16,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=204">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=206">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   <style>
   .inline-form {
@@ -28,19 +28,6 @@
     padding-left: 1.2rem;
     display: grid;
     gap: 0.6rem;
-  }
-  @media (max-width: 900px) {
-    .profile-tabs {
-      flex-direction: row;
-      overflow-x: auto;
-      gap: 0.75rem;
-      padding-bottom: 0.5rem;
-    }
-    .profile-tab {
-      flex: 1 0 auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-    }
   }
   </style>
 </head>
@@ -105,10 +92,22 @@
         <div class="profile-shell">
           <aside class="profile-sidebar" aria-label="Navegación de perfil">
             <div class="profile-tabs" role="tablist" aria-label="Secciones del perfil">
-              <button type="button" class="profile-tab active" data-target="perfil-panel">Perfil</button>
-              <button type="button" class="profile-tab" data-target="seguridad-panel">Seguridad</button>
-              <button type="button" class="profile-tab" data-target="materias-panel">Materias</button>
-              <button type="button" class="profile-tab" data-target="registros-panel">Registros</button>
+              <button type="button" class="profile-tab active" data-target="perfil-panel" role="tab" aria-controls="perfil-panel" aria-selected="true">
+                <span>Perfil</span>
+                <small>Datos personales</small>
+              </button>
+              <button type="button" class="profile-tab" data-target="seguridad-panel" role="tab" aria-controls="seguridad-panel" aria-selected="false">
+                <span>Seguridad</span>
+                <small>Contraseña</small>
+              </button>
+              <button type="button" class="profile-tab" data-target="materias-panel" role="tab" aria-controls="materias-panel" aria-selected="false">
+                <span>Materias</span>
+                <small>Asignaciones</small>
+              </button>
+              <button type="button" class="profile-tab" data-target="registros-panel" role="tab" aria-controls="registros-panel" aria-selected="false">
+                <span>Registros</span>
+                <small>Actividad</small>
+              </button>
             </div>
           </aside>
           <div class="profile-content">
@@ -194,7 +193,7 @@
               <form id="googleDisconnectForm" action="${pageContext.request.contextPath}${googleDisconnectUrl}" method="post" style="display:none;"></form>
             </section>
 
-            <section id="seguridad-panel" class="profile-panel">
+            <section id="seguridad-panel" class="profile-panel" hidden>
               <form id="securityForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="securitySaveStatus">
                 <input type="hidden" name="action" value="changePassword" />
                 <div class="profile-grid profile-grid-layout">
@@ -224,7 +223,7 @@
               </form>
             </section>
 
-        <section id="materias-panel" class="profile-panel">
+        <section id="materias-panel" class="profile-panel" hidden>
           <div class="table-card table-card--wide card">
             <div class="table-header">Asignaciones de materias</div>
             <div class="subject-list-grid">
@@ -233,14 +232,14 @@
                   <p class="empty-state">No hay asignaciones de materias registradas.</p>
                 </c:when>
                 <c:otherwise>
-                  <div class="subject-list-header" style="display:grid;grid-template-columns:1.5fr 1fr;gap:1rem;font-weight:600;padding:0.75rem 1rem;border-bottom:1px solid var(--line);">
+                  <div class="subject-list-header">
                     <span>Materia</span>
                     <span>Curso</span>
                   </div>
                   <c:forEach var="asignacion" items="${misAsignaciones}">
-                    <div class="subject-item" style="display:grid;grid-template-columns:1.5fr 1fr;gap:1rem;align-items:center;padding:0.9rem 1rem;border-bottom:1px solid var(--line);">
-                      <span><c:out value="${asignacion.materiaNombre}" /></span>
-                      <span><c:out value="${asignacion.cursoDescripcion}" /></span>
+                    <div class="subject-item">
+                      <span class="subject-item__name"><c:out value="${asignacion.materiaNombre}" /></span>
+                      <span class="subject-item__course"><c:out value="${asignacion.cursoDescripcion}" /></span>
                     </div>
                   </c:forEach>
                 </c:otherwise>
@@ -249,7 +248,7 @@
           </div>
         </section>
 
-        <section id="registros-panel" class="profile-panel">
+        <section id="registros-panel" class="profile-panel" hidden>
           <div class="activity-log">
             <c:choose>
               <c:when test="${empty activityLog}">
@@ -288,14 +287,18 @@
   function activateTab(tab) {
     tabs.forEach(function (item) {
       item.classList.remove('active');
+      item.setAttribute('aria-selected', 'false');
     });
     panels.forEach(function (panel) {
       panel.classList.remove('active');
+      panel.hidden = true;
     });
     tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
     const target = document.getElementById(tab.dataset.target);
     if (target) {
       target.classList.add('active');
+      target.hidden = false;
     }
     try {
       localStorage.setItem(storageKey, tab.dataset.target);
