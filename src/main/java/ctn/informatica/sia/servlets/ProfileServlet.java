@@ -159,6 +159,27 @@ public class ProfileServlet extends HttpServlet {
         }
     }
 
+    private void writeJsonResponse(HttpServletResponse resp, boolean success, String message, List<Materia> similarMaterias) throws IOException {
+        resp.setContentType("application/json;charset=UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        try (PrintWriter out = resp.getWriter()) {
+            out.write("{\"success\":" + success + ",\"message\":" + quoteJson(message));
+            if (similarMaterias != null) {
+                out.write(",\"needsDisambiguation\":true,\"similarMaterias\":[");
+                boolean first = true;
+                for (Materia similar : similarMaterias) {
+                    if (!first) {
+                        out.write(",");
+                    }
+                    first = false;
+                    out.write("{\"id\":" + similar.getId() + ",\"nombre\":" + quoteJson(similar.getNombre()) + ",\"categoria\":" + quoteJson(similar.getCategoria()) + "}");
+                }
+                out.write("]");
+            }
+            out.write("}");
+        }
+    }
+
     private String quoteJson(String input) {
         if (input == null) {
             return "\"\"";
@@ -291,8 +312,10 @@ public class ProfileServlet extends HttpServlet {
                         profesor.setContrasenia(newPassword);
                         new ProfesorDao().update(profesor);
                         RememberMeTokenStore.invalidateUserTokens(user.getId());
-                        session.setAttribute("flashMessage", "Contraseña actualizada exitosamente.");
-                        appendActivityLog(session, "Contraseña actualizada.");
+                        if (session != null) {
+                            session.setAttribute("flashMessage", "Contraseña actualizada exitosamente.");
+                            appendActivityLog(session, "Contraseña actualizada.");
+                        }
                     } else {
                         errors.add("La contraseña actual es incorrecta.");
                     }
@@ -301,11 +324,22 @@ public class ProfileServlet extends HttpServlet {
                     log("Error updating password for user " + (user != null ? user.getId() : -1), ex);
                 }
             }
-            
-            if (!errors.isEmpty()) {
-                session.setAttribute("errors", errors);
+
+            if (isAjaxRequest(req)) {
+                if (errors.isEmpty()) {
+                    writeJsonResponse(resp, true, "Contraseña actualizada exitosamente.");
+                } else {
+                    writeJsonResponse(resp, false, String.join("; ", errors));
+                }
+                return;
             }
-            
+
+            if (!errors.isEmpty()) {
+                req.setAttribute("errors", errors);
+                doGet(req, resp);
+                return;
+            }
+
             resp.sendRedirect(req.getContextPath() + "/ProfileServlet");
             return;
         }
@@ -449,6 +483,12 @@ public class ProfileServlet extends HttpServlet {
                     if (materia == null && user.getLevel() == 1) {
                         java.util.List<Materia> similar = materiaDao.findSimilarByName(materiaNombre);
                         if (!similar.isEmpty()) {
+                            if (isAjaxRequest(req)) {
+                                writeJsonResponse(resp, false,
+                                        "Se encontraron materias similares a \"" + materiaNombre + "\". Elegí una para vincularte o corrige el nombre.",
+                                        similar);
+                                return;
+                            }
                             req.setAttribute("similarMaterias", similar);
                             req.setAttribute("pendingMateriaNombre", materiaNombre);
                             req.setAttribute("categoria", categoria);
@@ -465,6 +505,11 @@ public class ProfileServlet extends HttpServlet {
                             // link only, do not change category/especialidades
                             materiaDao.linkProfesorMateria(user.getId(), materia.getId());
                             if (session != null) session.setAttribute("flashMessage", "Se ha vinculado a la materia existente. Para cambiar categoría/especialidades, contactá al admin.");
+                            if (isAjaxRequest(req)) {
+                                writeJsonResponse(resp, true,
+                                        "Se ha vinculado a la materia existente. Para cambiar categoría/especialidades, contactá al admin.");
+                                return;
+                            }
                             doGet(req, resp);
                             return;
                         }

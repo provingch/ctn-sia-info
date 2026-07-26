@@ -103,7 +103,7 @@
               <button type="button" class="flash-close" aria-label="Cerrar mensajes de error">&times;</button>
             </div>
         </c:forEach>
-        <c:remove var="flashErrors" scope="session"/>
+        <c:remove var="errors" scope="session"/>
       </c:if>
 
       <div class="profile-layout">
@@ -266,24 +266,26 @@
             </div>
           </form>
 
-          <c:if test="${not empty similarMaterias}">
-            <div class="card">
-              <div class="table-header">Se encontraron materias similares</div>
-              <p>Se detectaron materias parecidas a "${pendingMateriaNombre}". Seleccioná una para vincularte o volvé atrás para crear una nueva:</p>
-              <ul>
-                <c:forEach var="sm" items="${similarMaterias}">
-                  <li>
-                    ${sm.nombre} (${sm.categoria})
-                    <form method="post" action="${pageContext.request.contextPath}/ProfileServlet" style="display:inline-block;">
-                      <input type="hidden" name="action" value="linkExisting" />
-                      <input type="hidden" name="materiaId" value="${sm.id}" />
-                      <button type="submit">Vincularme</button>
-                    </form>
-                  </li>
-                </c:forEach>
-              </ul>
-            </div>
-          </c:if>
+          <div id="similarSubjectSuggestions">
+            <c:if test="${not empty similarMaterias}">
+              <div class="card">
+                <div class="table-header">Se encontraron materias similares</div>
+                <p>Se detectaron materias parecidas a "${pendingMateriaNombre}". Seleccioná una para vincularte o volvé atrás para crear una nueva:</p>
+                <ul>
+                  <c:forEach var="sm" items="${similarMaterias}">
+                    <li>
+                      ${sm.nombre} (${sm.categoria})
+                      <form method="post" action="${pageContext.request.contextPath}/ProfileServlet" style="display:inline-block;">
+                        <input type="hidden" name="action" value="linkExisting" />
+                        <input type="hidden" name="materiaId" value="${sm.id}" />
+                        <button type="submit">Vincularme</button>
+                      </form>
+                    </li>
+                  </c:forEach>
+                </ul>
+              </div>
+            </c:if>
+          </div>
 
             <div class="table-card table-card--wide card">
               <div class="table-header">Materias disponibles</div>
@@ -448,6 +450,64 @@
     return { success: response.ok, message: responseText || 'Operación completada.' };
   }
 
+  function clearSimilarSubjectSuggestions() {
+    const container = document.getElementById('similarSubjectSuggestions');
+    if (!container) return;
+    container.innerHTML = '';
+  }
+
+  function renderSimilarSubjectSuggestions(payload) {
+    const container = document.getElementById('similarSubjectSuggestions');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const header = document.createElement('div');
+    header.className = 'table-header';
+    header.textContent = 'Se encontraron materias similares';
+    card.appendChild(header);
+
+    const paragraph = document.createElement('p');
+    paragraph.textContent = payload.message || 'Se encontraron materias similares.';
+    card.appendChild(paragraph);
+
+    const list = document.createElement('ul');
+    (payload.similarMaterias || []).forEach(function (sm) {
+      const item = document.createElement('li');
+      item.textContent = sm.nombre + ' (' + sm.categoria + ') ';
+
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = subjectForm.getAttribute('action');
+      form.style.display = 'inline-block';
+
+      const actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = 'linkExisting';
+      form.appendChild(actionInput);
+
+      const idInput = document.createElement('input');
+      idInput.type = 'hidden';
+      idInput.name = 'materiaId';
+      idInput.value = sm.id;
+      form.appendChild(idInput);
+
+      const button = document.createElement('button');
+      button.type = 'submit';
+      button.textContent = 'Vincularme';
+      form.appendChild(button);
+
+      item.appendChild(form);
+      list.appendChild(item);
+    });
+
+    card.appendChild(list);
+    container.appendChild(card);
+  }
+
   function setStatus(el, message, tone) {
     if (!el) return;
     el.textContent = message;
@@ -530,10 +590,16 @@
       const responseText = await response.text();
       const payload = resolveAjaxPayload(responseText, response);
       if (!response.ok || !payload.success) {
+        if (payload.needsDisambiguation && isSubjectForm) {
+          renderSimilarSubjectSuggestions(payload);
+          setStatus(statusEl, payload.message || 'Se encontraron materias similares.', 'is-error');
+          return;
+        }
         throw new Error(payload.message || 'No se pudo guardar la información.');
       }
 
       if (isSubjectForm) {
+        clearSimilarSubjectSuggestions();
         const materiaInput = document.getElementById('materiaNombre');
         const materiaNombre = normalizeSubjectName(materiaInput ? materiaInput.value : '');
         if (materiaNombre) {
@@ -611,12 +677,12 @@
     }
 
     profileForm.addEventListener('input', function (event) {
-      if (!['correo', 'telefono', 'celular', 'usuario'].includes(event.target.name)) return;
+      if (!['correo', 'telefono', 'celular', 'usuario', 'especialidadId'].includes(event.target.name)) return;
       scheduleProfileSave();
     });
 
     profileForm.addEventListener('change', function (event) {
-      if (!['correo', 'telefono', 'celular', 'usuario'].includes(event.target.name)) return;
+      if (!['correo', 'telefono', 'celular', 'usuario', 'especialidadId'].includes(event.target.name)) return;
       scheduleProfileSave();
     });
 
