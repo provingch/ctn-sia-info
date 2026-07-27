@@ -461,7 +461,6 @@
               </form>
               <form id="confirmTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0; display:none;">
                 <input type="hidden" name="action" value="confirmTotp" />
-                <input type="hidden" name="totpSetupCode" id="confirmTotpSetupCode" />
               </form>
               <form id="disableTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0; display:none;">
                 <input type="hidden" name="action" value="disableTotp" />

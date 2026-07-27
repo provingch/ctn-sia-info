@@ -17,7 +17,7 @@ public final class TotpUtils {
     private static final int DEFAULT_SECRET_BYTES = 20;
     private static final int DEFAULT_DIGITS = 6;
     private static final int DEFAULT_PERIOD_SECONDS = 30;
-    private static final int DEFAULT_WINDOW = 1;
+    private static final int DEFAULT_WINDOW = 2;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private TotpUtils() {
