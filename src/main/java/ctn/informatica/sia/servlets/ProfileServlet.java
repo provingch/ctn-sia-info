@@ -515,21 +515,27 @@ public class ProfileServlet extends HttpServlet {
             String newPassword = req.getParameter("newPassword");
             String confirmPassword = req.getParameter("confirmPassword");
             
-            if (currentPassword == null || currentPassword.trim().isEmpty()) {
-                errors.add("La contraseña actual es requerida.");
-            }
-            if (newPassword == null || newPassword.trim().isEmpty()) {
-                errors.add("La nueva contraseña es requerida.");
-            } else if (newPassword.length() < 6) {
-                errors.add("La nueva contraseña debe tener al menos 6 caracteres.");
-            }
-            if (confirmPassword == null || confirmPassword.trim().isEmpty()) {
-                errors.add("La confirmación de contraseña es requerida.");
-            } else if (!newPassword.equals(confirmPassword)) {
-                errors.add("Las contraseñas no coinciden.");
+            boolean hasCurrentPassword = currentPassword != null && !currentPassword.trim().isEmpty();
+            boolean hasNewPassword = newPassword != null && !newPassword.trim().isEmpty();
+            boolean hasConfirmPassword = confirmPassword != null && !confirmPassword.trim().isEmpty();
+            
+            if (hasCurrentPassword || hasNewPassword || hasConfirmPassword) {
+                if (!hasCurrentPassword) {
+                    errors.add("La contraseña actual es requerida.");
+                }
+                if (!hasNewPassword) {
+                    errors.add("La nueva contraseña es requerida.");
+                } else if (newPassword.length() < 6) {
+                    errors.add("La nueva contraseña debe tener al menos 6 caracteres.");
+                }
+                if (!hasConfirmPassword) {
+                    errors.add("La confirmación de contraseña es requerida.");
+                } else if (!newPassword.equals(confirmPassword)) {
+                    errors.add("Las contraseñas no coinciden.");
+                }
             }
             
-            if (errors.isEmpty() && user != null) {
+            if (errors.isEmpty() && (hasCurrentPassword || hasNewPassword || hasConfirmPassword) && user != null) {
                 try {
                     boolean passwordUpdated = false;
                     if (user.getLevel() >= 1 && user.getLevel() <= 3) {
