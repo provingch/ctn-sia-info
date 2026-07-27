@@ -10,6 +10,12 @@
 <head>
   <meta charset="utf-8" />
   <title>Styleguide — Foundation</title>
+  <link rel="manifest" href="${pageContext.request.contextPath}/manifest.jsp">
+  <meta name="theme-color" content="#1f2d3d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CTN Portal">
+  <link rel="apple-touch-icon" href="${pageContext.request.contextPath}/icons/pwa/apple-touch-icon.png">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=210">
   <style>body{padding:24px}</style>
@@ -77,7 +83,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('${pageContext.request.contextPath}/sw.js').catch(console.error);
+        navigator.serviceWorker.register('${pageContext.request.contextPath}/sw.js');
       });
     }
   </script>

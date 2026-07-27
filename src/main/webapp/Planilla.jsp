@@ -15,6 +15,12 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><c:out value="${not empty pageTitle ? pageTitle : planilla.nombre}" /></title>
+  <link rel="manifest" href="${pageContext.request.contextPath}/manifest.jsp">
+  <meta name="theme-color" content="#1f2d3d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CTN Portal">
+  <link rel="apple-touch-icon" href="${pageContext.request.contextPath}/icons/pwa/apple-touch-icon.png">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=215">
   <script src="${pageContext.request.contextPath}/scripts/planilla.js?v=164"></script>
@@ -259,7 +265,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('${pageContext.request.contextPath}/sw.js').catch(console.error);
+        navigator.serviceWorker.register('${pageContext.request.contextPath}/sw.js');
       });
     }
   </script>
