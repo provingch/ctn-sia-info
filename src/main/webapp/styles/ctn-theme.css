@@ -359,35 +359,6 @@ section { margin-bottom: 28px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
 
-@media (max-width: 900px) {
-  .profile-shell {
-    display: block;
-    min-height: auto;
-    border-radius: var(--radius);
-  }
-  .profile-sidebar {
-    position: static;
-    width: 100%;
-    min-height: auto;
-    padding: 16px;
-  }
-  .profile-tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .profile-back-link {
-    margin-top: 12px;
-  }
-  .profile-content {
-    min-height: auto;
-    overflow: visible;
-  }
-  .profile-panel.active {
-    max-height: none;
-    overflow: visible;
-    padding: 16px;
-  }
-}
-
 input, select, textarea {
   font: inherit;
   color: var(--ink);
@@ -1436,66 +1407,6 @@ input[type="checkbox"] {
   padding: 16px;
 }
 
-@media (max-width: 860px) {
-  .titleblock { grid-template-columns: 1fr; }
-  .tb-right { border-top: 1px solid var(--line); }
-  .profile-layout { grid-template-columns: 1fr; }
-  .admin-hero {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .admin-metric-grid,
-  .admin-nav-grid,
-  .admin-form-grid {
-    grid-template-columns: 1fr;
-  }
-  .subject-list-header,
-  .subject-item {
-    grid-template-columns: 1fr;
-  }
-  .subject-list-header {
-    display: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .tb-right { grid-template-columns: 1fr; }
-  .btn-row, .info-bar, .planilla-hero__header, .planilla-toolbar, .planilla-info-bar { flex-direction: column; align-items: flex-start; }
-  .curso-selection-form,
-  .planilla-toolbar form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .curso-selection-form label,
-  .planilla-toolbar form label {
-    margin-top: 8px;
-  }
-  .curso-selection-form select,
-  .planilla-toolbar form select {
-    width: 100%;
-    min-width: 0;
-  }
-  .tareas-grid,
-  .profile-grid-layout,
-  .subject-form-grid {
-    grid-template-columns: 1fr;
-  }
-  .tareas-grid .table-header,
-  .tareas-grid .cell {
-    grid-column: 1 / -1;
-  }
-  .tareas-grid .table-header:not(.buttons-row) {
-    border-bottom: 0;
-    padding-bottom: 4px;
-  }
-  .tareas-grid .cell {
-    padding-top: 4px;
-  }
-  .login-card {
-    padding: 22px;
-  }
-}
-
 /* Flat UI integration overrides */
 :root {
   --green: #2ecc71;
@@ -1802,6 +1713,7 @@ form > div label {
 .login-form,
 .curso-selection-form,
 #tareaForm,
+#exportCourseForm,
 .planilla-toolbar form,
 form[action$="PlanillaServlet"] {
   max-width: none;
@@ -2470,5 +2382,231 @@ html[data-theme="dark"] .footer {
   .ctn-navbar .navbar-nav {
     margin-top: 0;
     margin-bottom: 0;
+  }
+}
+
+/*
+ * Responsive consolidado.
+ * Estas reglas deben permanecer al final para prevalecer sobre las reglas
+ * base y las adaptaciones de Flat UI declaradas más arriba.
+ */
+@media (max-width: 900px) {
+  .profile-shell {
+    display: block;
+    min-height: auto;
+    border-radius: var(--radius);
+  }
+
+  .profile-sidebar {
+    position: static;
+    width: 100%;
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .profile-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-back-link {
+    margin-top: 12px;
+  }
+
+  .profile-content {
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .profile-panel.active {
+    max-height: none;
+    overflow: visible;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 860px) {
+  .titleblock {
+    grid-template-columns: 1fr;
+  }
+
+  .tb-right {
+    border-top: 1px solid var(--line);
+  }
+
+  .admin-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-metric-grid,
+  .admin-nav-grid,
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subject-list-header,
+  .subject-item {
+    grid-template-columns: 1fr;
+  }
+
+  .subject-list-header {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .planilla-hero__header,
+  .planilla-toolbar,
+  .planilla-info-bar,
+  .info-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .info-bar-spacer {
+    display: none;
+  }
+
+  .planilla-hero__actions,
+  .planilla-hero__actions .btn-row,
+  .planilla-toolbar form,
+  .curso-selection-form,
+  .grade-ranges-container {
+    width: 100%;
+  }
+
+  .curso-selection-form,
+  .planilla-toolbar form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .curso-selection-form label,
+  .planilla-toolbar form label {
+    width: 100%;
+    margin: 0;
+    white-space: normal;
+  }
+
+  .curso-selection-form select,
+  .planilla-toolbar form select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .grade-ranges-container {
+    justify-content: flex-start;
+  }
+
+  .planilla-info-bar > .save-button {
+    width: 100%;
+  }
+
+  .admin-form,
+  .admin-card-warning {
+    width: 100%;
+    max-width: none;
+  }
+
+  .admin-check-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-table-wrap,
+  .table-responsive,
+  .section-block .grade-table {
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-hero > .btn-secondary {
+    width: 100%;
+  }
+
+  .cookie-consent-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cookie-consent-actions > * {
+    width: 100%;
+  }
+
+  .section-block,
+  .table-card,
+  .admin-card {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .tb-right,
+  .tareas-grid,
+  .profile-grid-layout,
+  .subject-form-grid,
+  .planilla-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tareas-grid .table-header,
+  .tareas-grid .cell {
+    grid-column: 1 / -1;
+  }
+
+  .tareas-grid .table-header:not(.buttons-row) {
+    border-bottom: 0;
+    padding-bottom: 4px;
+  }
+
+  .tareas-grid .cell {
+    padding-top: 4px;
+  }
+
+  .btn-row,
+  .buttons-row,
+  .button-group {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-row > *,
+  .buttons-row > button,
+  .button-group > * {
+    width: 100%;
+  }
+
+  .planilla-grid {
+    padding: 12px;
+  }
+
+  .login-card {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-sidebar,
+  .profile-panel.active {
+    padding: 12px;
+  }
+
+  .subject-card__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .subject-card__status {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 380px) {
+  .ctn-navbar-brand span {
+    display: none;
   }
 }
