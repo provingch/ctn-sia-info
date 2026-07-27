@@ -36,8 +36,9 @@ public final class TotpUtils {
     public static String getOtpAuthUrl(String issuer, String accountName, String secret) {
         String encodedIssuer = urlEncode(issuer);
         String encodedAccount = urlEncode(accountName);
+        String encodedSecret = urlEncode(secret);
         return "otpauth://totp/" + encodedIssuer + ":" + encodedAccount
-                + "?secret=" + secret
+                + "?secret=" + encodedSecret
                 + "&issuer=" + encodedIssuer
                 + "&algorithm=SHA1"
                 + "&digits=" + DEFAULT_DIGITS

@@ -89,7 +89,8 @@
     justify-content: center;
     margin: 1rem 0;
   }
-  #totpQrCanvas canvas {
+  #totpQrCanvas svg,
+  #totpQrCanvas img {
     max-width: 200px;
     width: 100%;
     height: auto;
@@ -99,7 +100,8 @@
     border-radius: 0.4rem;
   }
   html[data-theme="dark"] .totp-qr,
-  html[data-theme="dark"] #totpQrCanvas canvas {
+  html[data-theme="dark"] #totpQrCanvas svg,
+  html[data-theme="dark"] #totpQrCanvas img {
     background: #1e293b;
     border-color: #475569;
   }
@@ -732,7 +734,7 @@
   const securityForm = document.getElementById('securityForm');
   const confirmTotpForm = document.getElementById('confirmTotpForm');
   const totpQrCanvas = document.getElementById('totpQrCanvas');
-  const totpProvisioningUri = '${totpProvisioningUri}';
+  const totpProvisioningUri = '<c:out value="${totpProvisioningUri}" />';
   const enablePushButton = document.getElementById('enablePushButton');
   const disablePushButton = document.getElementById('disablePushButton');
   const testPushButton = document.getElementById('testPushButton');
@@ -1078,18 +1080,11 @@
 
   if (totpQrCanvas && totpProvisioningUri) {
     try {
-      if (typeof window.QRCode !== 'undefined') {
-        const qr = new window.QRCode(totpQrCanvas, {
-          text: totpProvisioningUri,
-          width: 200,
-          height: 200,
-          colorDark: '#1f2937',
-          colorLight: '#ffffff',
-          correctLevel: window.QRCode.CorrectLevel.M
-        });
-        if (qr && typeof qr.makeCode === 'function') {
-          qr.makeCode(totpProvisioningUri);
-        }
+      if (typeof window.qrcode === 'function') {
+        const qr = window.qrcode(0, 'M');
+        qr.addData(totpProvisioningUri);
+        qr.make();
+        totpQrCanvas.innerHTML = qr.createSvgTag({ scalable: true });
       }
     } catch (error) {
       console.error('No se pudo renderizar el QR de 2FA', error);
