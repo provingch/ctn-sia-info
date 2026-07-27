@@ -22,7 +22,7 @@
   <meta name="apple-mobile-web-app-title" content="CTN Portal">
   <link rel="apple-touch-icon" href="${pageContext.request.contextPath}/icons/pwa/apple-touch-icon.png">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=222">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=223">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   <style>
   .inline-form {
@@ -440,7 +440,7 @@
 
             <section id="seguridad-panel" class="profile-panel" hidden>
               <div class="security-panel-grid">
-                <form id="securityForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="securitySaveStatus">
+                <form id="securityForm" class="security-password-form" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="securitySaveStatus">
                   <input type="hidden" name="action" value="changePassword" />
                   <div class="table-card card">
                     <div class="table-header">Cambiar Contraseña</div>

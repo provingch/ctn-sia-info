@@ -747,18 +747,22 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 }
 
 .profile-tab span {
+  width: 100%;
   color: inherit;
   font-size: 14px;
   font-weight: 900;
   line-height: 1.2;
+  text-align: left;
 }
 
 .profile-tab small {
+  width: 100%;
   color: inherit;
   font-size: 11px;
   font-weight: 700;
   line-height: 1.2;
   opacity: .78;
+  text-align: left;
 }
 
 .profile-tab:hover,
@@ -784,13 +788,23 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   gap: 8px;
   width: 100%;
   min-height: 42px;
-  margin-top: auto;
+  margin-top: 12px;
   padding: 10px 12px;
   border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
   border-radius: 6px;
   background: color-mix(in srgb, var(--paper) 66%, #111827 16%);
   color: var(--ink);
   font-weight: 900;
+}
+
+.security-password-form {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .profile-back-link:hover,
