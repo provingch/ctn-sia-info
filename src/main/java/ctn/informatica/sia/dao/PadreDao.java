@@ -17,7 +17,7 @@ import java.util.Map;
 public class PadreDao extends conexion {
 
     public Padre findById(int id) throws SQLException {
-        String sql = "SELECT id, ci, nombre, apellido, usuario, contrasenia, correo, telefono FROM padre WHERE id = ?";
+        String sql = "SELECT id, ci, nombre, apellido, usuario, contrasenia, correo, telefono, totp_secret FROM padre WHERE id = ?";
         try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -31,6 +31,7 @@ public class PadreDao extends conexion {
                     padre.setContrasenia(rs.getString("contrasenia"));
                     padre.setCorreo(rs.getString("correo"));
                     padre.setTelefono(rs.getString("telefono"));
+                    padre.setTotpSecret(rs.getString("totp_secret"));
                     return padre;
                 }
             }
@@ -39,7 +40,7 @@ public class PadreDao extends conexion {
     }
 
     public boolean update(Padre padre) throws SQLException {
-        String sql = "UPDATE padre SET ci = ?, nombre = ?, apellido = ?, usuario = ?, contrasenia = ?, telefono = ?, correo = ? WHERE id = ?";
+        String sql = "UPDATE padre SET ci = ?, nombre = ?, apellido = ?, usuario = ?, contrasenia = ?, telefono = ?, correo = ?, totp_secret = ? WHERE id = ?";
         try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql)) {
             if (padre.getCi() != null) {
                 ps.setInt(1, padre.getCi());
@@ -52,7 +53,12 @@ public class PadreDao extends conexion {
             ps.setString(5, padre.getContrasenia());
             ps.setString(6, padre.getTelefono());
             ps.setString(7, padre.getCorreo());
-            ps.setInt(8, padre.getId());
+            if (padre.getTotpSecret() != null && !padre.getTotpSecret().isBlank()) {
+                ps.setString(8, padre.getTotpSecret());
+            } else {
+                ps.setNull(8, java.sql.Types.VARCHAR);
+            }
+            ps.setInt(9, padre.getId());
             return ps.executeUpdate() == 1;
         }
     }

@@ -810,6 +810,7 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 }
 
 .form-card-header {
+  padding: 10px 14px;
   border-bottom: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
   background: color-mix(in srgb, var(--paper) 72%, var(--card-tone) 16%);
   color: var(--ink);
@@ -834,11 +835,11 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 .form-card .form-field,
 .form-card .classroom-status,
 .form-card .classroom-actions {
-  margin: 12px 14px;
+  margin: 10px 12px;
 }
 
 .form-card .form-field + .form-field {
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .form-card--actions {

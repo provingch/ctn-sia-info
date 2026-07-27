@@ -20,6 +20,7 @@ import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
 import ctn.informatica.sia.util.RememberMeTokenStore;
 import ctn.informatica.sia.util.SiaUiContext;
+import ctn.informatica.sia.util.TotpUtils;
 import com.google.api.services.classroom.model.Course;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -261,6 +262,26 @@ public class ProfileServlet extends HttpServlet {
         }
     }
 
+    private boolean saveTotpSecretForUser(User user, String totpSecret) throws SQLException {
+        if (user == null) {
+            return false;
+        }
+        if (user.getLevel() == 4) {
+            Padre padre = new PadreDao().findById(user.getId());
+            if (padre == null) {
+                return false;
+            }
+            padre.setTotpSecret(totpSecret);
+            return new PadreDao().update(padre);
+        } else {
+            Profesor profesor = new ProfesorDao().findById(user.getId());
+            if (profesor == null) {
+                return false;
+            }
+            return new ProfesorDao().updateTotpSecret(profesor.getId(), totpSecret);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private void appendActivityLog(HttpSession session, String entry) {
         if (session == null) {
@@ -338,6 +359,14 @@ public class ProfileServlet extends HttpServlet {
             }
         }
 
+        String totpSecret = null;
+        if (profesor != null) {
+            totpSecret = profesor.getTotpSecret();
+        } else if (padre != null) {
+            totpSecret = padre.getTotpSecret();
+        }
+        String pendingTotpSecret = session == null ? null : (String) session.getAttribute("pendingTotpSecret");
+
         req.setAttribute("profesor", profesor);
         req.setAttribute("padre", padre);
         req.setAttribute("profileOwner", profesor != null ? profesor : padre);
@@ -360,6 +389,11 @@ public class ProfileServlet extends HttpServlet {
         req.setAttribute("profesorEspecialidadNombre", resolveProfesorEspecialidadNombre(profesor));
         req.setAttribute("manualTeacherSubjectsText", manualTeacherSubjectsText);
         req.setAttribute("activityLog", session != null ? session.getAttribute("activityLog") : Collections.emptyList());
+        req.setAttribute("totpEnabled", totpSecret != null && !totpSecret.isBlank());
+        req.setAttribute("pendingTotpSecret", pendingTotpSecret);
+        if (pendingTotpSecret != null && !pendingTotpSecret.isBlank()) {
+            req.setAttribute("totpProvisioningUri", TotpUtils.getOtpAuthUrl("CTNPortal", user == null ? "" : user.getUsername(), pendingTotpSecret));
+        }
 
         req.getRequestDispatcher("/Profile.jsp").forward(req, resp);
     }
@@ -371,6 +405,106 @@ public class ProfileServlet extends HttpServlet {
 
         String action = req.getParameter("action");
         
+        if ("prepareTotp".equals(action)) {
+            if (user == null) {
+                resp.sendRedirect(req.getContextPath() + "/index.jsp");
+                return;
+            }
+            String generatedSecret = TotpUtils.generateSecret();
+            if (session != null) {
+                session.setAttribute("pendingTotpSecret", generatedSecret);
+            }
+            if (isAjaxRequest(req)) {
+                writeJsonResponse(resp, true, "Se generó el código de activación. Ingresa el código de la app para confirmar.");
+                return;
+            }
+            doGet(req, resp);
+            return;
+        }
+
+        if ("confirmTotp".equals(action)) {
+            List<String> errors = new ArrayList<>();
+            String totpSetupCode = req.getParameter("totpSetupCode");
+            String pendingSecret = session == null ? null : (String) session.getAttribute("pendingTotpSecret");
+            if (pendingSecret == null || pendingSecret.isBlank()) {
+                errors.add("No hay un código de configuración activo. Genera un nuevo código.");
+            }
+            if (totpSetupCode == null || totpSetupCode.trim().isEmpty()) {
+                errors.add("El código de la app es requerido.");
+            }
+            if (errors.isEmpty()) {
+                boolean verified = TotpUtils.verifyCode(pendingSecret, totpSetupCode);
+                if (!verified) {
+                    errors.add("El código de autenticación no es válido. Intenta de nuevo.");
+                }
+            }
+            if (errors.isEmpty() && user != null) {
+                try {
+                    if (!saveTotpSecretForUser(user, pendingSecret)) {
+                        errors.add("No se pudo activar 2FA. Intenta de nuevo más tarde.");
+                    } else {
+                        if (session != null) {
+                            session.removeAttribute("pendingTotpSecret");
+                            session.setAttribute("flashMessage", "2FA activado. Usa tu app de autenticación para iniciar sesión.");
+                            appendActivityLog(session, "2FA activado.");
+                        }
+                    }
+                } catch (Exception ex) {
+                    errors.add("Error al guardar el secreto de 2FA.");
+                    log("Error saving TOTP secret for user " + (user != null ? user.getId() : -1), ex);
+                }
+            }
+            if (isAjaxRequest(req)) {
+                if (errors.isEmpty()) {
+                    writeJsonResponse(resp, true, "2FA activado correctamente.");
+                } else {
+                    writeJsonResponse(resp, false, String.join("; ", errors));
+                }
+                return;
+            }
+            if (!errors.isEmpty()) {
+                req.setAttribute("errors", errors);
+                doGet(req, resp);
+                return;
+            }
+            doGet(req, resp);
+            return;
+        }
+
+        if ("disableTotp".equals(action)) {
+            List<String> errors = new ArrayList<>();
+            if (user == null) {
+                errors.add("Sesión no válida.");
+            }
+            if (errors.isEmpty()) {
+                try {
+                    if (!saveTotpSecretForUser(user, null)) {
+                        errors.add("No se pudo desactivar 2FA. Intenta de nuevo más tarde.");
+                    } else if (session != null) {
+                        session.removeAttribute("pendingTotpSecret");
+                        session.setAttribute("flashMessage", "2FA desactivado.");
+                        appendActivityLog(session, "2FA desactivado.");
+                    }
+                } catch (Exception ex) {
+                    errors.add("Error al desactivar 2FA.");
+                    log("Error disabling TOTP for user " + (user != null ? user.getId() : -1), ex);
+                }
+            }
+            if (isAjaxRequest(req)) {
+                if (errors.isEmpty()) {
+                    writeJsonResponse(resp, true, "2FA desactivado correctamente.");
+                } else {
+                    writeJsonResponse(resp, false, String.join("; ", errors));
+                }
+                return;
+            }
+            if (!errors.isEmpty()) {
+                req.setAttribute("errors", errors);
+            }
+            doGet(req, resp);
+            return;
+        }
+
         if ("changePassword".equals(action)) {
             List<String> errors = new ArrayList<>();
             String currentPassword = req.getParameter("currentPassword");

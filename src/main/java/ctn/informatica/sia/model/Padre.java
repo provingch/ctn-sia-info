@@ -9,6 +9,7 @@ public class Padre {
     private String contrasenia;
     private String correo;
     private String telefono;
+    private String totpSecret;
 
     public String getFullName() {
         return ((nombre == null ? "" : nombre) + " " + (apellido == null ? "" : apellido)).trim();
@@ -76,5 +77,13 @@ public class Padre {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public String getTotpSecret() {
+        return totpSecret;
+    }
+
+    public void setTotpSecret(String totpSecret) {
+        this.totpSecret = totpSecret;
     }
 }

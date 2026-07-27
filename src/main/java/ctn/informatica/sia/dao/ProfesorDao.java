@@ -38,6 +38,7 @@ public class ProfesorDao extends conexion {
         p.setGcRefreshToken(rs.getString("google_refresh_token"));
         long expiry = rs.getLong("google_token_expiry");
         if (!rs.wasNull()) p.setGcTokenExpiry(expiry);
+        p.setTotpSecret(rs.getString("totp_secret"));
         return p;
     }
 
@@ -45,7 +46,7 @@ public class ProfesorDao extends conexion {
     public Profesor findById(int id) {
         final String sql = "SELECT id, nombre, apellido, usuario, contrasenia, nivel, "
                          + "ci, telefono, celular, correo, especialidad_id, google_email, "
-                         + "google_access_token, google_refresh_token, google_token_expiry "
+                         + "google_access_token, google_refresh_token, google_token_expiry, totp_secret "
                          + "FROM profesor WHERE id = ?";
         try (Connection c = getCon();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -65,7 +66,7 @@ public class ProfesorDao extends conexion {
     public Profesor findByGoogleEmail(String email) {
         final String sql = "SELECT id, nombre, apellido, usuario, contrasenia, nivel, "
                          + "ci, telefono, celular, correo, especialidad_id, google_email, "
-                         + "google_access_token, google_refresh_token, google_token_expiry "
+                         + "google_access_token, google_refresh_token, google_token_expiry, totp_secret "
                          + "FROM profesor WHERE google_email = ? OR correo = ?";
         try (Connection c = getCon();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -189,7 +190,7 @@ public class ProfesorDao extends conexion {
     public java.util.List<Profesor> findAll() {
         final String sql = "SELECT id, nombre, apellido, usuario, contrasenia, nivel, "
                          + "ci, telefono, celular, correo, especialidad_id, google_email, "
-                         + "google_access_token, google_refresh_token, google_token_expiry "
+                         + "google_access_token, google_refresh_token, google_token_expiry, totp_secret "
                          + "FROM profesor ORDER BY apellido, nombre";
         java.util.List<Profesor> out = new java.util.ArrayList<>();
         try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(sql);
@@ -201,6 +202,22 @@ public class ProfesorDao extends conexion {
             ex.printStackTrace();
         }
         return out;
+    }
+
+    public boolean updateTotpSecret(int profesorId, String totpSecret) {
+        final String sql = "UPDATE profesor SET totp_secret = ? WHERE id = ?";
+        try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(sql)) {
+            if (totpSecret != null && !totpSecret.isBlank()) {
+                ps.setString(1, totpSecret);
+            } else {
+                ps.setNull(1, Types.VARCHAR);
+            }
+            ps.setInt(2, profesorId);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     public boolean existsByUsuario(String usuario) {

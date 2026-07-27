@@ -44,15 +44,41 @@ public class LoginServlet extends HttpServlet {
         try {
             User user = userDao.findByUsernameAndPassword(username, password);
             if (user != null) {
-                // store user in session
+                boolean rememberMe = "true".equalsIgnoreCase(request.getParameter("rememberMe"));
+                String secret = null;
+                Profesor profesor = null;
+                Padre padre = null;
+                try {
+                    if (user.getLevel() == 4) {
+                        padre = new PadreDao().findById(user.getId());
+                        if (padre != null) {
+                            secret = padre.getTotpSecret();
+                        }
+                    } else {
+                        profesor = new ctn.informatica.sia.dao.ProfesorDao().findById(user.getId());
+                        if (profesor != null) {
+                            secret = profesor.getTotpSecret();
+                        }
+                    }
+                } catch (Exception ignored) {
+                    // ignore secret lookup failures; fall back to password-only login
+                }
+
+                if (secret != null && !secret.isBlank()) {
+                    HttpSession session = request.getSession(true);
+                    session.setMaxInactiveInterval(60 * 60 * 24 * 7);
+                    session.setAttribute("pendingTotpLogin", new ctn.informatica.sia.model.PendingTotpLogin(user.getId(), user.getUsername(), user.getLevel(), rememberMe));
+                    response.sendRedirect(request.getContextPath() + "/TotpServlet");
+                    return;
+                }
+
                 HttpSession session = request.getSession(true);
                 session.setMaxInactiveInterval(60 * 60 * 24 * 7);
                 session.setAttribute("user", user);
-                try {
-                    Profesor profesor = new ctn.informatica.sia.dao.ProfesorDao().findById(user.getId());
+                if (profesor != null) {
                     session.setAttribute("profesor", profesor);
                     String specialty = "informatica";
-                    if (profesor != null && profesor.getEspecialidadId() != null) {
+                    if (profesor.getEspecialidadId() != null) {
                         try {
                             Especialidad especialidad = new EspecialidadDao().findById(profesor.getEspecialidadId());
                             if (especialidad != null && especialidad.getNombre() != null && !especialidad.getNombre().isBlank()) {
@@ -63,18 +89,9 @@ public class LoginServlet extends HttpServlet {
                         }
                     }
                     session.setAttribute("siaSpecialty", specialty);
-                } catch (Exception ignored) {
-                    // no-op: the planilla pages can recover by loading the professor from the DB later
+                } else if (padre != null) {
+                    session.setAttribute("padre", padre);
                 }
-                try {
-                    Padre padre = new PadreDao().findById(user.getId());
-                    if (padre != null) {
-                        session.setAttribute("padre", padre);
-                    }
-                } catch (Exception ignored) {
-                    // no-op: parent page can recover by loading the parent from the DB later
-                }
-                boolean rememberMe = "true".equalsIgnoreCase(request.getParameter("rememberMe"));
                 if (rememberMe) {
                     String token = RememberMeTokenStore.issueToken(user.getId());
                     setRememberMeCookie(request, response, token);

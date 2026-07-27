@@ -26,6 +26,7 @@ public class Profesor {
     private String gcAccessToken;
     private String gcRefreshToken;
     private long gcTokenExpiry;
+    private String totpSecret;
 
     // getters y setters
     public String getGoogleEmail() { return googleEmail; }
@@ -39,6 +40,9 @@ public class Profesor {
 
     public long getGcTokenExpiry() { return gcTokenExpiry; }
     public void setGcTokenExpiry(long gcTokenExpiry) { this.gcTokenExpiry = gcTokenExpiry; }
+
+    public String getTotpSecret() { return totpSecret; }
+    public void setTotpSecret(String totpSecret) { this.totpSecret = totpSecret; }
 
     public String getFullName() {
         String n = nombre == null ? "" : nombre;

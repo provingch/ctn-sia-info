@@ -53,6 +53,7 @@ CREATE TABLE profesor (
     google_refresh_token TEXT NULL,
     google_token_expiry BIGINT NULL,
     materias_manual TEXT NULL,
+    totp_secret VARCHAR(255) NULL,
     especialidad_id INT NULL,
     nivel TINYINT NOT NULL,
     PRIMARY KEY (id),
@@ -188,6 +189,7 @@ CREATE TABLE padre (
   `contrasenia` varchar(45) NOT NULL,
   `telefono` varchar(20) DEFAULT NULL,
   `correo` varchar(45) DEFAULT NULL,
+  `totp_secret` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `usuario_UNIQUE` (`usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

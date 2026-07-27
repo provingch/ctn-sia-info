@@ -23,11 +23,38 @@
     display: inline-block;
     margin: 0;
   }
+  .security-status {
+    margin: 0.5rem 0 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 0.5rem;
+    background: #f4f7fb;
+    color: #22303f;
+  }
+  .security-status--enabled {
+    border-left: 4px solid #3c8dbc;
+  }
+  .security-status--disabled {
+    border-left: 4px solid #d9534f;
+  }
+  .security-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
   .activity-log ul {
     margin: 0;
     padding-left: 1.2rem;
     display: grid;
     gap: 0.6rem;
+  }
+  .totp-secret {
+    word-break: break-all;
+    padding: 0.75rem 1rem;
+    background: #f7f9fb;
+    border: 1px solid #dcdfe6;
+    border-radius: 0.5rem;
+    margin: 0.5rem 0;
   }
   </style>
 </head>
@@ -368,6 +395,59 @@
                   </div>
                 </div>
               </form>
+
+              <form id="prepareTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0; display:none;">
+                <input type="hidden" name="action" value="prepareTotp" />
+              </form>
+              <form id="confirmTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0; display:none;">
+                <input type="hidden" name="action" value="confirmTotp" />
+                <input type="hidden" name="totpSetupCode" id="confirmTotpSetupCode" />
+              </form>
+              <form id="disableTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0; display:none;">
+                <input type="hidden" name="action" value="disableTotp" />
+              </form>
+
+              <div class="profile-grid profile-grid-layout">
+                <div class="form-card card">
+                  <div class="form-card-header">Seguridad adicional</div>
+                  <div class="form-field">
+                    <strong>Autenticación de dos factores (2FA)</strong>
+                    <c:choose>
+                      <c:when test="${totpEnabled}">
+                        <div class="security-status security-status--enabled">2FA activado en esta cuenta.</div>
+                        <p>Usa tu app de autenticación para generar el código de inicio de sesión.</p>
+                      </c:when>
+                      <c:otherwise>
+                        <div class="security-status security-status--disabled">2FA no está activo.</div>
+                        <p>Activa 2FA para proteger tu cuenta con un código extra al iniciar sesión.</p>
+                      </c:otherwise>
+                    </c:choose>
+                  </div>
+                  <div class="form-field security-actions">
+                    <c:choose>
+                      <c:when test="${totpEnabled}">
+                        <button class="btn-danger" type="submit" form="disableTotpForm">Desactivar 2FA</button>
+                      </c:when>
+                      <c:otherwise>
+                        <button class="btn-secondary" type="submit" form="prepareTotpForm">Configurar 2FA</button>
+                      </c:otherwise>
+                    </c:choose>
+                  </div>
+                  <c:if test="${not empty pendingTotpSecret}">
+                    <div class="form-field">
+                      <p>Escanea el código QR con tu app de autenticación o usa este secreto para registrar la cuenta:</p>
+                      <div class="totp-secret"><c:out value="${pendingTotpSecret}" /></div>
+                    </div>
+                    <div class="form-field">
+                      <label for="totpSetupCode">Código de la app</label>
+                      <input type="text" id="totpSetupCode" form="confirmTotpForm" maxlength="6" required />
+                    </div>
+                    <div class="form-field security-actions">
+                      <button class="btn-primary" id="confirmTotpButton" type="button">Confirmar activación</button>
+                    </div>
+                  </c:if>
+                </div>
+              </div>
             </section>
 
         <c:if test="${showMateriasPanel}">
@@ -565,6 +645,18 @@
       submitWithFetch(securityForm, 'securitySaveStatus', 'Contraseña actualizada.', true);
     });
     securityStatus && setStatus(securityStatus, 'Listo para guardar.', 'is-success');
+  }
+
+  const confirmTotpButton = document.getElementById('confirmTotpButton');
+  const confirmTotpForm = document.getElementById('confirmTotpForm');
+  const totpSetupCodeInput = document.getElementById('totpSetupCode');
+  const confirmTotpSetupCode = document.getElementById('confirmTotpSetupCode');
+
+  if (confirmTotpButton && confirmTotpForm && totpSetupCodeInput && confirmTotpSetupCode) {
+    confirmTotpButton.addEventListener('click', function () {
+      confirmTotpSetupCode.value = totpSetupCodeInput.value.trim();
+      confirmTotpForm.submit();
+    });
   }
 })();
 </script>
