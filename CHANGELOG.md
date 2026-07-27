@@ -6,6 +6,7 @@ El formato se basa en [Mantener un Registro de Cambios](https://keepachangelog.c
 y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Hola
 
 ### En proceso
 - Consolidación del diseño visual bajo el sistema SIA.
