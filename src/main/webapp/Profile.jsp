@@ -1121,17 +1121,17 @@
 
   if (enablePushButton) {
     enablePushButton.addEventListener('click', function () {
-      subscribeToPush().finally(syncPushUi);
+      subscribeToPush();
     });
   }
   if (disablePushButton) {
     disablePushButton.addEventListener('click', function () {
-      unsubscribeFromPush().finally(syncPushUi);
+      unsubscribeFromPush();
     });
   }
   if (testPushButton) {
     testPushButton.addEventListener('click', function () {
-      sendPushTest().finally(syncPushUi);
+      sendPushTest();
     });
   }
 
