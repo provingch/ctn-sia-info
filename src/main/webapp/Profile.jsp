@@ -55,15 +55,6 @@
       grid-template-columns: 1fr;
     }
   }
-  .table-card, .form-card {
-    border-left: 4px solid #2563eb;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-  }
-  html[data-theme="dark"] .table-card,
-  html[data-theme="dark"] .form-card {
-    border-left-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
   .table-header, .form-card-header {
     font-weight: 700;
     letter-spacing: 0.01em;
