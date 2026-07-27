@@ -743,42 +743,65 @@
     pushStateBadge.className = 'pwa-status-pill ' + tone;
   }
 
+  function updatePushButtonsOnly() {
+    const permission = typeof Notification !== 'undefined' ? Notification.permission : 'default';
+    const serverSubscribed = Boolean(window.ctnProfilePushEnabled);
+
+    if (!enablePushButton || !disablePushButton || !testPushButton) return;
+
+    if (permission === 'denied') {
+      enablePushButton.style.display = 'none';
+      disablePushButton.style.display = 'none';
+      testPushButton.style.display = 'none';
+      return;
+    }
+
+    if (permission === 'granted' && serverSubscribed) {
+      enablePushButton.style.display = 'none';
+      disablePushButton.style.display = 'inline-flex';
+      testPushButton.style.display = 'inline-flex';
+      return;
+    }
+
+    if (permission === 'granted') {
+      enablePushButton.style.display = 'inline-flex';
+      enablePushButton.textContent = 'Reintentar';
+      disablePushButton.style.display = 'none';
+      testPushButton.style.display = 'none';
+      return;
+    }
+
+    enablePushButton.style.display = 'inline-flex';
+    enablePushButton.textContent = 'Activar notificaciones';
+    disablePushButton.style.display = 'none';
+    testPushButton.style.display = 'none';
+  }
+
   function syncPushUi() {
     const permission = typeof Notification !== 'undefined' ? Notification.permission : 'default';
     const serverSubscribed = Boolean(window.ctnProfilePushEnabled);
+    updatePushButtonsOnly();
 
     if (permission === 'denied') {
       setPushBadge('Bloqueado', 'is-error');
       setPushStatus('Las notificaciones están bloqueadas. Habilítalas desde la configuración del navegador.', 'is-error');
-      if (enablePushButton) enablePushButton.disabled = true;
-      if (disablePushButton) disablePushButton.disabled = false;
-      if (testPushButton) testPushButton.disabled = true;
       return;
     }
 
     if (permission === 'granted' && serverSubscribed) {
       setPushBadge('Activado', 'is-success');
       setPushStatus('Notificaciones activadas para esta cuenta.', 'is-success');
-      if (enablePushButton) enablePushButton.disabled = true;
-      if (disablePushButton) disablePushButton.disabled = false;
-      if (testPushButton) testPushButton.disabled = false;
       return;
     }
 
     if (permission === 'granted') {
       setPushBadge('Permiso concedido', 'is-warning');
       setPushStatus('El permiso está activo, pero la suscripción aún no quedó registrada.', 'is-warning');
-      if (enablePushButton) enablePushButton.disabled = false;
-      if (disablePushButton) disablePushButton.disabled = false;
-      if (testPushButton) testPushButton.disabled = true;
       return;
     }
 
     setPushBadge('No activado', 'is-info');
     setPushStatus('Listo para activar.', 'is-success');
-    if (enablePushButton) enablePushButton.disabled = false;
-    if (disablePushButton) disablePushButton.disabled = false;
-    if (testPushButton) testPushButton.disabled = true;
   }
 
   function updateInstallUi() {
@@ -894,7 +917,7 @@
       syncPushUi();
     } catch (error) {
       setPushStatus(error.message || 'No se pudo activar.', 'is-error');
-      syncPushUi();
+      updatePushButtonsOnly();
     }
   }
 
@@ -919,7 +942,7 @@
       syncPushUi();
     } catch (error) {
       setPushStatus(error.message || 'No se pudo desactivar.', 'is-error');
-      syncPushUi();
+      updatePushButtonsOnly();
     }
   }
 
