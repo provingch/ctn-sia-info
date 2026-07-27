@@ -136,7 +136,24 @@
       <div class="collapse navbar-collapse" id="ctnNavbarMenu">
         <ul class="nav navbar-nav navbar-right ctn-navbar-actions">
           <li class="ctn-theme-item"></li>
-          <li><a class="manual-link" href="${pageContext.request.contextPath}/pdfs/manual.pdf" target="_blank" rel="noopener noreferrer">Manual</a></li>
+          <c:choose>
+            <c:when test="${sessionScope.user.level == 1}">
+              <c:set var="manualHref" value="${pageContext.request.contextPath}/pdfs/manual-profesor.pdf" />
+            </c:when>
+            <c:when test="${sessionScope.user.level == 2}">
+              <c:set var="manualHref" value="${pageContext.request.contextPath}/pdfs/manual-evaluador.pdf" />
+            </c:when>
+            <c:when test="${sessionScope.user.level == 3}">
+              <c:set var="manualHref" value="${pageContext.request.contextPath}/pdfs/manual-administrador.pdf" />
+            </c:when>
+            <c:when test="${sessionScope.user.level == 4}">
+              <c:set var="manualHref" value="${pageContext.request.contextPath}/pdfs/manual-padres.pdf" />
+            </c:when>
+            <c:otherwise>
+              <c:set var="manualHref" value="${pageContext.request.contextPath}/pdfs/manual-profesor.pdf" />
+            </c:otherwise>
+          </c:choose>
+          <li><a class="manual-link" href="${manualHref}" target="_blank" rel="noopener noreferrer">Manual</a></li>
           <li class="dropdown">
             <a href="#" id="sessionButton" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sesión <span class="caret"></span></a>
             <ul class="dropdown-menu" id="sessionMenu" role="menu" aria-labelledby="sessionButton">
