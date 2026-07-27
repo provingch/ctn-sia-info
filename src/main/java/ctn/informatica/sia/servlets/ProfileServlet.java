@@ -10,6 +10,7 @@ import ctn.informatica.sia.dao.EspecialidadDao;
 import ctn.informatica.sia.dao.MateriaDao;
 import ctn.informatica.sia.dao.PadreDao;
 import ctn.informatica.sia.dao.ProfesorDao;
+import ctn.informatica.sia.dao.PushSubscriptionDao;
 import ctn.informatica.sia.google.GoogleClassroomService;
 import ctn.informatica.sia.model.Curso;
 import ctn.informatica.sia.model.Especialidad;
@@ -63,6 +64,16 @@ public class ProfileServlet extends HttpServlet {
             return "";
         }
         return raw.trim().replaceAll("\\s+", " ");
+    }
+
+    private String resolveUserType(User user) {
+        if (user == null) {
+            return "profesor";
+        }
+        return switch (user.getLevel()) {
+            case 4 -> "padre";
+            default -> "profesor";
+        };
     }
 
     /**
@@ -394,7 +405,15 @@ public class ProfileServlet extends HttpServlet {
         req.setAttribute("totpEnabled", totpSecret != null && !totpSecret.isBlank());
         req.setAttribute("pendingTotpSecret", pendingTotpSecret);
         req.setAttribute("pushPublicKey", ctn.informatica.sia.util.PushNotificationService.resolveVapidPublicKey());
-        req.setAttribute("pushEnabled", false);
+        boolean pushEnabled = false;
+        if (user != null) {
+            try {
+                pushEnabled = !new PushSubscriptionDao().findByUser(user.getId(), resolveUserType(user)).isEmpty();
+            } catch (SQLException ex) {
+                log("Error loading push subscription state for user " + user.getId(), ex);
+            }
+        }
+        req.setAttribute("pushEnabled", pushEnabled);
         if (pendingTotpSecret != null && !pendingTotpSecret.isBlank()) {
             String provisioningUri = TotpUtils.getOtpAuthUrl("CTNPortal", user == null ? "" : user.getUsername(), pendingTotpSecret);
             req.setAttribute("totpProvisioningUri", provisioningUri);

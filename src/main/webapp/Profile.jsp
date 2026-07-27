@@ -94,6 +94,61 @@
     display: grid;
     gap: 0.6rem;
   }
+  .pwa-setup-grid {
+    display: grid;
+    gap: 1rem;
+  }
+  .pwa-status-pill {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .pwa-status-pill.is-success {
+    background: #e7f7ee;
+    color: #20663f;
+  }
+  .pwa-status-pill.is-error {
+    background: #fde8e8;
+    color: #a11c1c;
+  }
+  .pwa-status-pill.is-warning {
+    background: #fff8e1;
+    color: #8a6200;
+  }
+  .pwa-status-pill.is-info {
+    background: #e8f2ff;
+    color: #24518d;
+  }
+  .pwa-install-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+  }
+  .pwa-install-instructions {
+    margin-top: 0.8rem;
+    padding: 0.9rem 1rem;
+    border-radius: 0.7rem;
+    background: #f8fbff;
+    color: #22303f;
+    border: 1px solid #dbeafe;
+  }
+  .pwa-install-instructions strong {
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+  .pwa-share-icon {
+    display: inline-block;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-right: 0.35rem;
+    vertical-align: text-bottom;
+  }
   .totp-secret {
     word-break: break-all;
     padding: 0.75rem;
@@ -210,6 +265,10 @@
                   <small>Asignaciones</small>
                 </button>
               </c:if>
+              <button type="button" class="profile-tab" data-target="pwa-panel" role="tab" aria-controls="pwa-panel" aria-selected="false">
+                <span>App / Notif</span>
+                <small>Instalación</small>
+              </button>
               <button type="button" class="profile-tab" data-target="registros-panel" role="tab" aria-controls="registros-panel" aria-selected="false">
                 <span>Registros</span>
                 <small>Actividad</small>
@@ -491,16 +550,6 @@
                       </c:otherwise>
                     </c:choose>
                   </div>
-                  <div class="form-field">
-                    <strong>Notificaciones push</strong>
-                    <p>Activa las alertas del navegador para recibir mensajes de prueba desde esta sesión.</p>
-                    <div class="security-actions">
-                      <button class="btn-secondary" id="enablePushButton" type="button">Activar notificaciones</button>
-                      <button class="btn-secondary" id="testPushButton" type="button">Enviar prueba</button>
-                      <button class="btn-danger" id="disablePushButton" type="button">Desactivar</button>
-                    </div>
-                    <div id="pushStatus" class="save-status is-success" aria-live="polite">Listo para activar.</div>
-                  </div>
                   <c:if test="${not empty pendingTotpSecret}">
                     <div class="form-field">
                       <div class="totp-setup-box">
@@ -559,6 +608,32 @@
             </div>
           </section>
         </c:if>
+
+        <section id="pwa-panel" class="profile-panel" hidden>
+          <div class="pwa-setup-grid">
+            <div class="form-card card">
+              <div class="form-card-header">Instalar la app</div>
+              <div id="installAppState" class="pwa-status-pill is-info" aria-live="polite">Comprobando compatibilidad…</div>
+              <p id="installAppMessage">Revisamos si tu navegador permite instalar la PWA desde este perfil.</p>
+              <div id="installAppActions" class="pwa-install-actions">
+                <button class="btn-primary" id="installAppButton" type="button" style="display:none;">Instalar app</button>
+              </div>
+              <div id="installAppHint" class="pwa-install-instructions" style="display:none;"></div>
+            </div>
+
+            <div class="form-card card">
+              <div class="form-card-header">Activar notificaciones</div>
+              <p>Usa este bloque para gestionar las alertas del navegador sin depender de un flag guardado en sesión.</p>
+              <div class="security-actions">
+                <button class="btn-secondary" id="enablePushButton" type="button">Activar notificaciones</button>
+                <button class="btn-secondary" id="testPushButton" type="button">Enviar prueba</button>
+                <button class="btn-danger" id="disablePushButton" type="button">Desactivar</button>
+              </div>
+              <div id="pushStateBadge" class="pwa-status-pill is-info" aria-live="polite">Sin confirmar</div>
+              <div id="pushStatus" class="save-status is-success" aria-live="polite">Listo para activar.</div>
+            </div>
+          </div>
+        </section>
 
         <section id="registros-panel" class="profile-panel" hidden>
           <div class="activity-log">
@@ -647,12 +722,120 @@
   const disablePushButton = document.getElementById('disablePushButton');
   const testPushButton = document.getElementById('testPushButton');
   const pushStatus = document.getElementById('pushStatus');
+  const pushStateBadge = document.getElementById('pushStateBadge');
+  const installAppState = document.getElementById('installAppState');
+  const installAppButton = document.getElementById('installAppButton');
+  const installAppMessage = document.getElementById('installAppMessage');
+  const installAppHint = document.getElementById('installAppHint');
   const vapidPublicKey = '${pushPublicKey}';
+  window.ctnProfilePushEnabled = ${pushEnabled};
+  let deferredPrompt = null;
 
   function setPushStatus(message, tone) {
     if (!pushStatus) return;
     pushStatus.textContent = message;
     pushStatus.className = 'save-status ' + tone;
+  }
+
+  function setPushBadge(message, tone) {
+    if (!pushStateBadge) return;
+    pushStateBadge.textContent = message;
+    pushStateBadge.className = 'pwa-status-pill ' + tone;
+  }
+
+  function syncPushUi() {
+    const permission = typeof Notification !== 'undefined' ? Notification.permission : 'default';
+    const serverSubscribed = Boolean(window.ctnProfilePushEnabled);
+
+    if (permission === 'denied') {
+      setPushBadge('Bloqueado', 'is-error');
+      setPushStatus('Las notificaciones están bloqueadas. Habilítalas desde la configuración del navegador.', 'is-error');
+      if (enablePushButton) enablePushButton.disabled = true;
+      if (disablePushButton) disablePushButton.disabled = false;
+      if (testPushButton) testPushButton.disabled = true;
+      return;
+    }
+
+    if (permission === 'granted' && serverSubscribed) {
+      setPushBadge('Activado', 'is-success');
+      setPushStatus('Notificaciones activadas para esta cuenta.', 'is-success');
+      if (enablePushButton) enablePushButton.disabled = true;
+      if (disablePushButton) disablePushButton.disabled = false;
+      if (testPushButton) testPushButton.disabled = false;
+      return;
+    }
+
+    if (permission === 'granted') {
+      setPushBadge('Permiso concedido', 'is-warning');
+      setPushStatus('El permiso está activo, pero la suscripción aún no quedó registrada.', 'is-warning');
+      if (enablePushButton) enablePushButton.disabled = false;
+      if (disablePushButton) disablePushButton.disabled = false;
+      if (testPushButton) testPushButton.disabled = true;
+      return;
+    }
+
+    setPushBadge('No activado', 'is-info');
+    setPushStatus('Listo para activar.', 'is-success');
+    if (enablePushButton) enablePushButton.disabled = false;
+    if (disablePushButton) disablePushButton.disabled = false;
+    if (testPushButton) testPushButton.disabled = true;
+  }
+
+  function updateInstallUi() {
+    if (!installAppState || !installAppButton || !installAppMessage || !installAppHint) return;
+
+    const ua = navigator.userAgent || '';
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || Boolean(window.navigator.standalone);
+    const isIOS = /iPad|iPhone|iPod/.test(ua);
+    const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|Edg|Android/.test(ua);
+    const isChromeLike = /Chrome|CriOS|Edg\//.test(ua) && !/iPhone|iPad|iPod/.test(ua);
+
+    if (isStandalone) {
+      installAppState.textContent = 'Instalada';
+      installAppState.className = 'pwa-status-pill is-success';
+      installAppMessage.textContent = 'La app ya se está ejecutando en modo instalada.';
+      installAppButton.style.display = 'none';
+      installAppHint.style.display = 'none';
+      installAppHint.innerHTML = '';
+      return;
+    }
+
+    if (isIOS && isSafari) {
+      installAppState.textContent = 'Paso manual';
+      installAppState.className = 'pwa-status-pill is-info';
+      installAppMessage.textContent = 'Safari iOS no ofrece un prompt de instalación programable desde la web.';
+      installAppButton.style.display = 'none';
+      installAppHint.style.display = 'block';
+      installAppHint.innerHTML = '<strong>Agregar a inicio</strong><span><span class="pwa-share-icon" aria-hidden="true">⤴</span>Tocá el ícono de compartir y elegí “Agregar a inicio”.</span>';
+      return;
+    }
+
+    if (!isChromeLike) {
+      installAppState.textContent = 'No disponible';
+      installAppState.className = 'pwa-status-pill is-info';
+      installAppMessage.textContent = 'Este navegador no ofrece instalación de PWA en este contexto.';
+      installAppButton.style.display = 'none';
+      installAppHint.style.display = 'none';
+      installAppHint.innerHTML = '';
+      return;
+    }
+
+    if (deferredPrompt) {
+      installAppState.textContent = 'Listo para instalar';
+      installAppState.className = 'pwa-status-pill is-info';
+      installAppMessage.textContent = 'Tu navegador ya está preparado para instalar la app.';
+      installAppButton.style.display = 'inline-flex';
+      installAppHint.style.display = 'none';
+      installAppHint.innerHTML = '';
+      return;
+    }
+
+    installAppState.textContent = 'Disponible';
+    installAppState.className = 'pwa-status-pill is-info';
+    installAppMessage.textContent = 'Este navegador admite la instalación. Usa el botón cuando el prompt esté disponible.';
+    installAppButton.style.display = 'none';
+    installAppHint.style.display = 'none';
+    installAppHint.innerHTML = '';
   }
 
   function urlBase64ToUint8Array(base64String) {
@@ -706,9 +889,12 @@
       if (!response.ok || !payload.success) {
         throw new Error(payload.message || 'No se pudo guardar la suscripción.');
       }
+      window.ctnProfilePushEnabled = true;
       setPushStatus(payload.message || 'Suscripción guardada.', 'is-success');
+      syncPushUi();
     } catch (error) {
       setPushStatus(error.message || 'No se pudo activar.', 'is-error');
+      syncPushUi();
     }
   }
 
@@ -728,9 +914,12 @@
       if (!response.ok || !payload.success) {
         throw new Error(payload.message || 'No se pudo eliminar la suscripción.');
       }
+      window.ctnProfilePushEnabled = false;
       setPushStatus(payload.message || 'Suscripción eliminada.', 'is-success');
+      syncPushUi();
     } catch (error) {
       setPushStatus(error.message || 'No se pudo desactivar.', 'is-error');
+      syncPushUi();
     }
   }
 
@@ -849,16 +1038,52 @@
     });
   }
 
-  if (enablePushButton) {
-    enablePushButton.addEventListener('click', subscribeToPush);
-  }
-  if (disablePushButton) {
-    disablePushButton.addEventListener('click', unsubscribeFromPush);
-  }
-  if (testPushButton) {
-    testPushButton.addEventListener('click', sendPushTest);
+  if (installAppButton) {
+    installAppButton.addEventListener('click', async function () {
+      if (!deferredPrompt) {
+        updateInstallUi();
+        return;
+      }
+      deferredPrompt.prompt();
+      try {
+        await deferredPrompt.userChoice;
+      } catch (error) {
+        // Ignore prompt errors and keep UI responsive.
+      }
+      deferredPrompt = null;
+      updateInstallUi();
+    });
   }
 
+  window.addEventListener('beforeinstallprompt', function (event) {
+    event.preventDefault();
+    deferredPrompt = event;
+    updateInstallUi();
+  });
+
+  window.addEventListener('appinstalled', function () {
+    deferredPrompt = null;
+    updateInstallUi();
+  });
+
+  if (enablePushButton) {
+    enablePushButton.addEventListener('click', function () {
+      subscribeToPush().finally(syncPushUi);
+    });
+  }
+  if (disablePushButton) {
+    disablePushButton.addEventListener('click', function () {
+      unsubscribeFromPush().finally(syncPushUi);
+    });
+  }
+  if (testPushButton) {
+    testPushButton.addEventListener('click', function () {
+      sendPushTest().finally(syncPushUi);
+    });
+  }
+
+  updateInstallUi();
+  syncPushUi();
 })();
 </script>
 
