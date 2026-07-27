@@ -46,8 +46,14 @@
   }
   .security-panel-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .security-panel-grid {
+      grid-template-columns: 1fr;
+    }
   }
   .totp-setup {
     display: grid;
@@ -432,9 +438,9 @@
             </section>
 
             <section id="seguridad-panel" class="profile-panel" hidden>
-              <form id="securityForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="securitySaveStatus">
-                <input type="hidden" name="action" value="changePassword" />
-                <div class="security-panel-grid">
+              <div class="security-panel-grid">
+                <form id="securityForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="securitySaveStatus">
+                  <input type="hidden" name="action" value="changePassword" />
                   <div class="table-card card">
                     <div class="table-header">Cambiar Contraseña</div>
                     <div class="cell"><strong>Contraseña Actual</strong></div>
@@ -457,10 +463,8 @@
                       <span id="securitySaveStatus" class="save-status" aria-live="polite">Listo.</span>
                     </div>
                   </div>
-                </div>
-              </form>
+                </form>
 
-              <div class="security-panel-grid" style="margin-top: 1rem;">
                 <div class="form-card card totp-setup-card">
                   <div class="form-card-header">Seguridad adicional</div>
                   <div class="form-field">
@@ -627,6 +631,7 @@
 (function () {
   const profileForm = document.getElementById('profileForm');
   const securityForm = document.getElementById('securityForm');
+  const confirmTotpForm = document.getElementById('confirmTotpForm');
 
   function resolveAjaxPayload(responseText, response) {
     const contentType = response.headers.get('content-type') || '';
@@ -715,17 +720,17 @@
     securityStatus && setStatus(securityStatus, 'Listo para guardar.', 'is-success');
   }
 
-  const confirmTotpButton = document.getElementById('confirmTotpButton');
-  const confirmTotpForm = document.getElementById('confirmTotpForm');
-  const totpSetupCodeInput = document.getElementById('totpSetupCode');
-  const confirmTotpSetupCode = document.getElementById('confirmTotpSetupCode');
-
-  if (confirmTotpButton && confirmTotpForm && totpSetupCodeInput && confirmTotpSetupCode) {
-    confirmTotpButton.addEventListener('click', function () {
-      confirmTotpSetupCode.value = totpSetupCodeInput.value.trim();
-      confirmTotpForm.submit();
+  if (confirmTotpForm) {
+    confirmTotpForm.addEventListener('submit', function (event) {
+      const codeInput = document.getElementById('totpSetupCode');
+      if (codeInput && codeInput.value.trim().length < 6) {
+        event.preventDefault();
+        codeInput.focus();
+        return;
+      }
     });
   }
+
 })();
 </script>
 
