@@ -84,7 +84,22 @@
     border-radius: 0.4rem;
     box-shadow: none;
   }
-  html[data-theme="dark"] .totp-qr {
+  #totpQrCanvas {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+  #totpQrCanvas canvas {
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+    padding: 0.75rem;
+    background: #ffffff;
+    border: 1px solid #dbeafe;
+    border-radius: 0.4rem;
+  }
+  html[data-theme="dark"] .totp-qr,
+  html[data-theme="dark"] #totpQrCanvas canvas {
     background: #1e293b;
     border-color: #475569;
   }
@@ -554,9 +569,7 @@
                     <div class="form-field">
                       <div class="totp-setup-box">
                         <p>Escanea el código QR con tu app de autenticación o copia el secreto manualmente:</p>
-                        <c:if test="${not empty totpQrUrl}">
-                          <img class="totp-qr" src="${totpQrUrl}" alt="Código QR de 2FA" />
-                        </c:if>
+                        <div id="totpQrCanvas" aria-label="Código QR de 2FA"></div>
                         <div class="totp-secret"><c:out value="${pendingTotpSecret}" /></div>
                       </div>
                     </div>
@@ -718,6 +731,8 @@
   const profileForm = document.getElementById('profileForm');
   const securityForm = document.getElementById('securityForm');
   const confirmTotpForm = document.getElementById('confirmTotpForm');
+  const totpQrCanvas = document.getElementById('totpQrCanvas');
+  const totpProvisioningUri = '${totpProvisioningUri}';
   const enablePushButton = document.getElementById('enablePushButton');
   const disablePushButton = document.getElementById('disablePushButton');
   const testPushButton = document.getElementById('testPushButton');
@@ -1061,6 +1076,26 @@
     });
   }
 
+  if (totpQrCanvas && totpProvisioningUri) {
+    try {
+      if (typeof window.QRCode !== 'undefined') {
+        const qr = new window.QRCode(totpQrCanvas, {
+          text: totpProvisioningUri,
+          width: 200,
+          height: 200,
+          colorDark: '#1f2937',
+          colorLight: '#ffffff',
+          correctLevel: window.QRCode.CorrectLevel.M
+        });
+        if (qr && typeof qr.makeCode === 'function') {
+          qr.makeCode(totpProvisioningUri);
+        }
+      }
+    } catch (error) {
+      console.error('No se pudo renderizar el QR de 2FA', error);
+    }
+  }
+
   if (installAppButton) {
     installAppButton.addEventListener('click', async function () {
       if (!deferredPrompt) {
@@ -1146,6 +1181,7 @@
 </script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
+  <script src="${pageContext.request.contextPath}/scripts/qrcode.js"></script>
   <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
   <script>
     if ('serviceWorker' in navigator) {

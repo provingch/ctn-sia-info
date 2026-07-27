@@ -25,8 +25,6 @@ import ctn.informatica.sia.util.TotpUtils;
 import com.google.api.services.classroom.model.Course;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -417,7 +415,6 @@ public class ProfileServlet extends HttpServlet {
         if (pendingTotpSecret != null && !pendingTotpSecret.isBlank()) {
             String provisioningUri = TotpUtils.getOtpAuthUrl("CTNPortal", user == null ? "" : user.getUsername(), pendingTotpSecret);
             req.setAttribute("totpProvisioningUri", provisioningUri);
-            req.setAttribute("totpQrUrl", "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + URLEncoder.encode(provisioningUri, StandardCharsets.UTF_8));
         }
 
         req.getRequestDispatcher("/Profile.jsp").forward(req, resp);
