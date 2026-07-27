@@ -2,9 +2,14 @@ package ctn.informatica.sia.util;
 
 import ctn.informatica.sia.dao.PushSubscriptionDao;
 import ctn.informatica.sia.model.PushSubscription;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
+import nl.martijndwars.webpush.Notification;
+import nl.martijndwars.webpush.PushService;
+import org.apache.http.HttpResponse;
+import org.jose4j.lang.JoseException;
 
 public class PushNotificationService {
 
@@ -30,9 +35,30 @@ public class PushNotificationService {
         if (subscription == null || subscription.getEndpoint() == null || subscription.getEndpoint().isBlank()) {
             return false;
         }
-        // Infraestructura básica: se deja preparado para un futuro proveedor real.
-        // En esta fase solo se registra el intento y se devuelve éxito.
-        return payload != null && !payload.isBlank();
+        String publicKey = resolveVapidPublicKey();
+        String privateKey = resolveVapidPrivateKey();
+        if (publicKey.isBlank() || privateKey.isBlank()) {
+            return false;
+        }
+
+        try {
+            PushService pushService = new PushService(publicKey, privateKey, "mailto:soporte@ctn.edu.ar");
+            Notification notification = new Notification(
+                    subscription.getEndpoint(),
+                    subscription.getP256dh(),
+                    subscription.getAuth(),
+                    payload
+            );
+            HttpResponse response = pushService.send(notification);
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 404 || status == 410) {
+                new PushSubscriptionDao().deleteById(subscription.getId());
+                return false;
+            }
+            return status >= 200 && status < 300;
+        } catch (GeneralSecurityException | IOException | JoseException | InterruptedException | java.util.concurrent.ExecutionException ex) {
+            return false;
+        }
     }
 
     public static String resolveVapidPublicKey() {

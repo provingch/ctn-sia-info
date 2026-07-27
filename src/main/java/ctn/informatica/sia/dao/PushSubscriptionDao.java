@@ -66,6 +66,13 @@ public class PushSubscriptionDao extends conexion {
         }
     }
 
+    public boolean deleteById(int id) throws SQLException {
+        try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement("DELETE FROM push_subscription WHERE id = ?")) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() == 1;
+        }
+    }
+
     public List<PushSubscription> findByUser(int userId, String userType) throws SQLException {
         List<PushSubscription> subscriptions = new ArrayList<>();
         String sql = "SELECT id, user_id, user_type, endpoint, p256dh, auth FROM push_subscription WHERE user_id = ? AND user_type = ? ORDER BY id DESC";
