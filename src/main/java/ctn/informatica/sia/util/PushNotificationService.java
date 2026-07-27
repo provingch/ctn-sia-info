@@ -56,6 +56,8 @@ public class PushNotificationService {
                 return false;
             }
             return status >= 200 && status < 300;
+        } catch (SQLException ex) {
+            return false;
         } catch (GeneralSecurityException | IOException | JoseException | InterruptedException | java.util.concurrent.ExecutionException ex) {
             return false;
         }
