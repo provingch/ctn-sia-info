@@ -420,7 +420,37 @@ public class PlanillaServlet extends HttpServlet {
                 return;
             }
 
-            String msg = "Los cambios se reflejarán desde Classroom.";
+            Set<Integer> alumnoIds = gradesByAlumno.keySet();
+            RegistroDao registroDao = new RegistroDao();
+            Map<Integer, Integer> alumnoToRegistro = registroDao.getRegistroIdsForPlanilla(planilla.getId(), alumnoIds);
+
+            Map<Integer, Map<Integer, Integer>> gradesByRegistro = new HashMap<>();
+            for (Map.Entry<Integer, Map<Integer, Integer>> entry : gradesByAlumno.entrySet()) {
+                int alumnoId = entry.getKey();
+                Integer registroId = alumnoToRegistro.get(alumnoId);
+                if (registroId == null) {
+                    paramErrors.add("Alumno " + alumnoId + " no está registrado en esta planilla; calificación omitida.");
+                    continue;
+                }
+                gradesByRegistro.put(registroId, entry.getValue());
+            }
+
+            if (gradesByRegistro.isEmpty()) {
+                session.setAttribute("flashMessage", "No se encontraron registros válidos para guardar (ver advertencias).");
+                session.setAttribute("flashErrors", paramErrors);
+                response.sendRedirect(request.getContextPath() + "/PlanillaServlet?planillaId=" + planilla.getId());
+                return;
+            }
+
+            GradeDao gradeDao = new GradeDao();
+            try {
+                gradeDao.saveGradesBatch(planilla.getId(), gradesByRegistro);
+            } catch (SQLException sqle) {
+                log("Error saving grades for planilla " + planilla.getId(), sqle);
+                throw new ServletException("Error saving calificaciones", sqle);
+            }
+
+            String msg = "Cambios guardados correctamente.";
             if (!paramErrors.isEmpty()) {
                 session.setAttribute("flashErrors", paramErrors);
                 msg += " (con advertencias)";
