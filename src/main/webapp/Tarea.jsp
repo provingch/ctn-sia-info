@@ -302,6 +302,13 @@
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
   <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('${pageContext.request.contextPath}/sw.js').catch(console.error);
+      });
+    }
+  </script>
 <script>
 document.getElementById("saveBtn").addEventListener("click", function(){
     document.getElementById("tareaForm").className="submitted";

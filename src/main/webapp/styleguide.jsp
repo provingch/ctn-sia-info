@@ -75,6 +75,13 @@
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
   <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
   <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('${pageContext.request.contextPath}/sw.js').catch(console.error);
+      });
+    }
+  </script>
+  <script>
     document.getElementById('specialtySelect').addEventListener('change', function(e){
       var val = e.target.value;
       if(!val) { document.body.removeAttribute('data-specialty'); return; }
