@@ -491,6 +491,16 @@
                       </c:otherwise>
                     </c:choose>
                   </div>
+                  <div class="form-field">
+                    <strong>Notificaciones push</strong>
+                    <p>Activa las alertas del navegador para recibir mensajes de prueba desde esta sesión.</p>
+                    <div class="security-actions">
+                      <button class="btn-secondary" id="enablePushButton" type="button">Activar notificaciones</button>
+                      <button class="btn-secondary" id="testPushButton" type="button">Enviar prueba</button>
+                      <button class="btn-danger" id="disablePushButton" type="button">Desactivar</button>
+                    </div>
+                    <div id="pushStatus" class="save-status is-success" aria-live="polite">Listo para activar.</div>
+                  </div>
                   <c:if test="${not empty pendingTotpSecret}">
                     <div class="form-field">
                       <div class="totp-setup-box">
@@ -633,6 +643,113 @@
   const profileForm = document.getElementById('profileForm');
   const securityForm = document.getElementById('securityForm');
   const confirmTotpForm = document.getElementById('confirmTotpForm');
+  const enablePushButton = document.getElementById('enablePushButton');
+  const disablePushButton = document.getElementById('disablePushButton');
+  const testPushButton = document.getElementById('testPushButton');
+  const pushStatus = document.getElementById('pushStatus');
+  const vapidPublicKey = '${pushPublicKey}';
+
+  function setPushStatus(message, tone) {
+    if (!pushStatus) return;
+    pushStatus.textContent = message;
+    pushStatus.className = 'save-status ' + tone;
+  }
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const normalized = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(normalized);
+    const output = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; i += 1) {
+      output[i] = rawData.charCodeAt(i);
+    }
+    return output;
+  }
+
+  async function subscribeToPush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      setPushStatus('Tu navegador no soporta notificaciones push.', 'is-error');
+      return;
+    }
+    if (!vapidPublicKey) {
+      setPushStatus('La clave pública VAPID no está configurada.', 'is-error');
+      return;
+    }
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        setPushStatus('Se necesita permiso para mostrar notificaciones.', 'is-error');
+        return;
+      }
+      const existingSubscription = await registration.pushManager.getSubscription();
+      if (existingSubscription) {
+        await existingSubscription.unsubscribe();
+      }
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+      });
+      const p256dhKey = subscription.getKey('p256dh');
+      const authKey = subscription.getKey('auth');
+      const response = await fetch('${pageContext.request.contextPath}/PushSubscriptionServlet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: new URLSearchParams({
+          action: 'save',
+          endpoint: subscription.endpoint,
+          p256dh: p256dhKey ? btoa(String.fromCharCode(...new Uint8Array(p256dhKey))) : '',
+          auth: authKey ? btoa(String.fromCharCode(...new Uint8Array(authKey))) : ''
+        })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || 'No se pudo guardar la suscripción.');
+      }
+      setPushStatus(payload.message || 'Suscripción guardada.', 'is-success');
+    } catch (error) {
+      setPushStatus(error.message || 'No se pudo activar.', 'is-error');
+    }
+  }
+
+  async function unsubscribeFromPush() {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if (subscription) {
+        await subscription.unsubscribe();
+      }
+      const response = await fetch('${pageContext.request.contextPath}/PushSubscriptionServlet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: new URLSearchParams({ action: 'unsubscribe' })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || 'No se pudo eliminar la suscripción.');
+      }
+      setPushStatus(payload.message || 'Suscripción eliminada.', 'is-success');
+    } catch (error) {
+      setPushStatus(error.message || 'No se pudo desactivar.', 'is-error');
+    }
+  }
+
+  async function sendPushTest() {
+    try {
+      const response = await fetch('${pageContext.request.contextPath}/PushSubscriptionServlet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: new URLSearchParams({ action: 'test' })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || 'No se pudo enviar la prueba.');
+      }
+      setPushStatus(payload.message || 'Prueba enviada.', 'is-success');
+    } catch (error) {
+      setPushStatus(error.message || 'No se pudo enviar la prueba.', 'is-error');
+    }
+  }
 
   function resolveAjaxPayload(responseText, response) {
     const contentType = response.headers.get('content-type') || '';
@@ -730,6 +847,16 @@
         return;
       }
     });
+  }
+
+  if (enablePushButton) {
+    enablePushButton.addEventListener('click', subscribeToPush);
+  }
+  if (disablePushButton) {
+    disablePushButton.addEventListener('click', unsubscribeFromPush);
+  }
+  if (testPushButton) {
+    testPushButton.addEventListener('click', sendPushTest);
   }
 
 })();

@@ -393,6 +393,8 @@ public class ProfileServlet extends HttpServlet {
         req.setAttribute("activityLog", session != null ? session.getAttribute("activityLog") : Collections.emptyList());
         req.setAttribute("totpEnabled", totpSecret != null && !totpSecret.isBlank());
         req.setAttribute("pendingTotpSecret", pendingTotpSecret);
+        req.setAttribute("pushPublicKey", ctn.informatica.sia.util.PushNotificationService.resolveVapidPublicKey());
+        req.setAttribute("pushEnabled", false);
         if (pendingTotpSecret != null && !pendingTotpSecret.isBlank()) {
             String provisioningUri = TotpUtils.getOtpAuthUrl("CTNPortal", user == null ? "" : user.getUsername(), pendingTotpSecret);
             req.setAttribute("totpProvisioningUri", provisioningUri);

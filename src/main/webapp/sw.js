@@ -1,11 +1,45 @@
-// Fase 1: solo lo necesario para que el navegador considere el sitio "instalable".
-// No cachea nada todavía — eso es Fase 2.
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('push', (event) => {
+  const payload = event.data && event.data.text ? event.data.text() : '{}';
+  let notification = { title: 'CTN Portal', body: 'Tienes un mensaje nuevo.' };
+  try {
+    notification = JSON.parse(payload);
+  } catch (ignored) {
+    // ignore malformed payloads
+  }
+  const title = notification.title || 'CTN Portal';
+  const body = notification.body || 'Tienes un mensaje nuevo.';
+  const url = notification.url || self.registration.scope;
+  const iconUrl = new URL('icons/pwa/icon-192.png', self.registration.scope);
+  event.waitUntil(self.registration.showNotification(title, {
+    body,
+    icon: iconUrl.toString(),
+    data: { url }
+  }));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = event.notification.data && event.notification.data.url ? event.notification.data.url : self.registration.scope;
+  const urlToOpen = new URL(targetUrl, self.registration.scope);
+  event.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+    for (const client of clientList) {
+      if (client.url === urlToOpen.href && 'focus' in client) {
+        return client.focus();
+      }
+    }
+    if (clients.openWindow) {
+      return clients.openWindow(urlToOpen.href);
+    }
+    return null;
+  }));
 });
 
 self.addEventListener('fetch', () => {
