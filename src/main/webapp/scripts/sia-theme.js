@@ -54,26 +54,126 @@
     const dropdown = button.closest('.dropdown');
     const menu = document.getElementById('sessionMenu');
     if (!dropdown || !menu) return;
-    if (window.jQuery && window.jQuery.fn && window.jQuery.fn.dropdown) return;
+
+    let mobileToggle = dropdown.querySelector('.session-mobile-toggle');
+    if (!mobileToggle) {
+      mobileToggle = document.createElement('button');
+      mobileToggle.type = 'button';
+      mobileToggle.className = 'session-mobile-toggle';
+      mobileToggle.setAttribute('aria-controls', 'ctnSessionPanel');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+      mobileToggle.innerHTML = '<span class="session-mobile-toggle__icon" aria-hidden="true"></span><span class="session-mobile-toggle__label">Sesión</span>';
+      dropdown.appendChild(mobileToggle);
+    }
+
+    let mobilePanel = document.getElementById('ctnSessionPanel');
+    let mobileBackdrop = document.getElementById('ctnSessionPanelBackdrop');
+    if (!mobilePanel || !mobileBackdrop) {
+      mobileBackdrop = document.createElement('div');
+      mobileBackdrop.id = 'ctnSessionPanelBackdrop';
+      mobileBackdrop.className = 'session-menu-panel-backdrop';
+      mobileBackdrop.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(mobileBackdrop);
+
+      mobilePanel = document.createElement('aside');
+      mobilePanel.id = 'ctnSessionPanel';
+      mobilePanel.className = 'session-menu-panel';
+      mobilePanel.setAttribute('role', 'dialog');
+      mobilePanel.setAttribute('aria-modal', 'true');
+      mobilePanel.setAttribute('aria-label', 'Menú de sesión');
+
+      const header = document.createElement('div');
+      header.className = 'session-menu-panel__header';
+      header.innerHTML = '<span class="session-menu-panel__title">Sesión</span><button type="button" class="session-menu-panel__close" aria-label="Cerrar menú de sesión">×</button>';
+      mobilePanel.appendChild(header);
+
+      const panelMenu = menu.cloneNode(true);
+      panelMenu.className = 'dropdown-menu session-menu-panel__menu';
+      panelMenu.removeAttribute('id');
+      mobilePanel.appendChild(panelMenu);
+      document.body.appendChild(mobilePanel);
+    }
+
+    const panelCloseButton = mobilePanel.querySelector('.session-menu-panel__close');
+    const panelLinks = mobilePanel.querySelectorAll('a');
 
     function closeMenu() {
       dropdown.classList.remove('open');
       button.setAttribute('aria-expanded', 'false');
     }
 
+    function closeMobileMenu() {
+      mobilePanel.classList.remove('is-open');
+      mobileBackdrop.classList.remove('is-visible');
+      document.body.classList.remove('session-panel-open');
+      button.setAttribute('aria-expanded', 'false');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function openMobileMenu() {
+      mobilePanel.classList.add('is-open');
+      mobileBackdrop.classList.add('is-visible');
+      document.body.classList.add('session-panel-open');
+      button.setAttribute('aria-expanded', 'true');
+      mobileToggle.setAttribute('aria-expanded', 'true');
+    }
+
     button.addEventListener('click', function (event) {
       event.preventDefault();
       event.stopPropagation();
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        openMobileMenu();
+        return;
+      }
       const isOpen = dropdown.classList.toggle('open');
       button.setAttribute('aria-expanded', String(isOpen));
     });
 
+    mobileToggle.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      openMobileMenu();
+    });
+
+    if (panelCloseButton) {
+      panelCloseButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        closeMobileMenu();
+      });
+    }
+
+    if (mobileBackdrop) {
+      mobileBackdrop.addEventListener('click', closeMobileMenu);
+    }
+
+    panelLinks.forEach(function (link) {
+      link.addEventListener('click', closeMobileMenu);
+    });
+
     document.addEventListener('click', function (event) {
-      if (!dropdown.contains(event.target)) closeMenu();
+      const target = event.target;
+      const isMobileView = window.matchMedia('(max-width: 767px)').matches;
+      if (isMobileView) {
+        const shouldClose = mobilePanel.classList.contains('is-open')
+          && !mobilePanel.contains(target)
+          && !mobileToggle.contains(target)
+          && !button.contains(target);
+        if (shouldClose) {
+          closeMobileMenu();
+        }
+        return;
+      }
+      if (!dropdown.contains(target)) closeMenu();
     });
 
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') closeMenu();
+      if (event.key === 'Escape') {
+        if (mobilePanel.classList.contains('is-open')) {
+          closeMobileMenu();
+        } else {
+          closeMenu();
+        }
+      }
     });
   }
 

@@ -278,9 +278,17 @@
     (function sessionDropdown() {
       const button = document.getElementById('sessionButton');
       const dropdown = document.getElementById('sessionDropdown') || (button && button.closest('.dropdown'));
-      if (!dropdown) return;
+      if (!dropdown || !button) return;
       const menu = document.getElementById('sessionMenu');
-      if (!button) return;
+      const isMobileView = window.matchMedia('(max-width: 767px)').matches;
+
+      if (isMobileView) {
+        button.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+        return;
+      }
 
       function openMenu() {
         dropdown.classList.add('open');
