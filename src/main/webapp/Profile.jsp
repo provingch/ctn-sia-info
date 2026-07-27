@@ -55,59 +55,41 @@
       grid-template-columns: 1fr;
     }
   }
-  .totp-setup {
-    display: grid;
-    gap: 0.75rem;
+  .table-card, .form-card {
+    border-left: 4px solid #2563eb;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
   }
-  .totp-setup-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
-    border-left-color: #2563eb;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+  html[data-theme="dark"] .table-card,
+  html[data-theme="dark"] .form-card {
+    border-left-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
-  .totp-setup-card .form-card-header {
-    background: linear-gradient(90deg, #eff6ff 0%, #dbeafe 100%);
-    color: #0f172a;
+  .table-header, .form-card-header {
     font-weight: 700;
     letter-spacing: 0.01em;
   }
-  html[data-theme="dark"] .totp-setup-card {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    border-left-color: #3b82f6;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-  }
-  html[data-theme="dark"] .totp-setup-card .form-card-header {
-    background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 100%);
-    color: #e0f2fe;
-  }
-  html[data-theme="dark"] .totp-setup-box {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    border-color: #2563eb;
-  }
-  html[data-theme="dark"] .totp-qr {
-    background: #1e293b;
-    border-color: #2563eb;
-  }
-  html[data-theme="dark"] .totp-secret {
-    background: #0f172a;
-    border-color: #2563eb;
-  }
   .totp-setup-box {
     padding: 1rem;
-    border-radius: 0.85rem;
-    background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
-    border: 1px solid #dbeafe;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border-radius: 0.4rem;
+    background: inherit;
+    border: none;
+    box-shadow: none;
+    margin: 0.5rem 0;
   }
   .totp-qr {
     display: block;
-    max-width: 220px;
+    max-width: 200px;
     width: 100%;
-    margin: 0.85rem auto 0.95rem;
-    padding: 0.8rem;
+    margin: 1rem auto;
+    padding: 0.75rem;
     background: #ffffff;
     border: 1px solid #dbeafe;
-    border-radius: 0.9rem;
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    border-radius: 0.4rem;
+    box-shadow: none;
+  }
+  html[data-theme="dark"] .totp-qr {
+    background: #1e293b;
+    border-color: #475569;
   }
   .activity-log ul {
     margin: 0;
@@ -117,14 +99,19 @@
   }
   .totp-secret {
     word-break: break-all;
-    padding: 0.8rem 0.95rem;
+    padding: 0.75rem;
     background: var(--paper, #ffffff);
-    border: 1px solid color-mix(in srgb, var(--line, #dbeafe) 80%, transparent);
-    border-radius: 0.7rem;
+    border: 1px solid #dbeafe;
+    border-radius: 0.4rem;
     margin: 0.5rem 0 0;
     color: var(--ink, #1e293b);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.92rem;
+    font-size: 0.85rem;
+  }
+  html[data-theme="dark"] .totp-secret {
+    background: #1e293b;
+    border-color: #475569;
+    color: #e2e8f0;
   }
   </style>
 </head>
@@ -465,7 +452,7 @@
                   </div>
                 </form>
 
-                <div class="form-card card totp-setup-card">
+                <div class="form-card card">
                   <div class="form-card-header">Seguridad adicional</div>
                   <div class="form-field">
                     <strong>Autenticación de dos factores (2FA)</strong>
