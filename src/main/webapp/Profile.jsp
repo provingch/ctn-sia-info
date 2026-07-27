@@ -42,6 +42,23 @@
     flex-wrap: wrap;
     align-items: center;
   }
+  .security-panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+  }
+  .totp-setup {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .totp-qr {
+    display: block;
+    max-width: 220px;
+    width: 100%;
+    margin: 0.5rem 0;
+    border: 1px solid #dcdfe6;
+    border-radius: 0.5rem;
+  }
   .activity-log ul {
     margin: 0;
     padding-left: 1.2rem;
@@ -370,7 +387,7 @@
             <section id="seguridad-panel" class="profile-panel" hidden>
               <form id="securityForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" data-status-target="securitySaveStatus">
                 <input type="hidden" name="action" value="changePassword" />
-                <div class="profile-grid profile-grid-layout">
+                <div class="security-panel-grid">
                   <div class="table-card card">
                     <div class="table-header">Cambiar Contraseña</div>
                     <div class="cell"><strong>Contraseña Actual</strong></div>
@@ -393,6 +410,49 @@
                       <span id="securitySaveStatus" class="save-status" aria-live="polite">Listo.</span>
                     </div>
                   </div>
+
+                  <div class="form-card card">
+                    <div class="form-card-header">Seguridad adicional</div>
+                    <div class="form-field">
+                      <strong>Autenticación de dos factores (2FA)</strong>
+                      <c:choose>
+                        <c:when test="${totpEnabled}">
+                          <div class="security-status security-status--enabled">2FA activado en esta cuenta.</div>
+                          <p>Usa tu app de autenticación para generar el código de inicio de sesión.</p>
+                        </c:when>
+                        <c:otherwise>
+                          <div class="security-status security-status--disabled">2FA no está activo.</div>
+                          <p>Activa 2FA para proteger tu cuenta con un código extra al iniciar sesión.</p>
+                        </c:otherwise>
+                      </c:choose>
+                    </div>
+                    <div class="form-field security-actions">
+                      <c:choose>
+                        <c:when test="${totpEnabled}">
+                          <button class="btn-danger" type="submit" form="disableTotpForm">Desactivar 2FA</button>
+                        </c:when>
+                        <c:otherwise>
+                          <button class="btn-secondary" type="submit" form="prepareTotpForm">Configurar 2FA</button>
+                        </c:otherwise>
+                      </c:choose>
+                    </div>
+                    <c:if test="${not empty pendingTotpSecret}">
+                      <div class="form-field">
+                        <p>Escanea el código QR con tu app de autenticación o copia el secreto manualmente:</p>
+                        <c:if test="${not empty totpQrUrl}">
+                          <img class="totp-qr" src="${totpQrUrl}" alt="Código QR de 2FA" />
+                        </c:if>
+                        <div class="totp-secret"><c:out value="${pendingTotpSecret}" /></div>
+                      </div>
+                      <div class="form-field">
+                        <label for="totpSetupCode">Código de la app</label>
+                        <input type="text" id="totpSetupCode" form="confirmTotpForm" maxlength="6" required />
+                      </div>
+                      <div class="form-field security-actions">
+                        <button class="btn-primary" id="confirmTotpButton" type="button">Confirmar activación</button>
+                      </div>
+                    </c:if>
+                  </div>
                 </div>
               </form>
 
@@ -406,48 +466,6 @@
               <form id="disableTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0; display:none;">
                 <input type="hidden" name="action" value="disableTotp" />
               </form>
-
-              <div class="profile-grid profile-grid-layout">
-                <div class="form-card card">
-                  <div class="form-card-header">Seguridad adicional</div>
-                  <div class="form-field">
-                    <strong>Autenticación de dos factores (2FA)</strong>
-                    <c:choose>
-                      <c:when test="${totpEnabled}">
-                        <div class="security-status security-status--enabled">2FA activado en esta cuenta.</div>
-                        <p>Usa tu app de autenticación para generar el código de inicio de sesión.</p>
-                      </c:when>
-                      <c:otherwise>
-                        <div class="security-status security-status--disabled">2FA no está activo.</div>
-                        <p>Activa 2FA para proteger tu cuenta con un código extra al iniciar sesión.</p>
-                      </c:otherwise>
-                    </c:choose>
-                  </div>
-                  <div class="form-field security-actions">
-                    <c:choose>
-                      <c:when test="${totpEnabled}">
-                        <button class="btn-danger" type="submit" form="disableTotpForm">Desactivar 2FA</button>
-                      </c:when>
-                      <c:otherwise>
-                        <button class="btn-secondary" type="submit" form="prepareTotpForm">Configurar 2FA</button>
-                      </c:otherwise>
-                    </c:choose>
-                  </div>
-                  <c:if test="${not empty pendingTotpSecret}">
-                    <div class="form-field">
-                      <p>Escanea el código QR con tu app de autenticación o usa este secreto para registrar la cuenta:</p>
-                      <div class="totp-secret"><c:out value="${pendingTotpSecret}" /></div>
-                    </div>
-                    <div class="form-field">
-                      <label for="totpSetupCode">Código de la app</label>
-                      <input type="text" id="totpSetupCode" form="confirmTotpForm" maxlength="6" required />
-                    </div>
-                    <div class="form-field security-actions">
-                      <button class="btn-primary" id="confirmTotpButton" type="button">Confirmar activación</button>
-                    </div>
-                  </c:if>
-                </div>
-              </div>
             </section>
 
         <c:if test="${showMateriasPanel}">
