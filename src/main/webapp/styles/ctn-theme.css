@@ -1621,17 +1621,31 @@ button {
   color: var(--accent-contrast);
 }
 
-.navbar-toggle {
-  display: block;
+.ctn-navbar .navbar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ctn-navbar .navbar-toggle {
+  display: none;
+  order: 2;
+  margin-left: auto;
   background: transparent !important;
   color: var(--ink);
   padding: 0 21px !important;
   min-height: 0;
 }
-.navbar-toggle:before,
-.navbar-toggle:hover:before,
-.navbar-toggle:focus:before {
+.ctn-navbar .navbar-toggle:before,
+.ctn-navbar .navbar-toggle:hover:before,
+.ctn-navbar .navbar-toggle:focus:before {
   color: var(--ink);
+}
+
+@media (max-width: 767px) {
+  .ctn-navbar .navbar-toggle {
+    display: block;
+  }
 }
 
 button:hover,
