@@ -91,11 +91,11 @@
   .totp-secret {
     word-break: break-all;
     padding: 0.8rem 0.95rem;
-    background: #ffffff;
-    border: 1px solid #dbeafe;
+    background: var(--paper, #ffffff);
+    border: 1px solid color-mix(in srgb, var(--line, #dbeafe) 80%, transparent);
     border-radius: 0.7rem;
     margin: 0.5rem 0 0;
-    color: #1e293b;
+    color: var(--ink, #1e293b);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.92rem;
   }
@@ -418,18 +418,18 @@
                     <div class="table-header">Cambiar Contraseña</div>
                     <div class="cell"><strong>Contraseña Actual</strong></div>
                     <div class="cell">
-                      <input type="password" name="currentPassword" id="currentPassword" required />
+                      <input type="password" name="currentPassword" id="currentPassword" />
                     </div>
                     <div class="cell"><strong>Nueva Contraseña</strong></div>
                     <div class="cell">
-                      <input type="password" name="newPassword" id="newPassword" required />
+                      <input type="password" name="newPassword" id="newPassword" />
                     </div>
                     <div class="cell"><strong>Confirmar Contraseña</strong></div>
                     <div class="cell">
-                      <input type="password" name="confirmPassword" id="confirmPassword" required />
+                      <input type="password" name="confirmPassword" id="confirmPassword" />
                     </div>
                     <div class="cell selection-hint" style="grid-column: 1 / -1;">
-                      La contraseña debe tener al menos 6 caracteres.
+                      Completa solo si quieres cambiar la contraseña. Debe tener al menos 6 caracteres.
                     </div>
                     <div class="cell" style="grid-column: 1 / -1;">
                       <button class="btn-primary save-button" type="submit">Cambiar Contraseña</button>
