@@ -24,11 +24,13 @@
     margin: 0;
   }
   .security-status {
-    margin: 0.5rem 0 1rem;
+    margin: 0.6rem 0 1rem;
     padding: 0.9rem 1rem;
-    border-radius: 0.5rem;
-    background: #f4f7fb;
+    border-radius: 0.7rem;
+    background: #f8fbff;
     color: #22303f;
+    border: 1px solid #dbeafe;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
   }
   .security-status--enabled {
     border-left: 4px solid #3c8dbc;
@@ -51,13 +53,34 @@
     display: grid;
     gap: 0.75rem;
   }
+  .totp-setup-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    border-left-color: #2563eb;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+  }
+  .totp-setup-card .form-card-header {
+    background: linear-gradient(90deg, #eff6ff 0%, #dbeafe 100%);
+    color: #0f172a;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .totp-setup-box {
+    padding: 1rem;
+    border-radius: 0.85rem;
+    background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
+    border: 1px solid #dbeafe;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
   .totp-qr {
     display: block;
     max-width: 220px;
     width: 100%;
-    margin: 0.5rem 0;
-    border: 1px solid #dcdfe6;
-    border-radius: 0.5rem;
+    margin: 0.85rem auto 0.95rem;
+    padding: 0.8rem;
+    background: #ffffff;
+    border: 1px solid #dbeafe;
+    border-radius: 0.9rem;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
   }
   .activity-log ul {
     margin: 0;
@@ -67,11 +90,14 @@
   }
   .totp-secret {
     word-break: break-all;
-    padding: 0.75rem 1rem;
-    background: #f7f9fb;
-    border: 1px solid #dcdfe6;
-    border-radius: 0.5rem;
-    margin: 0.5rem 0;
+    padding: 0.8rem 0.95rem;
+    background: #ffffff;
+    border: 1px solid #dbeafe;
+    border-radius: 0.7rem;
+    margin: 0.5rem 0 0;
+    color: #1e293b;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.92rem;
   }
   </style>
 </head>
@@ -411,7 +437,7 @@
                     </div>
                   </div>
 
-                  <div class="form-card card">
+                  <div class="form-card card totp-setup-card">
                     <div class="form-card-header">Seguridad adicional</div>
                     <div class="form-field">
                       <strong>Autenticación de dos factores (2FA)</strong>
@@ -438,19 +464,24 @@
                     </div>
                     <c:if test="${not empty pendingTotpSecret}">
                       <div class="form-field">
-                        <p>Escanea el código QR con tu app de autenticación o copia el secreto manualmente:</p>
-                        <c:if test="${not empty totpQrUrl}">
-                          <img class="totp-qr" src="${totpQrUrl}" alt="Código QR de 2FA" />
-                        </c:if>
-                        <div class="totp-secret"><c:out value="${pendingTotpSecret}" /></div>
+                        <div class="totp-setup-box">
+                          <p>Escanea el código QR con tu app de autenticación o copia el secreto manualmente:</p>
+                          <c:if test="${not empty totpQrUrl}">
+                            <img class="totp-qr" src="${totpQrUrl}" alt="Código QR de 2FA" />
+                          </c:if>
+                          <div class="totp-secret"><c:out value="${pendingTotpSecret}" /></div>
+                        </div>
                       </div>
-                      <div class="form-field">
-                        <label for="totpSetupCode">Código de la app</label>
-                        <input type="text" id="totpSetupCode" form="confirmTotpForm" maxlength="6" required />
-                      </div>
-                      <div class="form-field security-actions">
-                        <button class="btn-primary" id="confirmTotpButton" type="button">Confirmar activación</button>
-                      </div>
+                      <form id="confirmTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0;">
+                        <input type="hidden" name="action" value="confirmTotp" />
+                        <div class="form-field">
+                          <label for="totpSetupCode">Código de la app</label>
+                          <input type="text" id="totpSetupCode" name="totpSetupCode" maxlength="6" inputmode="numeric" autocomplete="one-time-code" required />
+                        </div>
+                        <div class="form-field security-actions">
+                          <button class="btn-primary" id="confirmTotpButton" type="submit">Confirmar activación</button>
+                        </div>
+                      </form>
                     </c:if>
                   </div>
                 </div>
@@ -458,9 +489,6 @@
 
               <form id="prepareTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0; display:none;">
                 <input type="hidden" name="action" value="prepareTotp" />
-              </form>
-              <form id="confirmTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0; display:none;">
-                <input type="hidden" name="action" value="confirmTotp" />
               </form>
               <form id="disableTotpForm" action="${pageContext.request.contextPath}/ProfileServlet" method="post" style="margin:0; display:none;">
                 <input type="hidden" name="action" value="disableTotp" />
