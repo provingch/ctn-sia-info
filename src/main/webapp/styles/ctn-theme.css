@@ -1439,9 +1439,22 @@ input[type="checkbox"] {
 }
 
 @media (max-width: 640px) {
-  body { padding: 12px; }
   .tb-right { grid-template-columns: 1fr; }
   .btn-row, .info-bar, .planilla-hero__header, .planilla-toolbar, .planilla-info-bar { flex-direction: column; align-items: flex-start; }
+  .curso-selection-form,
+  .planilla-toolbar form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .curso-selection-form label,
+  .planilla-toolbar form label {
+    margin-top: 8px;
+  }
+  .curso-selection-form select,
+  .planilla-toolbar form select {
+    width: 100%;
+    min-width: 0;
+  }
   .tareas-grid,
   .profile-grid-layout,
   .subject-form-grid {
@@ -1608,6 +1621,19 @@ button {
   color: var(--accent-contrast);
 }
 
+.navbar-toggle {
+  display: block;
+  background: transparent !important;
+  color: var(--ink);
+  padding: 0 21px !important;
+  min-height: 0;
+}
+.navbar-toggle:before,
+.navbar-toggle:hover:before,
+.navbar-toggle:focus:before {
+  color: var(--ink);
+}
+
 button:hover,
 .btn:hover,
 .btn-primary:hover,
@@ -1740,7 +1766,6 @@ form > div label {
 
 .login-form,
 .curso-selection-form,
-#exportCourseForm,
 #tareaForm,
 .planilla-toolbar form,
 form[action$="PlanillaServlet"] {
@@ -1756,7 +1781,6 @@ form[action$="PlanillaServlet"] {
 }
 
 .curso-selection-form,
-#exportCourseForm,
 .planilla-toolbar form {
   display: flex;
   align-items: center;
@@ -1771,7 +1795,6 @@ form[action$="PlanillaServlet"] {
 }
 
 .curso-selection-form select,
-#exportCourseForm select,
 .planilla-toolbar form select {
   width: auto;
   min-width: 140px;
@@ -2241,12 +2264,9 @@ html[data-theme="dark"] .footer {
   z-index: 2000;
 }
 
-/* Make nav list align right reliably */
-.ctn-navbar .navbar-nav { margin-left: auto; }
-
 @media (max-width: 640px) {
   body {
-    padding: 112px 12px 12px;
+    padding: 92px 12px 12px;
   }
 
   .cookie-consent-banner {

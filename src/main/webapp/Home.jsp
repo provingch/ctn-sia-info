@@ -81,8 +81,10 @@
     <section class="container page-shell">
       <div class="info-bar">
         <span>Bienvenido/a ${sessionScope.user.fullName}</span>
-        <span class="info-bar-divider">•</span>
-        <span>${selCurso.getCurso()}.<sup>o</sup> "${selCurso.seccion}" | ${selCurso.especialidad}</span>
+        <c:if test="${not empty selCurso}">
+          <span class="info-bar-divider">•</span>
+          <span>${selCurso.getCurso()}.<sup>o</sup> "${selCurso.seccion}" | ${selCurso.especialidad}</span>
+        </c:if>
         <span class="info-bar-spacer"></span>
         <span><c:out value="${nowFormatted}" /></span>
       </div>
