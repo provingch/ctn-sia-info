@@ -17,7 +17,7 @@ public class Curso {
     private String especialidad;
     private int promocion;
     private String seccion;
-    private int period = 2025; // TODO add functionality later
+    private int period = ctn.informatica.sia.util.AcademicPeriod.current();
 
     public Curso(int id, String especialidad, int promocion, String seccion) {
         this.id = id;

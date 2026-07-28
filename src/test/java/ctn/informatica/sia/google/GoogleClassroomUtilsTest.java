@@ -3,6 +3,7 @@ package ctn.informatica.sia.google;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ctn.informatica.sia.model.Curso;
+import ctn.informatica.sia.util.AcademicPeriod;
 import com.google.api.services.classroom.model.Course;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ public class GoogleClassroomUtilsTest {
     public void testParseCourseKey() {
         assertEquals(1, GoogleClassroomUtils.parseCourseKey("Matemáticas Primero A").get().getNivel());
         assertEquals("A", GoogleClassroomUtils.parseCourseKey("Matemáticas Primero A").get().getSeccion());
+        assertEquals(AcademicPeriod.current(), GoogleClassroomUtils.parseCourseKey("Matemáticas Primero A").get().getPeriodo());
 
         assertEquals(2, GoogleClassroomUtils.parseCourseKey("Historia Segundo B").get().getNivel());
         assertEquals("B", GoogleClassroomUtils.parseCourseKey("Historia Segundo B").get().getSeccion());
@@ -30,6 +32,7 @@ public class GoogleClassroomUtilsTest {
         assertTrue(key.isPresent());
         assertEquals(1, key.get().getNivel());
         assertEquals("A", key.get().getSeccion());
+        assertEquals(AcademicPeriod.current(), key.get().getPeriodo());
         assertEquals("matematica", key.get().getSala());
     }
 

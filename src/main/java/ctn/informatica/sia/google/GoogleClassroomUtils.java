@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import ctn.informatica.sia.util.AcademicPeriod;
 
 public final class GoogleClassroomUtils {
 
@@ -35,7 +36,7 @@ public final class GoogleClassroomUtils {
         }
 
         String sala = stripLevelAndSection(normalizedName);
-        return Optional.of(new CourseKey(level, section, sala));
+        return Optional.of(new CourseKey(level, section, sala, AcademicPeriod.current()));
     }
 
     public static String normalizeSubjectName(String subjectName) {
@@ -159,11 +160,17 @@ public final class GoogleClassroomUtils {
         private final int nivel;
         private final String seccion;
         private final String sala;
+        private final int periodo;
 
         public CourseKey(int nivel, String seccion, String sala) {
+            this(nivel, seccion, sala, AcademicPeriod.current());
+        }
+
+        public CourseKey(int nivel, String seccion, String sala, int periodo) {
             this.nivel = nivel;
             this.seccion = seccion;
             this.sala = sala == null ? "" : sala;
+            this.periodo = periodo;
         }
 
         public int getNivel() {
@@ -178,9 +185,13 @@ public final class GoogleClassroomUtils {
             return sala;
         }
 
+        public int getPeriodo() {
+            return periodo;
+        }
+
         @Override
         public int hashCode() {
-            return Objects.hash(nivel, seccion, sala);
+            return Objects.hash(nivel, seccion, sala, periodo);
         }
 
         @Override
@@ -188,12 +199,12 @@ public final class GoogleClassroomUtils {
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
             CourseKey other = (CourseKey) obj;
-            return nivel == other.nivel && seccion.equals(other.seccion) && Objects.equals(sala, other.sala);
+            return nivel == other.nivel && periodo == other.periodo && seccion.equals(other.seccion) && Objects.equals(sala, other.sala);
         }
 
         @Override
         public String toString() {
-            return "CursoKey{nivel=" + nivel + ", seccion='" + seccion + "', sala='" + sala + "'}";
+            return "CursoKey{nivel=" + nivel + ", seccion='" + seccion + "', sala='" + sala + "', periodo=" + periodo + "}";
         }
     }
 }

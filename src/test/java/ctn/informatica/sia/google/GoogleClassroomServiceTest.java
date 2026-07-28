@@ -51,7 +51,7 @@ class GoogleClassroomServiceTest {
 
     @Test
     void shouldNotMatchCoursesFromDifferentSpecialtyWhenOnlyLevelAndSectionAlign() {
-        Curso curso = new Curso(1, "Informática", 2026, "A");
+        Curso curso = new Curso(1, "Informática", ctn.informatica.sia.util.AcademicPeriod.current() + 1, "A");
         Course classroomCourse = new Course();
         classroomCourse.setName("Historia 2do A");
         classroomCourse.setRoom("");
@@ -61,7 +61,7 @@ class GoogleClassroomServiceTest {
 
     @Test
     void shouldMatchWhenSpecialtyComesFromCourseName() {
-        Curso curso = new Curso(1, "Informática", 2026, "A");
+        Curso curso = new Curso(1, "Informática", ctn.informatica.sia.util.AcademicPeriod.current() + 1, "A");
         Course classroomCourse = new Course();
         classroomCourse.setName("Informática 2do A");
         classroomCourse.setRoom("Otra sala");
@@ -71,7 +71,7 @@ class GoogleClassroomServiceTest {
 
     @Test
     void shouldNotMatchWhenSpecialtyOnlyComesFromRoom() {
-        Curso curso = new Curso(1, "Informática", 2026, "A");
+        Curso curso = new Curso(1, "Informática", ctn.informatica.sia.util.AcademicPeriod.current() + 1, "A");
         Course classroomCourse = new Course();
         classroomCourse.setName("2do A");
         classroomCourse.setRoom("Informática");

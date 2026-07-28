@@ -204,8 +204,9 @@ public final class GoogleClassroomService {
             for (Curso curso : cursos) {
                 boolean sameLevel = curso.getNivel() == key.get().getNivel();
                 boolean sameSection = curso.getSeccion() != null && curso.getSeccion().equalsIgnoreCase(key.get().getSeccion());
+                boolean samePeriod = curso.getPeriod() == key.get().getPeriodo();
                 boolean sameSpecialty = specialtyHintMatchesCurso(specialtyHint, curso);
-                if (sameLevel && sameSection && sameSpecialty) {
+                if (sameLevel && sameSection && samePeriod && sameSpecialty) {
                     return true;
                 }
             }

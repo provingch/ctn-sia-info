@@ -161,6 +161,17 @@ const ESPECIALIDADES = [];
 ESPECIALIDADES.push("<c:out value='${esp.nombre}'/>");
 </c:forEach>
 
+const SECCIONES_TRES = new Set(['quimica industrial', 'construcciones civiles', 'electronica']);
+
+function normalizeText(text) {
+    return (text || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase();
+}
+
 function uniqueEspecialidades() {
     const seen = new Set();
     const out = [];
@@ -193,7 +204,7 @@ function populateCursoNivel() {
     sel.innerHTML = '';
     sel.appendChild(new Option('--Seleccione curso--',''));
     if (!esp) return;
-    const niveles = [...new Set(CURSOS.filter(c=>c.especialidad===esp).map(c=>c.nivel))].sort((a,b)=>a-b);
+    const niveles = [1, 2, 3];
     niveles.forEach(n => sel.appendChild(new Option(n + 'º', n)));
 }
 
@@ -204,7 +215,7 @@ function populateSeccion() {
     sel.innerHTML = '';
     sel.appendChild(new Option('--Seleccione sección--',''));
     if (!esp || !nivel) return;
-    const secciones = [...new Set(CURSOS.filter(c=>c.especialidad===esp && c.nivel===nivel).map(c=>c.seccion))];
+    const secciones = normalizeText(esp) && SECCIONES_TRES.has(normalizeText(esp)) ? ['A', 'B', 'C'] : ['A', 'B'];
     secciones.forEach(s => sel.appendChild(new Option(s,s)));
     updateHiddenCursoId();
 }

@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class PlanillaDao extends conexion {
 
-    private static final int DEFAULT_PERIOD = 2025;
+    private static final int DEFAULT_PERIOD = ctn.informatica.sia.util.AcademicPeriod.current();
 
     private String normalizeEtapa(int etapaIndex) {
         return etapaIndex == 2 ? "segunda" : "primera";
@@ -192,12 +192,13 @@ public class PlanillaDao extends conexion {
     public Planilla findByCompositeKey(int cursoId, int materiaId, int etapa) throws SQLException {
         String sql = "SELECT p.id, m.nombre AS nombre, curso_id, materia_id, categoria, periodo, etapa, profesor_id, p.google_course_id "
                 + "FROM planilla p JOIN materia m ON p.materia_id = m.id "
-                + "WHERE curso_id = ? AND materia_id = ? AND periodo = 2025 AND etapa = ?";// TODO add periodo functionality
+                + "WHERE curso_id = ? AND materia_id = ? AND periodo = ? AND etapa = ?";
         try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, cursoId);
             ps.setInt(2, materiaId);
-            ps.setString(3, normalizeEtapa(etapa));
+            ps.setInt(3, DEFAULT_PERIOD);
+            ps.setString(4, normalizeEtapa(etapa));
             try (ResultSet rs = ps.executeQuery()) {
                 return fromResultSet(rs);
             }
