@@ -76,8 +76,12 @@ public class ExportCoursePlanillasServlet extends HttpServlet {
             int especialidadId = Integer.parseInt(espIdStr.trim());
             int curso = Integer.parseInt(cursoStr.trim()); // 1..3 as user enters
             int periodo = Integer.parseInt(periodoStr.trim()); // period (year)
-            // compute promocion
+            // compute promocion from the selected course level (1º/2º/3º)
             int promocion = periodo - curso + 3;
+            if (promocion <= 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "El curso seleccionado no corresponde a una promoción válida");
+                return;
+            }
 
             PlanillaDao planillaDao = new PlanillaDao();
             // get all planillas for the course
@@ -100,7 +104,6 @@ public class ExportCoursePlanillasServlet extends HttpServlet {
 
             // Build workbook with one sheet per planilla (subject)
             try (XSSFWorkbook wb = new XSSFWorkbook()) {
-                int sheetIndex = 0;
                 for (PlanillaInfo pi : planillas) {
                     Planilla p = pi.getPlanilla();
                     String materiaNombre = pi.getMateriaNombre();
@@ -169,7 +172,6 @@ public class ExportCoursePlanillasServlet extends HttpServlet {
                         } catch (Exception ignore) {}
                     }
 
-                    sheetIndex++;
                 } // end for each planilla
 
                 // prepare response filename

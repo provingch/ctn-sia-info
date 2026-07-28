@@ -37,9 +37,9 @@ public class Curso {
     public String getCursoOrdinal() {
         int cursoInt = period - promocion + 3;
         return switch (cursoInt) {
-            case 1 -> "Primero";
-            case 2 -> "Segundo";
-            case 3 -> "Tercero";
+            case 1 -> "1º";
+            case 2 -> "2º";
+            case 3 -> "3º";
             default -> "Desconocido";
         };
     }

@@ -126,9 +126,9 @@
           <div class="cell">
             <select name="curso" id="curso-select" required>
               <option value="" selected disabled>--Seleccione un curso--</option>
-              <option value="1">Primero</option>
-              <option value="2">Segundo</option>
-              <option value="3">Tercero</option>
+              <option value="1">1º</option>
+              <option value="2">2º</option>
+              <option value="3">3º</option>
             </select>
           </div>
 
