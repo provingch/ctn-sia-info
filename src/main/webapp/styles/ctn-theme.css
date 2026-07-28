@@ -880,6 +880,46 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   margin-top: 6px;
 }
 
+.profile-panel .form-field label {
+  color: color-mix(in srgb, var(--ink) 82%, var(--muted));
+}
+
+.profile-panel .form-field input:not(:disabled):not([readonly]),
+.profile-panel .form-field select:not(:disabled),
+.profile-panel .form-field textarea:not(:disabled):not([readonly]) {
+  background: var(--color-bg-input);
+  border-color: color-mix(in srgb, var(--line) 78%, var(--ink) 22%);
+}
+
+.profile-panel .form-field input:disabled,
+.profile-panel .form-field input[readonly],
+.profile-panel .form-field select:disabled,
+.profile-panel .form-field textarea:disabled,
+.profile-panel .form-field textarea[readonly] {
+  cursor: not-allowed;
+  opacity: 1;
+  color: color-mix(in srgb, var(--ink) 68%, var(--muted));
+  -webkit-text-fill-color: color-mix(in srgb, var(--ink) 68%, var(--muted));
+  background: color-mix(in srgb, var(--color-bg-muted) 82%, var(--line) 18%);
+  border-color: color-mix(in srgb, var(--line) 78%, var(--muted) 22%);
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .profile-panel .form-field label {
+  color: color-mix(in srgb, var(--ink) 90%, var(--muted));
+}
+
+html[data-theme="dark"] .profile-panel .form-field input:disabled,
+html[data-theme="dark"] .profile-panel .form-field input[readonly],
+html[data-theme="dark"] .profile-panel .form-field select:disabled,
+html[data-theme="dark"] .profile-panel .form-field textarea:disabled,
+html[data-theme="dark"] .profile-panel .form-field textarea[readonly] {
+  color: color-mix(in srgb, var(--ink) 62%, var(--muted));
+  -webkit-text-fill-color: color-mix(in srgb, var(--ink) 62%, var(--muted));
+  background: color-mix(in srgb, var(--color-bg-muted) 86%, #111827 14%);
+  border-color: color-mix(in srgb, var(--line) 72%, var(--muted) 28%);
+}
+
 .form-card--actions {
   grid-column: 1 / -1;
   border-top: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
