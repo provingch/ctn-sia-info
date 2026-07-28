@@ -32,6 +32,22 @@ public class GoogleCallbackServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException, ServletException {
 
+        HttpSession session = req.getSession(false);
+        String returnedState = req.getParameter("state");
+        String expectedState = session == null ? null : (String) session.getAttribute("googleOAuthState");
+
+        if (expectedState == null || !expectedState.equals(returnedState)) {
+            resp.sendRedirect(req.getContextPath() + "/index.jsp?error=oauth_state_invalid");
+            return;
+        }
+        session.removeAttribute("googleOAuthState");
+
+        User user = session == null ? null : (User) session.getAttribute("user");
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/index.jsp?error=login_required");
+            return;
+        }
+
         String code = req.getParameter("code");
         String error = req.getParameter("error");
 
@@ -50,7 +66,6 @@ public class GoogleCallbackServlet extends HttpServlet {
         String redirectUri = AppConfig.get("google.redirect.uri");
 
         try {
-            // --- Paso 1: intercambiar code por tokens ---
             GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
                     new NetHttpTransport(),
                     GsonFactory.getDefaultInstance(),
@@ -62,12 +77,9 @@ public class GoogleCallbackServlet extends HttpServlet {
                 .execute();
 
             String accessToken = tokenResponse.getAccessToken();
-            String refreshToken = tokenResponse.getRefreshToken(); // puede ser null si ya existía
+            String refreshToken = tokenResponse.getRefreshToken();
             long expiresInSeconds = tokenResponse.getExpiresInSeconds();
 
-            // --- Paso 2: obtener el email del profesor ---
-            // Envolvemos el access token recién obtenido con google-auth-library
-            // (reemplazo recomendado de GoogleCredential, que está deprecado)
             AccessToken tokenWrapper = new AccessToken(accessToken, null);
             GoogleCredentials credentials = GoogleCredentials.create(tokenWrapper);
             HttpRequestInitializer credential = new HttpCredentialsAdapter(credentials);
@@ -80,18 +92,8 @@ public class GoogleCallbackServlet extends HttpServlet {
             Userinfo userInfo = oauth2.userinfo().get().execute();
             String googleEmail = userInfo.getEmail();
 
-            // --- Paso 3: vincular email → profesor en la BD ---
-            HttpSession session = req.getSession(false);
-            User user = session == null ? null : (User) session.getAttribute("user");
-
             ProfesorDao profesorDao = new ProfesorDao();
-            Profesor profesor = null;
-            if (user != null) {
-                profesor = profesorDao.findById(user.getId());
-            }
-            if (profesor == null) {
-                profesor = profesorDao.findByGoogleEmail(googleEmail);
-            }
+            Profesor profesor = profesorDao.findById(user.getId());
 
             if (profesor == null) {
                 resp.sendRedirect(req.getContextPath() + "/index.jsp?error=profesor_no_encontrado");
@@ -108,11 +110,9 @@ public class GoogleCallbackServlet extends HttpServlet {
                 googleEmail
             );
 
-            // --- Paso 4: actualizar sesión sin reemplazar el User existente ---
-            if (session != null && user != null) {
-                session.setAttribute("googleAccessToken", accessToken);
-                session.setAttribute("profesor", profesor);
-            }
+            session.setAttribute("googleAccessToken", accessToken);
+            session.setAttribute("profesor", profesor);
+            session.setAttribute("flashMessage", "Cuenta de Google vinculada: " + googleEmail);
 
             resp.sendRedirect(req.getContextPath() + "/ProfileServlet");
 

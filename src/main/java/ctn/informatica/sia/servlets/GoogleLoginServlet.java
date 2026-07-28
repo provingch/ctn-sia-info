@@ -2,13 +2,16 @@ package ctn.informatica.sia.servlets;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.UUID;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import ctn.informatica.sia.config.AppConfig;
+import ctn.informatica.sia.model.User;
 
 @WebServlet("/GoogleLoginServlet")
 public class GoogleLoginServlet extends HttpServlet {
@@ -22,6 +25,14 @@ public class GoogleLoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession(false);
+        User user = session == null ? null : (User) session.getAttribute("user");
+
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/index.jsp?error=login_required");
+            return;
+        }
+
         String clientId = resolveClientId();
         String redirectUri = resolveRedirectUri(req);
 
@@ -30,13 +41,18 @@ public class GoogleLoginServlet extends HttpServlet {
             return;
         }
 
+        String state = UUID.randomUUID().toString();
+        session = req.getSession(true);
+        session.setAttribute("googleOAuthState", state);
+
         String authUrl = "https://accounts.google.com/o/oauth2/v2/auth"
             + "?client_id=" + URLEncoder.encode(clientId, "UTF-8")
             + "&redirect_uri=" + URLEncoder.encode(redirectUri, "UTF-8")
             + "&response_type=code"
             + "&scope=" + URLEncoder.encode(SCOPES, "UTF-8")
             + "&access_type=offline"
-            + "&prompt=consent";
+            + "&prompt=consent"
+            + "&state=" + URLEncoder.encode(state, "UTF-8");
 
         resp.sendRedirect(authUrl);
     }
