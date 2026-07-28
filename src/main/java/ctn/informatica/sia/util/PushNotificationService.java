@@ -6,12 +6,16 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
 import org.apache.http.HttpResponse;
 import org.jose4j.lang.JoseException;
 
 public class PushNotificationService {
+
+    private static final Logger LOGGER = Logger.getLogger(PushNotificationService.class.getName());
 
     public static String buildNotificationPayload(String title, String body, String url) {
         return "{\"title\":\"" + escapeJson(title) + "\",\"body\":\"" + escapeJson(body) + "\",\"url\":\"" + escapeJson(url == null ? "/" : url) + "\"}";
@@ -65,13 +69,20 @@ public class PushNotificationService {
             HttpResponse response = pushService.send(notification);
             int status = response.getStatusLine().getStatusCode();
             if (status == 404 || status == 410) {
-                new PushSubscriptionDao().deleteById(subscription.getId());
+                try {
+                    new PushSubscriptionDao().deleteById(subscription.getId());
+                } catch (SQLException deleteEx) {
+                    LOGGER.log(Level.WARNING, "Could not delete expired push subscription {0}", subscription.getId());
+                }
                 return false;
             }
-            return status >= 200 && status < 300;
-        } catch (SQLException ex) {
+            if (status >= 200 && status < 300) {
+                return true;
+            }
+            LOGGER.log(Level.WARNING, "Push delivery failed with status {0} for endpoint {1}", new Object[]{status, subscription.getEndpoint()});
             return false;
         } catch (GeneralSecurityException | IOException | JoseException | InterruptedException | java.util.concurrent.ExecutionException ex) {
+            LOGGER.log(Level.WARNING, "Push delivery failed due to transport error", ex);
             return false;
         }
     }
