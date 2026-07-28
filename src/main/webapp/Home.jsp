@@ -106,8 +106,8 @@
           <form id="cursoSelectionForm" action="HomeServlet" method="get" class="curso-selection-form">
             <label for="selEspecialidad" style="font-weight:600;margin-right:0.5rem;">Especialidad</label>
             <select id="selEspecialidad" name="especialidad"></select>
-            <label for="selPromocion" style="font-weight:600;margin-right:0.5rem;">Curso</label>
-            <select id="selPromocion" name="promocion" disabled></select>
+            <label for="selCursoNivel" style="font-weight:600;margin-right:0.5rem;">Curso</label>
+            <select id="selCursoNivel" name="promocion" disabled></select>
             <label for="selSeccion" style="font-weight:600;margin-right:0.5rem;">Sección</label>
             <select id="selSeccion" name="seccion" disabled></select>
             <input type="hidden" name="cursoId" id="cursoIdHidden" value="${empty selCurso ? '' : selCurso.id}" />
@@ -280,7 +280,7 @@ const CURSOS = [
 
 (function () {
   const selEspecialidad = document.getElementById('selEspecialidad');
-  const selPromocion = document.getElementById('selPromocion');
+  const selCursoNivel = document.getElementById('selCursoNivel');
   const selSeccion = document.getElementById('selSeccion');
   const cursoIdHidden = document.getElementById('cursoIdHidden');
   const selectedCursoId = ${empty selCurso ? 0 : selCurso.id};
@@ -301,56 +301,56 @@ const CURSOS = [
     selEspecialidad.innerHTML = '';
     selEspecialidad.appendChild(new Option('--Seleccione especialidad--',''));
     uniqueEspecialidades().forEach(e => selEspecialidad.appendChild(new Option(e,e)));
-    selPromocion.innerHTML = '<option value="">--Seleccione curso--</option>';
-    selPromocion.disabled = true;
+    selCursoNivel.innerHTML = '<option value="">--Seleccione curso--</option>';
+    selCursoNivel.disabled = true;
     selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
     selSeccion.disabled = true;
   }
 
-  function formatPromocion(p) {
-    return p + 'º';
+  function formatCursoNivel(n) {
+    return n + 'º';
   }
 
-  function populatePromocion() {
+  function populateCursoNivel() {
     const esp = selEspecialidad.value;
-    selPromocion.innerHTML = '';
-    selPromocion.appendChild(new Option('--Seleccione curso--',''));
+    selCursoNivel.innerHTML = '';
+    selCursoNivel.appendChild(new Option('--Seleccione curso--',''));
     if (!esp) {
-      selPromocion.disabled = true;
+      selCursoNivel.disabled = true;
       selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
       selSeccion.disabled = true;
       return;
     }
-    const promos = [...new Set(CURSOS.filter(c => c.especialidad === esp).map(c => c.nivel))].sort((a,b)=>a-b);
-    promos.forEach(p => selPromocion.appendChild(new Option(formatPromocion(p), p)));
-    selPromocion.disabled = false;
+    const niveles = [...new Set(CURSOS.filter(c => c.especialidad === esp).map(c => c.nivel))].sort((a,b)=>a-b);
+    niveles.forEach(n => selCursoNivel.appendChild(new Option(formatCursoNivel(n), n)));
+    selCursoNivel.disabled = false;
     selSeccion.innerHTML = '<option value="">--Seleccione sección--</option>';
     selSeccion.disabled = true;
   }
 
   function populateSeccion() {
     const esp = selEspecialidad.value;
-    const promo = parseInt(selPromocion.value);
+    const nivel = parseInt(selCursoNivel.value);
     selSeccion.innerHTML = '';
     selSeccion.appendChild(new Option('--Seleccione sección--',''));
-    if (!esp || !promo) {
+    if (!esp || !nivel) {
       selSeccion.disabled = true;
       return;
     }
-    const secciones = [...new Set(CURSOS.filter(c => c.especialidad === esp && c.nivel === promo).map(c => c.seccion))];
+    const secciones = [...new Set(CURSOS.filter(c => c.especialidad === esp && c.nivel === nivel).map(c => c.seccion))];
     secciones.forEach(s => selSeccion.appendChild(new Option(s,s)));
     selSeccion.disabled = false;
   }
 
   function updateHiddenCursoId(submit) {
     const esp = selEspecialidad.value;
-    const promo = parseInt(selPromocion.value);
+    const nivel = parseInt(selCursoNivel.value);
     const seccion = selSeccion.value;
     cursoIdHidden.value = '';
-    if (!esp || !promo || !seccion) {
+    if (!esp || !nivel || !seccion) {
       return;
     }
-    const found = CURSOS.find(c => c.especialidad === esp && c.nivel === promo && c.seccion === seccion);
+    const found = CURSOS.find(c => c.especialidad === esp && c.nivel === nivel && c.seccion === seccion);
     if (found) {
       cursoIdHidden.value = found.id;
       if (submit) {
@@ -364,8 +364,8 @@ const CURSOS = [
     const found = CURSOS.find(c => c.id === selectedCursoId);
     if (!found) return;
     selEspecialidad.value = found.especialidad;
-    populatePromocion();
-    selPromocion.value = found.nivel;
+    populateCursoNivel();
+    selCursoNivel.value = found.nivel;
     populateSeccion();
     selSeccion.value = found.seccion;
     updateHiddenCursoId(false);
@@ -374,10 +374,10 @@ const CURSOS = [
   populateEspecialidad();
   preselectCurso();
   selEspecialidad.addEventListener('change', function () {
-    populatePromocion();
+    populateCursoNivel();
     updateHiddenCursoId(false);
   });
-  selPromocion.addEventListener('change', function () {
+  selCursoNivel.addEventListener('change', function () {
     populateSeccion();
     updateHiddenCursoId(false);
   });

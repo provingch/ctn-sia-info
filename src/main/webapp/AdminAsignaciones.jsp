@@ -103,8 +103,8 @@
             <label>Especialidad</label>
             <select id="selEspecialidad"></select>
 
-            <label>Año</label>
-            <select id="selPromocion"></select>
+            <label>Curso</label>
+            <select id="selCursoNivel"></select>
 
             <label>Sección</label>
             <select id="selSeccion"></select>
@@ -151,11 +151,10 @@
 
 <!-- Dump cursos to JS for cascaded selector -->
 <script>
-const CURSOS = [
-    <c:forEach var="cu" items="${cursos}" varStatus="s">
-        {"id": ${cu.id}, "especialidad": "<c:out value='${cu.especialidad}'/>", "promocion": ${cu.promocion}, "seccion": "<c:out value='${cu.seccion}'/>"}<c:if test="${!s.last}">,</c:if>
-    </c:forEach>
-];
+const CURSOS = [];
+<c:forEach var="cu" items="${cursos}">
+CURSOS.push({"id": ${cu.id}, "especialidad": "<c:out value='${cu.especialidad}'/>", "nivel": Number("<c:out value='${cu.nivel}'/>"), "seccion": "<c:out value='${cu.seccion}'/>"});
+</c:forEach>
 
 function uniqueEspecialidades() {
     const seen = new Set();
@@ -171,45 +170,45 @@ function populateEspecialidad() {
     uniqueEspecialidades().forEach(e => sel.appendChild(new Option(e,e)));
 }
 
-function populatePromocion() {
+function populateCursoNivel() {
     const esp = document.getElementById('selEspecialidad').value;
-    const sel = document.getElementById('selPromocion');
+    const sel = document.getElementById('selCursoNivel');
     sel.innerHTML = '';
-    sel.appendChild(new Option('--Seleccione año--',''));
+    sel.appendChild(new Option('--Seleccione curso--',''));
     if (!esp) return;
-    const promos = [...new Set(CURSOS.filter(c=>c.especialidad===esp).map(c=>c.promocion))].sort((a,b)=>a-b);
-    promos.forEach(p => sel.appendChild(new Option(p,p)));
+    const niveles = [...new Set(CURSOS.filter(c=>c.especialidad===esp).map(c=>c.nivel))].sort((a,b)=>a-b);
+    niveles.forEach(n => sel.appendChild(new Option(n + 'º', n)));
 }
 
 function populateSeccion() {
     const esp = document.getElementById('selEspecialidad').value;
-    const promo = parseInt(document.getElementById('selPromocion').value);
+    const nivel = parseInt(document.getElementById('selCursoNivel').value);
     const sel = document.getElementById('selSeccion');
     sel.innerHTML = '';
     sel.appendChild(new Option('--Seleccione sección--',''));
-    if (!esp || !promo) return;
-    const secciones = [...new Set(CURSOS.filter(c=>c.especialidad===esp && c.promocion===promo).map(c=>c.seccion))];
+    if (!esp || !nivel) return;
+    const secciones = [...new Set(CURSOS.filter(c=>c.especialidad===esp && c.nivel===nivel).map(c=>c.seccion))];
     secciones.forEach(s => sel.appendChild(new Option(s,s)));
     updateHiddenCursoId();
 }
 
 function updateHiddenCursoId() {
     const esp = document.getElementById('selEspecialidad').value;
-    const promo = parseInt(document.getElementById('selPromocion').value);
+    const nivel = parseInt(document.getElementById('selCursoNivel').value);
     const seccion = document.getElementById('selSeccion').value;
     const hidden = document.getElementById('cursoIdHidden');
     hidden.value = '';
-    if (!esp || !promo || !seccion) return;
-    const found = CURSOS.find(c => c.especialidad===esp && c.promocion===promo && c.seccion===seccion);
+    if (!esp || !nivel || !seccion) return;
+    const found = CURSOS.find(c => c.especialidad===esp && c.nivel===nivel && c.seccion===seccion);
     if (found) hidden.value = found.id;
 }
 
 document.addEventListener('DOMContentLoaded', function(){
     populateEspecialidad();
-    document.getElementById('selEspecialidad').addEventListener('change', function(){ populatePromocion(); document.getElementById('selSeccion').innerHTML=''; updateHiddenCursoId(); });
-    document.getElementById('selPromocion').addEventListener('change', function(){ populateSeccion(); });
+    document.getElementById('selEspecialidad').addEventListener('change', function(){ populateCursoNivel(); document.getElementById('selSeccion').innerHTML=''; updateHiddenCursoId(); });
+    document.getElementById('selCursoNivel').addEventListener('change', function(){ populateSeccion(); });
     document.getElementById('selSeccion').addEventListener('change', updateHiddenCursoId);
-    document.getElementById('createForm').addEventListener('submit', function(e){ if (!document.getElementById('cursoIdHidden').value) { e.preventDefault(); alert('Seleccione una combinación válida de especialidad/año/sección que corresponda a un curso real.'); } });
+    document.getElementById('createForm').addEventListener('submit', function(e){ if (!document.getElementById('cursoIdHidden').value) { e.preventDefault(); alert('Seleccione una combinación válida de especialidad/curso/sección que corresponda a un curso real.'); } });
 });
 </script>
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
