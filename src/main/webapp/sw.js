@@ -1,9 +1,45 @@
+const CACHE_NAME = 'ctn-portal-v1';
+const CORE_ASSETS = [
+  './',
+  './offline.html',
+  './styles/ctn-theme.css',
+  './scripts/sia-theme.js',
+  './images/ctn-logo.svg',
+  './images/ctn-logo-2.svg'
+];
+
 self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS)).catch(() => undefined)
+  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+  );
   event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET') return;
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(() => caches.match('./offline.html').then((fallback) => fallback || caches.match('./')).then((cached) => cached || fetch(request)))
+    );
+    return;
+  }
+  event.respondWith(
+    caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+      const copy = response.clone();
+      if (response.ok) {
+        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+      }
+      return response;
+    }).catch(() => caches.match('./offline.html')))
+  );
 });
 
 self.addEventListener('push', (event) => {
@@ -42,6 +78,3 @@ self.addEventListener('notificationclick', (event) => {
   }));
 });
 
-self.addEventListener('fetch', () => {
-  // Passthrough — sin estrategia de cache en esta fase.
-});
