@@ -930,6 +930,7 @@ html[data-theme="dark"] .profile-panel .form-field textarea[readonly] {
 .profile-save-status {
   grid-column: 1 / -1;
   justify-self: start;
+  margin-top: -8px;
 }
 
 .profile-panel .btn-primary,
