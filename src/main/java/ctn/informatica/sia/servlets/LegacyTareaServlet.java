@@ -38,6 +38,11 @@ public class LegacyTareaServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         User user = session == null ? null : (User) session.getAttribute("user");
 
+        if (user == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Debe iniciar sesión para acceder a esta página.");
+            return;
+        }
+
         String planillaIdStr = request.getParameter("planillaId");
         String etapaStr = request.getParameter("etapa");
         int planillaId;
@@ -105,6 +110,13 @@ public class LegacyTareaServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+
+        HttpSession session = request.getSession(false);
+        User user = session == null ? null : (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Debe iniciar sesión para crear tareas.");
+            return;
+        }
 
         String planillaIdStr = request.getParameter("planillaId");
         String instrumentoIdStr = request.getParameter("instrumentoId");
@@ -176,9 +188,6 @@ public class LegacyTareaServlet extends HttpServlet {
                 throw new ServletException("Error loading instrumentos", ex);
             }
 
-            HttpSession session = request.getSession(false);
-            User user = session == null ? null : (User) session.getAttribute("user");
-
             ArrayList<Planilla> planillas;
             try {
                 planillas = new PlanillaDao()
@@ -197,6 +206,12 @@ public class LegacyTareaServlet extends HttpServlet {
             request.setAttribute("titulo", titulo);
             request.setAttribute("etapa", etapaStr);
             request.getRequestDispatcher("/Tarea.jsp").forward(request, response);
+            return;
+        }
+
+        Planilla planilla = new PlanillaDao().findById(planillaId);
+        if (planilla == null || planilla.getProfesorId() != user.getId()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tiene permiso para modificar esta planilla.");
             return;
         }
 

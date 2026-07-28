@@ -31,13 +31,14 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author jonat
  */
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/HomeServlet", "/PlanillaServlet", "/TareaServlet", "/ProfileServlet", "/EvaluacionServlet", "/AdminServlet", "/AdminMateriasServlet", "/AdminUsuariosServlet", "/AdminAsignacionesServlet", "/ParentServlet", "/PushSubscriptionServlet", "/index.jsp"})
+@WebFilter(filterName = "AuthFilter", urlPatterns = {"/HomeServlet", "/PlanillaServlet", "/TareaServlet", "/LegacyTareaServlet", "/ProfileServlet", "/EvaluacionServlet", "/AdminServlet", "/AdminMateriasServlet", "/AdminUsuariosServlet", "/AdminAsignacionesServlet", "/ParentServlet", "/PushSubscriptionServlet", "/index.jsp"})
 public class AuthFilter implements Filter {
 
         private static final Map<String, List<Integer>> AUTHORIZED_LEVELS = Map.ofEntries(
             Map.entry("/HomeServlet", List.of(1)),
             Map.entry("/PlanillaServlet", List.of(1)),
             Map.entry("/TareaServlet", List.of(1)),
+            Map.entry("/LegacyTareaServlet", List.of(1)),
             Map.entry("/ProfileServlet", List.of(1, 2, 3, 4)),
             Map.entry("/PushSubscriptionServlet", List.of(1, 2, 3, 4)),
             Map.entry("/EvaluacionServlet", List.of(2)),
