@@ -16,6 +16,9 @@
     .capacity-card.over { border-color: #e74c3c; background: #fff2f0; }
     .capacity-v { font-size: 1.1rem; font-weight: 700; }
     .muted { color: #6b7280; }
+    .filter-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 16px; }
+    .filter-row .form-group { flex: 1 1 220px; margin-bottom: 0; }
+    .student-card.hidden { display: none; }
   </style>
 </head>
 <body class="admin-page">
@@ -99,9 +102,24 @@
       <div class="admin-card">
         <h3>Alumnos existentes</h3>
         <p class="muted">Podés editar nombre, apellido, CI, curso y correos directamente desde aquí.</p>
-        <div class="capacity-grid">
+        <div class="filter-row">
+          <div class="form-group">
+            <label for="studentSearch">Buscar por nombre o apellido</label>
+            <input id="studentSearch" class="form-control" placeholder="Ej. Ana" />
+          </div>
+          <div class="form-group">
+            <label for="courseFilter">Filtrar por curso</label>
+            <select id="courseFilter" class="form-control">
+              <option value="">Todos los cursos</option>
+              <c:forEach var="curso" items="${cursos}">
+                <option value="${curso.id}">${curso.especialidad} · ${curso.cursoOrdinal} · Sección ${curso.seccion}</option>
+              </c:forEach>
+            </select>
+          </div>
+        </div>
+        <div class="capacity-grid" id="studentList">
           <c:forEach var="alumno" items="${alumnos}">
-            <form class="capacity-card" method="post" action="${pageContext.request.contextPath}/AdminIngresantesServlet">
+            <form class="capacity-card student-card" data-name="${alumno.apellido} ${alumno.nombre}" data-course="${alumno.cursoId}" method="post" action="${pageContext.request.contextPath}/AdminIngresantesServlet">
               <input type="hidden" name="action" value="editar" />
               <input type="hidden" name="alumnoId" value="${alumno.id}" />
               <div class="capacity-v">${alumno.apellido}, ${alumno.nombre}</div>
@@ -140,5 +158,26 @@
       </div>
     </section>
   </main>
+  <script>
+    const studentSearch = document.getElementById('studentSearch');
+    const courseFilter = document.getElementById('courseFilter');
+    const studentCards = Array.from(document.querySelectorAll('.student-card'));
+
+    function applyStudentFilters() {
+      const query = (studentSearch?.value || '').trim().toLowerCase();
+      const courseValue = courseFilter?.value || '';
+
+      studentCards.forEach(card => {
+        const name = (card.dataset.name || '').toLowerCase();
+        const course = card.dataset.course || '';
+        const matchesQuery = !query || name.includes(query);
+        const matchesCourse = !courseValue || course === courseValue;
+        card.classList.toggle('hidden', !(matchesQuery && matchesCourse));
+      });
+    }
+
+    studentSearch?.addEventListener('input', applyStudentFilters);
+    courseFilter?.addEventListener('change', applyStudentFilters);
+  </script>
 </body>
 </html>
