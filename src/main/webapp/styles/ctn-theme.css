@@ -704,6 +704,7 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 
 .profile-tab {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 2px;
   width: 100%;
   min-height: 50px;
@@ -714,6 +715,9 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   background: color-mix(in srgb, var(--paper) 74%, #6b7280 10%);
   color: color-mix(in srgb, var(--ink) 72%, var(--muted));
   text-align: left;
+  align-content: center;
+  align-items: start;
+  justify-content: stretch;
   justify-items: start;
 }
 
@@ -769,6 +773,8 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 }
 
 .security-password-form {
+  width: 100%;
+  min-width: 0;
   max-width: none;
   margin: 0;
   padding: 0;
@@ -776,6 +782,17 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   border: 0;
   border-radius: 0;
   background: transparent;
+}
+
+.security-panel-grid > .form-card {
+  width: 100%;
+  min-width: 0;
+}
+
+.security-panel-grid .table-header,
+.security-panel-grid .form-card-header {
+  min-height: 42px;
+  padding: 8px 12px;
 }
 
 .profile-back-link:hover,
