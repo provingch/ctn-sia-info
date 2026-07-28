@@ -2667,7 +2667,7 @@ html[data-theme="dark"] .footer {
   .ctn-navbar .container-fluid {
     position: relative;
     display: block;
-    padding-right: 16px;
+    padding-right: 6px;
     padding-left: 16px;
   }
 
@@ -2677,16 +2677,27 @@ html[data-theme="dark"] .footer {
     justify-content: space-between;
   }
 
+  .ctn-navbar .navbar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    margin: 0 0 0 auto;
+    padding: 0 !important;
+  }
+
   .ctn-navbar .navbar-collapse {
     position: absolute;
     top: calc(100% + 8px);
-    right: 12px;
+    right: 6px;
     left: auto;
     z-index: 2050;
-    width: min(320px, calc(100vw - 24px));
+    width: min(250px, calc(100vw - 12px));
     max-height: calc(100vh - 84px);
     margin: 0;
-    padding: 10px !important;
+    padding: 8px !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
     border: 1px solid var(--line);
@@ -2698,7 +2709,7 @@ html[data-theme="dark"] .footer {
 
   .ctn-navbar .navbar-nav {
     display: grid;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
     margin: 0;
   }
@@ -2716,15 +2727,16 @@ html[data-theme="dark"] .footer {
   .ctn-navbar .ctn-theme-item .theme-toggle-button {
     display: flex;
     width: 100%;
-    min-height: 48px;
+    min-height: 44px;
     height: auto;
     margin: 0;
-    padding: 10px 14px;
+    padding: 8px 12px;
     justify-content: flex-start;
     border: 1px solid var(--line);
     border-radius: 6px;
     background: color-mix(in srgb, var(--paper) 84%, var(--color-bg-muted) 16%);
     color: var(--ink);
+    font-size: 14px;
     text-align: left;
   }
 
