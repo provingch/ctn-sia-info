@@ -1,119 +1,156 @@
-# Manual de integración de cursos con Google Classroom
+# CTN Portal — Sistema de Informes Académicos
 
-## Objetivo
+Sistema de informes académicos del **Colegio Técnico Nacional (CTN)**: gestiona especialidades, cursos, materias, planillas de evaluación y notas, con integración a **Google Classroom**, portal para padres/encargados y soporte de **PWA** (instalable en el celular).
 
-Este proyecto necesita que los cursos de Google Classroom sigan una convención de nombres simple y consistente para poder detectarlos correctamente y vincularlos con las planillas locales.
+- Inicio del desarrollo: 18/06/2026
+- Propuesta aceptada: 29/06/2026
+- Versión actual: **2.0.0** (27/07/2026) — ver [`CHANGELOG.md`](./CHANGELOG.md) para el historial completo.
 
-## Flujo de administración de integración
+## Roles del sistema
 
-Además del flujo de uso del profesor, ahora existe un rol de integración administrativa para corregir manualmente los correos de Google de los alumnos por especialidad antes de sincronizar Classroom.
+| Rol | Qué puede hacer |
+|---|---|
+| **Profesor** | Gestiona su perfil, sus materias, sus planillas de evaluación y notas; conecta su cuenta de Google Classroom para importar tareas y calificaciones. |
+| **Administrador** | Gestiona usuarios, materias y asignaciones de profesor–materia–curso desde paneles dedicados (`Admin.jsp`, `AdminUsuarios.jsp`, `AdminMaterias.jsp`, `AdminAsignaciones.jsp`). |
+| **Padre / Encargado** | Consulta el resumen académico y las notas de su hijo/a vinculado (`Parent.jsp`). |
+| **Usuario de integración** (uno por especialidad, ej. `informatica-itg`, `electricidad-itg`) | Corrige manualmente los correos de Google de los alumnos de su especialidad antes de sincronizar con Classroom. |
 
-Usuarios de ejemplo:
-- `informatica-itg`
-- `electricidad-itg`
+## Funcionalidades principales
 
-Contraseña por defecto:
-- `ctn2025`
+- **Autenticación**: login con usuario/contraseña (hash BCrypt, con compatibilidad hacia registros antiguos en texto plano), **2FA con TOTP**, sesión "recordarme" y filtro de autenticación (`AuthFilter`).
+- **Perfil de profesor**: datos personales, configuración de seguridad, estado de conexión con Google, panel de actividad reciente.
+- **Materias y asignaciones**: alta/edición/eliminación de materias por especialidad, vínculo profesor–materia–curso.
+- **Planillas y evaluación**: registro de tareas/instrumentos de evaluación por curso, período (1º/2º) y sección, carga de notas por alumno (`registro`, `puntaje`).
+- **Exportación a Excel**: exportación de planillas individuales o masivas por especialidad/curso/sección/período (Apache POI).
+- **Integración con Google Classroom**:
+  - Login OAuth2 y vinculación/desvinculación de cuenta de Google.
+  - Detección de cursos de Classroom por nivel + sección (convención de nombres, ver `flowcharts/README.md`).
+  - Sincronización manual de tareas y notas desde la planilla.
+  - Vinculación de alumnos locales con estudiantes de Classroom por correo/nombre, con corrección manual vía el rol de integración.
+- **Portal de padres**: resumen y notas del alumno vinculado.
+- **Notificaciones push** (Web Push/VAPID) y **PWA instalable** (manifest, service worker, iconos).
+- **Manuales de usuario en PDF** por rol: administrador, evaluador, padres y profesor (`src/main/webapp/pdfs/`).
 
-Al iniciar sesión con ese usuario, la aplicación abre un panel dedicado donde se pueden revisar y actualizar los correos de Google de los alumnos de esa especialidad.
+## Stack tecnológico
 
-## Estructura recomendada para los nombres de curso
+| Componente | Detalle |
+|---|---|
+| Lenguaje / plataforma | Java 17, Jakarta EE 11 (Servlets + JSP) |
+| Build | Maven (`pom.xml`), plugin `tomcat10-maven-plugin` (puerto 8080) |
+| Base de datos | MySQL (`mysql-connector-j`) |
+| Vistas | JSP + JSTL, CSS propio (`ctn-theme.css`) + Flat UI / Bootstrap como base |
+| Seguridad | `jbcrypt` (hash de contraseñas), `bouncycastle` + TOTP (2FA) |
+| Reportes | Apache POI (`poi-ooxml`) para exportar Excel |
+| Notificaciones | `web-push` (VAPID) |
+| Integraciones Google | `google-api-client`, `google-api-services-classroom`, `google-api-services-oauth2`, OAuth2 |
+| Testing | JUnit 5 (Jupiter) |
+| IDE | NetBeans (`nb-configuration.xml`, `nbactions.xml`) |
 
-El nombre del curso debe indicar, al menos:
+## Estructura del proyecto
 
-- la materia
-- el nivel
-- la sección
+```
+ctn-sia-info/
+├── database/
+│   ├── db-tables-properties.sql   # Esquema completo (DDL) de la BD ctndb
+│   └── seed.sql                    # Datos de ejemplo (especialidades, cursos, etc.)
+├── flowcharts/
+│   ├── README.md                   # Manual de integración con Google Classroom
+│   └── classroom_integration_architecture.png
+├── src/
+│   ├── main/java/ctn/informatica/sia/
+│   │   ├── config/       # AppConfig, StartupListener
+│   │   ├── clases/       # conexion.java (JDBC)
+│   │   ├── dao/          # DAOs por entidad (Alumno, Curso, Profesor, Planilla, Tarea, ...)
+│   │   ├── model/        # Modelos (Alumno, Curso, Materia, Profesor, Tarea, User, ...)
+│   │   ├── filter/       # AuthFilter, DateFilter
+│   │   ├── google/       # GoogleClassroomService / SyncService / Utils
+│   │   ├── servlets/     # Servlets (Home, Login, Profile, Planilla, Admin*, Parent, Google*, ...)
+│   │   └── util/         # PasswordUtil, TotpUtils, PushNotificationService, ...
+│   ├── main/webapp/      # JSPs, assets estáticos, manifest.json, sw.js, manuales PDF
+│   └── test/java/...     # Pruebas unitarias (DAOs, servlets, utilidades)
+├── pom.xml
+├── CHANGELOG.md
+└── LICENSE                # GPL-3.0
+```
 
-Formato recomendado:
+## Configuración
 
-Materia + Nivel + Sección
+### Base de datos
+La conexión (`conexion.java`) toma estos valores de variables de entorno (con defaults locales si no están definidas):
 
-Ejemplos válidos:
-- Algoritmia 2do A
-- Algoritmia 2° A
-- Matemática 1A
-- Historia 3ro B
-- Física 2do B
+| Variable de entorno | Default |
+|---|---|
+| `CTN_DB_HOST` | `localhost:3306` |
+| `CTN_DB_NAME` | `ctndb` |
+| `CTN_DB_USER` | `testadmin` |
+| `CTN_DB_PASSWORD` | *(vacío)* |
 
-## Niveles aceptados
+### Google OAuth / Classroom
+`AppConfig` carga `/WEB-INF/config.properties`, que **debe crearse manualmente** (no está versionado) con estas claves:
 
-El sistema reconoce estos niveles:
+```properties
+google.client.id=TU_CLIENT_ID
+google.client.secret=TU_CLIENT_SECRET
+google.redirect.uri=http://localhost:8080/GoogleCallbackServlet
+```
 
-- Primero / 1 / 1ro / 1er / 1°
-- Segundo / 2 / 2do / 2°
-- Tercero / 3 / 3ro / 3°
+Se obtienen creando credenciales OAuth 2.0 en Google Cloud Console con la **Google Classroom API** habilitada.
 
-## Secciones aceptadas
+## Instalación y ejecución
 
-Las secciones reconocidas son:
+### Requisitos
+- JDK 17
+- Maven
+- MySQL 8+
+- Un servidor compatible con Jakarta EE 11 / Servlet 6.0 (el proyecto trae embebido Tomcat 10 vía plugin de Maven)
 
-- A
-- B
-- C
+### Pasos
 
-## Ejemplos de nombres recomendados
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/provingch/ctn-sia-info.git
+   cd ctn-sia-info
+   ```
 
-- Algoritmia 2do A
-- Programación 1ro B
-- Matemática 3ro C
-- Historia 2° A
+2. Crear la base de datos y cargar el esquema:
+   ```bash
+   mysql -u root -p < database/db-tables-properties.sql
+   mysql -u root -p ctndb < database/seed.sql   # opcional: datos de ejemplo
+   ```
 
-## Ejemplos que no son recomendables
+3. Crear `src/main/webapp/WEB-INF/config.properties` con las credenciales de Google (ver sección anterior).
 
-- Algoritmia
-- 2do
-- Curso de práctica
-- Laboratorio
+4. Definir las variables de entorno de conexión a la base de datos si difieren de los defaults locales.
 
-## Cómo funciona la detección
+5. Compilar y levantar con el plugin de Tomcat embebido:
+   ```bash
+   mvn tomcat10:run
+   ```
+   La app queda disponible en `http://localhost:8080/`.
 
-El sistema intenta identificar el curso usando:
+   Alternativamente, generar el `.war` y desplegarlo en un Tomcat 10 externo:
+   ```bash
+   mvn clean package
+   # copiar target/*.war al directorio webapps/ de Tomcat
+   ```
 
-1. el nombre del curso de Classroom
-2. el nivel y la sección que aparecen en ese nombre
-3. la coincidencia con los cursos del profesor
-4. el ID real del curso de Google Classroom para mantener la asociación estable
+### Tests
 
-Esto significa que lo más importante no es solo el texto exacto, sino la combinación de nivel y sección que representa el curso.
+```bash
+mvn test
+```
 
-## Reglas de uso
+## Documentación adicional
 
-- usar nombres simples y consistentes
-- incluir siempre nivel y sección
-- evitar cambios frecuentes del nombre
-- si el nombre cambia, el sistema puede seguir encontrando el curso por su identidad real en Classroom
+- **Integración con Google Classroom** (convención de nombres de curso, rol de integración, sincronización de alumnos y notas): [`flowcharts/README.md`](./flowcharts/README.md)
+- **Historial de cambios**: [`CHANGELOG.md`](./CHANGELOG.md)
+- **Manuales de usuario en PDF** (dentro de la app, `/pdfs/`): administrador, evaluador, padres, profesor
 
-## Recomendación práctica
+## Licencia
 
-Para que todo funcione de forma limpia, conviene usar una convención fija como esta:
+[GPL-3.0](./LICENSE)
 
-Materia + Nivel + Sección
+## Autores
 
-Ejemplo:
-
-Algoritmia 2do A
-
-## Nota importante
-
-Si un curso tiene el mismo nivel y la misma sección que uno de tus cursos locales, el sistema puede asociarlo correctamente aunque el nombre no sea idéntico al de la planilla.
-
-## Sincronización de alumnos y notas
-
-La integración ahora permite:
-
-- vincular alumnos locales con estudiantes de Google Classroom por correo o nombre
-- guardar esa vinculación en la base de datos mediante las columnas `google_user_id` y `google_email` de la tabla `alumno`
-- importar tareas desde Classroom hacia la planilla web
-- importar calificaciones asignadas en Classroom hacia la planilla web
-- que la web también pueda mostrar o reutilizar esa información cuando se vuelve a abrir la planilla
-
-### Pasos recomendados
-
-1. Aplicar la migración de alumnos en la base de datos si la instalación aún no cuenta con las columnas `google_user_id` y `google_email`:
-   - `database/migration-classroom-student-link.sql`
-2. Iniciar sesión con el usuario de integración correspondiente a la especialidad y corregir los correos de Google de los alumnos desde el panel de integración.
-3. Volver a abrir la planilla asociada a un curso de Classroom.
-4. Ejecutar la sincronización manual desde la planilla para vincular alumnos y cargar notas.
-
-> La vinculación ya no depende exclusivamente del emparejamiento automático por correo; el flujo de integración administrativa permite corregir manualmente los datos cuando el email local no coincide con el registro de Classroom.
+- [@provingch](https://github.com/provingch)
+- [@Sh1b0](https://github.com/Sh1b0)
