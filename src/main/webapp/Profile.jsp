@@ -125,6 +125,24 @@
     font-weight: 700;
     margin-bottom: 0.75rem;
   }
+  .pwa-setup-grid > .form-card {
+    padding-bottom: 0.75rem;
+  }
+  .pwa-setup-grid > .form-card > .pwa-status-pill {
+    display: flex;
+    margin: 0.75rem 0.75rem 0.6rem;
+  }
+  .pwa-setup-grid > .form-card > p {
+    margin: 0.25rem 0.75rem 0.75rem;
+    line-height: 1.45;
+  }
+  .pwa-setup-grid > .form-card > .pwa-install-actions,
+  .pwa-setup-grid > .form-card > .security-actions {
+    margin: 0.5rem 0.75rem 0;
+  }
+  .pwa-setup-grid > .form-card > .save-status {
+    margin: 0.75rem 0.75rem 0;
+  }
   .pwa-status-pill.is-success {
     background: #e7f7ee;
     color: #20663f;
@@ -165,6 +183,20 @@
     height: 1.1rem;
     margin-right: 0.35rem;
     vertical-align: text-bottom;
+  }
+  .security-password-field {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.75rem 0.75rem 0.15rem;
+  }
+  .security-password-field label {
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+  .security-password-field input {
+    width: 100%;
   }
   .totp-secret {
     word-break: break-all;
@@ -520,16 +552,16 @@
                   <input type="hidden" name="action" value="changePassword" />
                   <div class="table-card card">
                     <div class="table-header">Cambiar Contraseña</div>
-                    <div class="cell"><strong>Contraseña Actual</strong></div>
-                    <div class="cell">
+                    <div class="security-password-field">
+                      <label for="currentPassword">Contraseña Actual</label>
                       <input type="password" name="currentPassword" id="currentPassword" />
                     </div>
-                    <div class="cell"><strong>Nueva Contraseña</strong></div>
-                    <div class="cell">
+                    <div class="security-password-field">
+                      <label for="newPassword">Nueva Contraseña</label>
                       <input type="password" name="newPassword" id="newPassword" />
                     </div>
-                    <div class="cell"><strong>Confirmar Contraseña</strong></div>
-                    <div class="cell">
+                    <div class="security-password-field">
+                      <label for="confirmPassword">Confirmar Contraseña</label>
                       <input type="password" name="confirmPassword" id="confirmPassword" />
                     </div>
                     <div class="cell selection-hint" style="grid-column: 1 / -1;">
