@@ -7,8 +7,15 @@
   <title>CTNPortal - Ingresantes</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="${pageContext.request.contextPath}/manifest.jsp">
+  <meta name="theme-color" content="#1f2d3d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CTN Portal">
+  <link rel="apple-touch-icon" href="${pageContext.request.contextPath}/icons/pwa/apple-touch-icon.png">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=235" />
+  <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg" />
   <style>
     .capacity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 16px 0 24px; }
     .capacity-card { border: 1px solid #dfe5ed; border-radius: 12px; padding: 12px 14px; background: #fff; }
@@ -16,24 +23,59 @@
     .capacity-card.warning { border-color: #f0c36d; background: #fff8e8; }
     .capacity-card.over { border-color: #e74c3c; background: #fff2f0; }
     .capacity-v { font-size: 1.1rem; font-weight: 700; }
-    .muted { color: #6b7280; }
+    .muted { color: var(--muted); }
     .filter-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 16px; }
     .filter-row .form-group { flex: 1 1 220px; margin-bottom: 0; }
     .student-card.hidden { display: none; }
     .capacity-groups { display: grid; gap: 18px; margin: 18px 0 26px; }
     .capacity-specialty {
+      --group-accent: var(--accent);
+      --group-contrast: var(--accent-contrast);
+      --group-border: var(--group-accent);
       overflow: hidden;
-      border: 1px solid var(--line);
+      border: 2px solid var(--group-border);
       border-radius: 10px;
       background: var(--paper);
+    }
+    .capacity-specialty[data-specialty="informatica"] {
+      --group-accent: var(--color-accent-informatica);
+      --group-contrast: #ffffff;
+    }
+    .capacity-specialty[data-specialty="construcciones"] {
+      --group-accent: var(--color-accent-construcciones);
+      --group-contrast: #14233b;
+    }
+    .capacity-specialty[data-specialty="quimica"] {
+      --group-accent: var(--color-accent-quimica);
+      --group-contrast: #14233b;
+      box-shadow: 0 0 0 1px var(--line);
+    }
+    .capacity-specialty[data-specialty="electronica"] {
+      --group-accent: var(--color-accent-electronica);
+      --group-contrast: #ffffff;
+    }
+    .capacity-specialty[data-specialty="mecanica-automotriz"] {
+      --group-accent: var(--color-accent-mecanica-automotriz);
+      --group-contrast: #ffffff;
+    }
+    .capacity-specialty[data-specialty="mecanica-general"] {
+      --group-accent: var(--color-accent-mecanica-general);
+      --group-contrast: #ffffff;
+    }
+    .capacity-specialty[data-specialty="electromecanica"] {
+      --group-accent: var(--color-accent-electromecanica);
+      --group-contrast: #ffffff;
+    }
+    .capacity-specialty[data-specialty="electricidad"] {
+      --group-accent: var(--color-accent-electricidad);
+      --group-contrast: #14233b;
     }
     .capacity-specialty__header {
       margin: 0;
       padding: 12px 16px;
-      border-left: 4px solid var(--accent);
-      border-bottom: 1px solid var(--line);
-      background: color-mix(in srgb, var(--paper) 88%, var(--accent) 7%);
-      color: var(--ink);
+      border-bottom: 2px solid var(--group-border);
+      background: var(--group-accent);
+      color: var(--group-contrast);
       font-size: 1.15rem;
       font-weight: 900;
     }
@@ -76,6 +118,26 @@
     }
     .capacity-section-grid .capacity-v { color: var(--ink); line-height: 1.3; }
     .capacity-section-grid .muted { color: var(--muted); }
+    html[data-theme="dark"] .capacity-card {
+      border-color: var(--line);
+      background: var(--paper);
+      color: var(--ink);
+    }
+    html[data-theme="dark"] .capacity-card.ideal {
+      border-color: #1abc9c;
+      background: color-mix(in srgb, var(--paper) 88%, #1abc9c 12%);
+    }
+    html[data-theme="dark"] .capacity-card.warning {
+      border-color: #d9a441;
+      background: color-mix(in srgb, var(--paper) 88%, #f0c36d 12%);
+    }
+    html[data-theme="dark"] .capacity-card.over {
+      border-color: #e74c3c;
+      background: color-mix(in srgb, var(--paper) 88%, #e74c3c 12%);
+    }
+    html[data-theme="dark"] .form-group label {
+      color: color-mix(in srgb, var(--ink) 88%, var(--muted));
+    }
     @media (max-width: 820px) {
       .capacity-section-grid.sections-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -87,12 +149,42 @@
     }
   </style>
 </head>
-<body class="admin-page">
+<body class="admin-page" data-specialty="${empty sessionScope.siaSpecialty ? 'informatica' : sessionScope.siaSpecialty}">
   <c:url var="backUrl" value="/AdminServlet" />
+  <c:url var="profileUrl" value="/ProfileServlet" />
+  <c:url var="logoutUrl" value="/LogoutServlet" />
   <header class="navbar navbar-default navbar-fixed-top ctn-navbar" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand ctn-navbar-brand" href="${backUrl}">CTN Portal</a>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#ctnNavbarMenu" aria-expanded="false">
+          <span class="sr-only">Abrir navegación</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand ctn-navbar-brand" href="${backUrl}" aria-label="Ir al panel de administración">
+          <img class="header-logo" src="${pageContext.request.contextPath}/images/ctn-logo.svg" alt="CTN">
+          <span>Colegio Técnico Nacional</span>
+        </a>
+      </div>
+      <div class="collapse navbar-collapse" id="ctnNavbarMenu">
+        <ul class="nav navbar-nav navbar-right ctn-navbar-actions">
+          <li class="ctn-theme-item"></li>
+          <li>
+            <a class="manual-link" href="${pageContext.request.contextPath}/pdfs/manual-administrador.pdf"
+               target="_blank" rel="noopener noreferrer">Manual</a>
+          </li>
+          <li class="dropdown">
+            <a href="#" id="sessionButton" class="dropdown-toggle" data-toggle="dropdown"
+               role="button" aria-haspopup="true" aria-expanded="false">
+              Sesión <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" id="sessionMenu" role="menu" aria-labelledby="sessionButton">
+              <li><a role="menuitem" href="${profileUrl}">Mi Perfil</a></li>
+              <li><a role="menuitem" class="session-logout" href="${logoutUrl}">Cerrar Sesión</a></li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
   </header>
@@ -122,7 +214,7 @@
 
       <div class="capacity-groups">
         <c:forEach var="especialidadGroup" items="${cursosAgrupados}">
-          <section class="capacity-specialty">
+          <section class="capacity-specialty" data-specialty="${specialtyTokenByName[especialidadGroup.key]}">
             <h2 class="capacity-specialty__header">
               <c:out value="${especialidadGroup.key}" />
             </h2>
@@ -241,7 +333,14 @@
         </div>
       </div>
     </section>
+    <footer class="footer">
+      <hr>
+      <p>Colegio Técnico Nacional</p>
+    </footer>
   </main>
+  <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/vendor/jquery.min.js"></script>
+  <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
+  <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
   <script>
     const studentSearch = document.getElementById('studentSearch');
     const courseFilter = document.getElementById('courseFilter');
@@ -262,6 +361,13 @@
 
     studentSearch?.addEventListener('input', applyStudentFilters);
     courseFilter?.addEventListener('change', applyStudentFilters);
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('${pageContext.request.contextPath}/sw.js').catch(console.error);
+      });
+    }
   </script>
 </body>
 </html>

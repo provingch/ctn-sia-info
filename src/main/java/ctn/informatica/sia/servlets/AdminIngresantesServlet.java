@@ -7,6 +7,7 @@ import ctn.informatica.sia.model.Alumno;
 import ctn.informatica.sia.model.Curso;
 import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.User;
+import ctn.informatica.sia.util.SiaUiContext;
 import ctn.informatica.sia.util.StudentLoadPolicy;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -40,16 +41,19 @@ public class AdminIngresantesServlet extends HttpServlet {
             req.setAttribute("cursos", cursos);
 
             Map<String, Map<String, List<Curso>>> cursosAgrupados = new LinkedHashMap<>();
+            Map<String, String> specialtyTokenByName = new LinkedHashMap<>();
             for (Curso curso : cursos) {
                 String especialidad = curso.getEspecialidad() == null || curso.getEspecialidad().isBlank()
                         ? "Sin especialidad"
                         : curso.getEspecialidad();
+                specialtyTokenByName.putIfAbsent(especialidad, SiaUiContext.normalizeSpecialty(especialidad));
                 cursosAgrupados
                         .computeIfAbsent(especialidad, key -> new LinkedHashMap<>())
                         .computeIfAbsent(curso.getCursoOrdinal(), key -> new ArrayList<>())
                         .add(curso);
             }
             req.setAttribute("cursosAgrupados", cursosAgrupados);
+            req.setAttribute("specialtyTokenByName", specialtyTokenByName);
 
             EspecialidadDao especialidadDao = new EspecialidadDao();
             List<Especialidad> especialidades = especialidadDao.findAll();
