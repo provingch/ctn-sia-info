@@ -2694,7 +2694,7 @@ html[data-theme="dark"] .footer {
     right: 6px;
     left: auto;
     z-index: 2050;
-    width: min(250px, calc(100vw - 12px));
+    width: min(220px, calc(100vw - 12px));
     max-height: calc(100vh - 84px);
     margin: 0;
     padding: 8px !important;
@@ -2709,9 +2709,12 @@ html[data-theme="dark"] .footer {
 
   .ctn-navbar .navbar-nav {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 6px;
     width: 100%;
     margin: 0;
+    align-items: stretch;
+    justify-content: stretch;
   }
 
   .ctn-navbar .navbar-nav > li,
@@ -2738,6 +2741,7 @@ html[data-theme="dark"] .footer {
     color: var(--ink);
     font-size: 14px;
     text-align: left;
+    white-space: nowrap;
   }
 
   .ctn-navbar .manual-link:hover,
