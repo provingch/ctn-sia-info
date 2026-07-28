@@ -142,7 +142,6 @@ mvn test
 
 ## Documentación adicional
 
-- **Integración con Google Classroom** (convención de nombres de curso, rol de integración, sincronización de alumnos y notas): [`flowcharts/README.md`](./flowcharts/README.md)
 - **Historial de cambios**: [`CHANGELOG.md`](./CHANGELOG.md)
 - **Manuales de usuario en PDF** (dentro de la app, `/pdfs/`): administrador, evaluador, padres, profesor
 
