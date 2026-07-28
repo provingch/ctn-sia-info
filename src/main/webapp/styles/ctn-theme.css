@@ -460,6 +460,16 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
+html[data-theme="dark"] .login-form .password-toggle {
+  background: color-mix(in srgb, var(--color-bg-muted) 72%, transparent);
+  color: #d9e5f0;
+}
+
+html[data-theme="dark"] .login-form .password-toggle:hover {
+  background: color-mix(in srgb, var(--color-bg-muted) 76%, #ffffff 10%);
+  color: #ffffff;
+}
+
 .password-toggle__icon {
   width: 21px;
   height: 21px;
