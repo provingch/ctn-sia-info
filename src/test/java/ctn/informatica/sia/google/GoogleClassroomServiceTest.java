@@ -58,4 +58,24 @@ class GoogleClassroomServiceTest {
 
         assertFalse(GoogleClassroomService.courseMatchesTeacherCurso(classroomCourse, List.of(curso)));
     }
+
+    @Test
+    void shouldMatchWhenSpecialtyComesFromCourseName() {
+        Curso curso = new Curso(1, "Informática", 2026, "A");
+        Course classroomCourse = new Course();
+        classroomCourse.setName("Informática 2do A");
+        classroomCourse.setRoom("Otra sala");
+
+        assertTrue(GoogleClassroomService.courseMatchesTeacherCurso(classroomCourse, List.of(curso)));
+    }
+
+    @Test
+    void shouldNotMatchWhenSpecialtyOnlyComesFromRoom() {
+        Curso curso = new Curso(1, "Informática", 2026, "A");
+        Course classroomCourse = new Course();
+        classroomCourse.setName("2do A");
+        classroomCourse.setRoom("Informática");
+
+        assertFalse(GoogleClassroomService.courseMatchesTeacherCurso(classroomCourse, List.of(curso)));
+    }
 }

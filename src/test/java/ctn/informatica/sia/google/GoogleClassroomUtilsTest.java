@@ -25,12 +25,12 @@ public class GoogleClassroomUtilsTest {
     }
 
     @Test
-    public void testParseCourseKeyWithSpecialtyFromRoom() {
+    public void testParseCourseKeyUsesCourseNameOnlyForSpecialty() {
         var key = GoogleClassroomUtils.parseCourseKey("Matemática Primero A", "Informática");
         assertTrue(key.isPresent());
         assertEquals(1, key.get().getNivel());
         assertEquals("A", key.get().getSeccion());
-        assertEquals("informatica", key.get().getSala());
+        assertEquals("matematica", key.get().getSala());
     }
 
     @Test
@@ -60,6 +60,7 @@ public class GoogleClassroomUtilsTest {
     public void testExtractSpecialtyHintUsesCourseNameOnly() {
         assertEquals("laboratorio redes", GoogleClassroomUtils.extractSpecialtyHint("Laboratorio redes 3ro A", "Informática"));
         assertEquals("algoritmia", GoogleClassroomUtils.extractSpecialtyHint("Algoritmia 2do A", "Química"));
+        assertEquals("", GoogleClassroomUtils.extractSpecialtyHint("2do A", "Informática"));
     }
 
     @Test

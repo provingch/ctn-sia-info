@@ -192,9 +192,10 @@ public final class GoogleClassroomService {
         }
 
         String name = course.getName();
-        Optional<GoogleClassroomUtils.CourseKey> key = parseCourseKey(name);
+        String room = course.getRoom();
+        Optional<GoogleClassroomUtils.CourseKey> key = parseCourseKey(name, room);
 
-        String specialtyHint = GoogleClassroomUtils.extractSpecialtyHint(name, course.getRoom());
+        String specialtyHint = GoogleClassroomUtils.extractSpecialtyHint(name, room);
         if (specialtyHint.isBlank()) {
             return false;
         }
@@ -251,7 +252,8 @@ public final class GoogleClassroomService {
         LinkedHashSet<String> seenClassroomCourseIds = new LinkedHashSet<>();
         for (Course course : allCourses) {
             String name = course.getName();
-            Optional<GoogleClassroomUtils.CourseKey> key = parseCourseKey(name);
+            String room = course.getRoom();
+            Optional<GoogleClassroomUtils.CourseKey> key = parseCourseKey(name, room);
 
             // Diagnostic: show what parsing produced for this course
             try {

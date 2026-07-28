@@ -21,29 +21,20 @@ public final class GoogleClassroomUtils {
     }
 
     public static Optional<CourseKey> parseCourseKey(String courseName, String room) {
-        if ((courseName == null || courseName.isBlank())
-                && (room == null || room.isBlank())) {
+        if (courseName == null || courseName.isBlank()) {
             return Optional.empty();
         }
 
         String normalizedName = normalize(courseName);
-        String normalizedRoom = normalizeRoom(room);
 
         Integer level = parseLevel(normalizedName);
-        if (level == null) {
-            level = parseLevel(normalizedRoom);
-        }
-
         String section = parseSection(normalizedName);
-        if (section == null) {
-            section = parseSection(normalizedRoom);
-        }
 
         if (level == null || section == null) {
             return Optional.empty();
         }
 
-        String sala = stripLevelAndSection(normalizedRoom);
+        String sala = stripLevelAndSection(normalizedName);
         return Optional.of(new CourseKey(level, section, sala));
     }
 
@@ -59,14 +50,9 @@ public final class GoogleClassroomUtils {
     }
 
     public static String extractSpecialtyHint(String courseName, String room) {
-        if (courseName == null || courseName.isBlank()) {
-            return "";
-        }
-        String cleaned = stripLevelAndSection(courseName);
-        if (cleaned.isBlank()) {
-            return "";
-        }
-        return normalize(cleaned);
+        String cleanedName = stripLevelAndSection(courseName);
+        String normalizedName = cleanedName.isBlank() ? "" : normalize(cleanedName);
+        return normalizedName;
     }
 
     private static String normalize(String text) {
