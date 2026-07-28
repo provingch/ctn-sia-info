@@ -6,6 +6,7 @@ package ctn.informatica.sia.dao;
 
 import ctn.informatica.sia.clases.conexion;
 import ctn.informatica.sia.model.User;
+import ctn.informatica.sia.util.PasswordUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,21 +37,43 @@ public class UserDao {
     }
 
     private User findProfessorUser(String username, String password) throws Exception {
-        String sql = "select * from profesor where usuario = ? and contrasenia = ?";
+        String sql = "select * from profesor where usuario = ?";
         try (Connection con = new conexion().getCon();
                 PreparedStatement stm = con.prepareStatement(sql)) {
 
             stm.setString(1, username);
-            stm.setString(2, password);
             try (ResultSet rs = stm.executeQuery()) {
-                if (rs.next()) {
-                    return mapUser(rs);
+                if (!rs.next()) {
+                    return null;
                 }
+
+                String stored = rs.getString("contrasenia");
+                boolean ok;
+                if (PasswordUtil.isBcryptHash(stored)) {
+                    ok = PasswordUtil.matches(password, stored);
+                } else {
+                    // Migración transparente: todavía es texto plano
+                    ok = PasswordUtil.matches(password, stored);
+                    if (ok) {
+                        // Rehashear en el próximo login
+                        int userId = rs.getInt("id");
+                        try {
+                            new ProfesorDao().resetPassword(userId, password);
+                        } catch (Exception e) {
+                            // Log pero no falla el login
+                            System.err.println("Warning: could not rehash password on login for profesor " + userId + ": " + e.getMessage());
+                        }
+                    }
+                }
+                if (!ok) {
+                    return null;
+                }
+
+                return mapUser(rs);
             }
         } catch (java.sql.SQLException ex) {
             throw new Exception("DB connection/query error", ex);
         }
-        return null;
     }
 
     private User findProfessorUserById(int id) throws Exception {
@@ -70,21 +93,43 @@ public class UserDao {
     }
 
     private User findParentUser(String username, String password) throws Exception {
-        String sql = "select id, nombre, apellido, usuario, contrasenia from padre where usuario = ? and contrasenia = ?";
+        String sql = "select id, nombre, apellido, usuario, contrasenia from padre where usuario = ?";
         try (Connection con = new conexion().getCon();
                 PreparedStatement stm = con.prepareStatement(sql)) {
 
             stm.setString(1, username);
-            stm.setString(2, password);
             try (ResultSet rs = stm.executeQuery()) {
-                if (rs.next()) {
-                    return mapParentUser(rs);
+                if (!rs.next()) {
+                    return null;
                 }
+
+                String stored = rs.getString("contrasenia");
+                boolean ok;
+                if (PasswordUtil.isBcryptHash(stored)) {
+                    ok = PasswordUtil.matches(password, stored);
+                } else {
+                    // Migración transparente: todavía es texto plano
+                    ok = PasswordUtil.matches(password, stored);
+                    if (ok) {
+                        // Rehashear en el próximo login
+                        int userId = rs.getInt("id");
+                        try {
+                            new PadreDao().resetPassword(userId, password);
+                        } catch (Exception e) {
+                            // Log pero no falla el login
+                            System.err.println("Warning: could not rehash password on login for padre " + userId + ": " + e.getMessage());
+                        }
+                    }
+                }
+                if (!ok) {
+                    return null;
+                }
+
+                return mapParentUser(rs);
             }
         } catch (java.sql.SQLException ex) {
             throw new Exception("DB connection/query error", ex);
         }
-        return null;
     }
 
     private User findParentUserById(int id) throws Exception {

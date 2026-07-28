@@ -20,6 +20,7 @@ import ctn.informatica.sia.model.Padre;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
 import ctn.informatica.sia.util.RememberMeTokenStore;
+import ctn.informatica.sia.util.PasswordUtil;
 import ctn.informatica.sia.util.SiaUiContext;
 import ctn.informatica.sia.util.TotpUtils;
 import com.google.api.services.classroom.model.Course;
@@ -558,7 +559,7 @@ public class ProfileServlet extends HttpServlet {
                     boolean passwordUpdated = false;
                     if (user.getLevel() >= 1 && user.getLevel() <= 3) {
                         Profesor profesor = new ProfesorDao().findById(user.getId());
-                        if (profesor != null && profesor.getContrasenia() != null && profesor.getContrasenia().equals(currentPassword)) {
+                        if (profesor != null && profesor.getContrasenia() != null && PasswordUtil.matches(currentPassword, profesor.getContrasenia())) {
                             profesor.setContrasenia(newPassword);
                             passwordUpdated = new ProfesorDao().update(profesor);
                         } else {
@@ -566,7 +567,7 @@ public class ProfileServlet extends HttpServlet {
                         }
                     } else if (user.getLevel() == 4) {
                         Padre padre = new PadreDao().findById(user.getId());
-                        if (padre != null && padre.getContrasenia() != null && padre.getContrasenia().equals(currentPassword)) {
+                        if (padre != null && padre.getContrasenia() != null && PasswordUtil.matches(currentPassword, padre.getContrasenia())) {
                             padre.setContrasenia(newPassword);
                             passwordUpdated = new PadreDao().update(padre);
                         } else {

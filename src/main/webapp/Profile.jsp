@@ -745,7 +745,7 @@
   const installAppMessage = document.getElementById('installAppMessage');
   const installAppHint = document.getElementById('installAppHint');
   const vapidPublicKey = '${pushPublicKey}';
-  window.ctnProfilePushEnabled = ${pushEnabled};
+  window.ctnProfilePushEnabled = <c:out value="${pushEnabled}" />;
   let deferredPrompt = null;
 
   function setPushStatus(message, tone) {

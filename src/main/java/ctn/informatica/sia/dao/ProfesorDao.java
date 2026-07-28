@@ -2,6 +2,7 @@ package ctn.informatica.sia.dao;
 
 import ctn.informatica.sia.clases.conexion;
 import ctn.informatica.sia.model.Profesor;
+import ctn.informatica.sia.util.PasswordUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -163,7 +164,11 @@ public class ProfesorDao extends conexion {
             ps.setString(1, p.getNombre());
             ps.setString(2, p.getApellido());
             ps.setString(3, p.getUsuario());
-            ps.setString(4, p.getContrasenia());
+            String password = p.getContrasenia();
+            if (password == null || password.trim().isEmpty()) {
+                password = "password";
+            }
+            ps.setString(4, PasswordUtil.hash(password));
             ps.setInt(5, p.getNivel());
 
             if (p.getCi() != null)       ps.setInt(6, p.getCi());
@@ -260,7 +265,7 @@ public class ProfesorDao extends conexion {
             if (password == null || password.trim().isEmpty()) {
                 password = "password";
             }
-            ps.setString(4, password);
+            ps.setString(4, PasswordUtil.hash(password));
             ps.setInt(5, p.getNivel());
 
             if (p.getCi() != null) ps.setInt(6, p.getCi()); else ps.setNull(6, Types.INTEGER);
@@ -296,7 +301,9 @@ public class ProfesorDao extends conexion {
     public boolean resetPassword(int id, String newPasswordPlainText) {
         final String sql = "UPDATE profesor SET contrasenia = ? WHERE id = ?";
         try (Connection c = getCon(); PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setString(1, newPasswordPlainText == null || newPasswordPlainText.trim().isEmpty() ? "password" : newPasswordPlainText);
+            String plain = (newPasswordPlainText == null || newPasswordPlainText.trim().isEmpty())
+                ? "password" : newPasswordPlainText;
+            ps.setString(1, PasswordUtil.hash(plain));
             ps.setInt(2, id);
             return ps.executeUpdate() == 1;
         } catch (SQLException ex) {

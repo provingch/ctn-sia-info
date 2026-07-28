@@ -5,6 +5,7 @@ import ctn.informatica.sia.model.Alumno;
 import ctn.informatica.sia.model.Padre;
 import ctn.informatica.sia.model.ParentSummaryItem;
 import ctn.informatica.sia.model.ParentTaskGrade;
+import ctn.informatica.sia.util.PasswordUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,7 +51,11 @@ public class PadreDao extends conexion {
             ps.setString(2, padre.getNombre());
             ps.setString(3, padre.getApellido());
             ps.setString(4, padre.getUsuario());
-            ps.setString(5, padre.getContrasenia());
+            String password = padre.getContrasenia();
+            if (password == null || password.trim().isEmpty()) {
+                password = "password";
+            }
+            ps.setString(5, PasswordUtil.hash(password));
             ps.setString(6, padre.getTelefono());
             ps.setString(7, padre.getCorreo());
             if (padre.getTotpSecret() != null && !padre.getTotpSecret().isBlank()) {
@@ -59,6 +64,17 @@ public class PadreDao extends conexion {
                 ps.setNull(8, java.sql.Types.VARCHAR);
             }
             ps.setInt(9, padre.getId());
+            return ps.executeUpdate() == 1;
+        }
+    }
+
+    public boolean resetPassword(int id, String newPasswordPlainText) throws SQLException {
+        String sql = "UPDATE padre SET contrasenia = ? WHERE id = ?";
+        try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql)) {
+            String plain = (newPasswordPlainText == null || newPasswordPlainText.trim().isEmpty())
+                ? "password" : newPasswordPlainText;
+            ps.setString(1, PasswordUtil.hash(plain));
+            ps.setInt(2, id);
             return ps.executeUpdate() == 1;
         }
     }

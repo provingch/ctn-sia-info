@@ -209,7 +209,13 @@ public class LegacyTareaServlet extends HttpServlet {
             return;
         }
 
-        Planilla planilla = new PlanillaDao().findById(planillaId);
+        Planilla planilla;
+        try {
+            planilla = new PlanillaDao().findById(planillaId);
+        } catch (SQLException ex) {
+            throw new ServletException("Error loading planilla", ex);
+        }
+        
         if (planilla == null || planilla.getProfesorId() != user.getId()) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tiene permiso para modificar esta planilla.");
             return;
