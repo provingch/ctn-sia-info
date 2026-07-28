@@ -1,12 +1,15 @@
-const CACHE_NAME = 'ctn-portal-v1';
+const CACHE_NAME = 'ctn-portal-v2';
 const CORE_ASSETS = [
   './',
   './offline.html',
   './styles/ctn-theme.css',
   './scripts/sia-theme.js',
   './images/ctn-logo.svg',
-  './images/ctn-logo-2.svg'
+  './images/ctn-logo-2.svg',
+  './icons/pwa/icon-192.png',
+  './icons/pwa/icon-512.png'
 ];
+const HTML_PREFIXES = ['https://', 'http://'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -25,20 +28,43 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
+
+  const isSameOrigin = request.url.startsWith(self.location.origin);
+  const shouldCache = isSameOrigin && (request.destination === 'document' || request.destination === 'script' || request.destination === 'style' || request.destination === 'image');
+
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match('./offline.html').then((fallback) => fallback || caches.match('./')).then((cached) => cached || fetch(request)))
+      fetch(request)
+        .then((response) => {
+          const copy = response.clone();
+          if (response.ok) {
+            caches.open(CACHE_NAME).then((cache) => cache.put('./', copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match('./offline.html').then((fallback) => fallback || caches.match('./')))
     );
     return;
   }
+
   event.respondWith(
-    caches.match(request).then((cached) => cached || fetch(request).then((response) => {
-      const copy = response.clone();
-      if (response.ok) {
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+    caches.match(request).then((cached) => {
+      if (cached) {
+        return cached;
       }
-      return response;
-    }).catch(() => caches.match('./offline.html')))
+      return fetch(request).then((response) => {
+        const copy = response.clone();
+        if (response.ok && shouldCache) {
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        }
+        return response;
+      }).catch(() => {
+        if (request.destination === 'document') {
+          return caches.match('./offline.html');
+        }
+        return caches.match('./offline.html');
+      });
+    })
   );
 });
 
