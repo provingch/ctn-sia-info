@@ -22,7 +22,7 @@
   <meta name="apple-mobile-web-app-title" content="CTN Portal">
   <link rel="apple-touch-icon" href="${pageContext.request.contextPath}/icons/pwa/apple-touch-icon.png">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=231">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=232">
   <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   <style>
   .inline-form {
@@ -190,13 +190,18 @@
     padding: 0.75rem 0.75rem 0.15rem;
   }
   .security-password-field label {
-    color: var(--muted);
+    color: color-mix(in srgb, var(--ink) 82%, var(--muted));
     font-size: 0.8rem;
     font-weight: 800;
     line-height: 1.25;
   }
   .security-password-field input {
     width: 100%;
+    background: var(--color-bg-input);
+    border-color: color-mix(in srgb, var(--line) 78%, var(--ink) 22%);
+  }
+  html[data-theme="dark"] .security-password-field label {
+    color: color-mix(in srgb, var(--ink) 90%, var(--muted));
   }
   .totp-secret {
     word-break: break-all;

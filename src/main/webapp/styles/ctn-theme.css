@@ -1825,7 +1825,12 @@ form[action$="PlanillaServlet"] {
 .planilla-toolbar form label,
 .curso-selection-form label {
   width: auto;
+  color: color-mix(in srgb, var(--ink) 82%, var(--muted));
   white-space: nowrap;
+}
+
+html[data-theme="dark"] .curso-selection-form label {
+  color: color-mix(in srgb, var(--ink) 90%, var(--muted));
 }
 
 .curso-selection-form select,
