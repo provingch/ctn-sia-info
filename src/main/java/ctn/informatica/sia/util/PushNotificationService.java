@@ -17,6 +17,19 @@ public class PushNotificationService {
         return "{\"title\":\"" + escapeJson(title) + "\",\"body\":\"" + escapeJson(body) + "\",\"url\":\"" + escapeJson(url == null ? "/" : url) + "\"}";
     }
 
+    public static String buildDeliveryMessage(boolean delivered, int subscriptionCount, boolean hasVapidKeys) {
+        if (delivered) {
+            return "Notificación de prueba enviada.";
+        }
+        if (!hasVapidKeys) {
+            return "No se pudo enviar la prueba porque faltan las claves VAPID del servidor.";
+        }
+        if (subscriptionCount == 0) {
+            return "No se encontraron suscripciones activas. Activa las notificaciones desde el perfil e inténtalo de nuevo.";
+        }
+        return "No se pudo entregar la prueba a las suscripciones activas.";
+    }
+
     public static boolean sendToUser(int userId, String userType, String title, String body, String url) throws SQLException {
         PushSubscriptionDao dao = new PushSubscriptionDao();
         List<PushSubscription> subscriptions = dao.findByUser(userId, userType);

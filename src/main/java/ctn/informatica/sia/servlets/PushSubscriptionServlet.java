@@ -64,7 +64,9 @@ public class PushSubscriptionServlet extends HttpServlet {
         if ("test".equals(action)) {
             try {
                 boolean delivered = PushNotificationService.sendToUser(user.getId(), resolveUserType(user), "Prueba CTN", "Esta es una notificación de prueba.", req.getContextPath() + "/ProfileServlet");
-                writeJson(resp, true, delivered ? "Notificación de prueba enviada." : "No se encontraron suscripciones activas.");
+                int subscriptionCount = new PushSubscriptionDao().findByUser(user.getId(), resolveUserType(user)).size();
+                boolean hasVapidKeys = !PushNotificationService.resolveVapidPublicKey().isBlank() && !PushNotificationService.resolveVapidPrivateKey().isBlank();
+                writeJson(resp, true, PushNotificationService.buildDeliveryMessage(delivered, subscriptionCount, hasVapidKeys));
             } catch (SQLException ex) {
                 log("Error sending push test", ex);
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
