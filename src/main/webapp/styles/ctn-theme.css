@@ -546,6 +546,39 @@ html[data-theme="dark"] .login-form .password-toggle:hover {
   margin: 6px 0 0;
   color: var(--muted);
 }
+
+.admin-hero > .btn-secondary {
+  border: 1px solid #c5d0dc;
+  background: #e2e8f0;
+  color: #243447;
+  box-shadow: 0 3px 8px rgba(20, 35, 59, 0.10);
+  filter: none;
+}
+
+.admin-hero > .btn-secondary:hover,
+.admin-hero > .btn-secondary:focus {
+  border-color: #334155;
+  background: #475569;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(20, 35, 59, 0.20);
+  filter: none;
+}
+
+html[data-theme="dark"] .admin-hero > .btn-secondary {
+  border-color: #52677d;
+  background: #33475b;
+  color: #f8fafc;
+  box-shadow: 0 4px 10px rgba(5, 12, 22, 0.28);
+}
+
+html[data-theme="dark"] .admin-hero > .btn-secondary:hover,
+html[data-theme="dark"] .admin-hero > .btn-secondary:focus {
+  border-color: #7890a8;
+  background: #526a82;
+  color: #ffffff;
+  box-shadow: 0 9px 20px rgba(5, 12, 22, 0.38);
+}
+
 .admin-metric-grid,
 .admin-nav-grid {
   display: grid;
