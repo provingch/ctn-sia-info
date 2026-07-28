@@ -83,6 +83,7 @@
         <a class="admin-nav-card" href="${pageContext.request.contextPath}/AdminMateriasServlet"><strong>Materias</strong><span>Catálogo, categorías y merges</span></a>
         <a class="admin-nav-card" href="${pageContext.request.contextPath}/AdminUsuariosServlet"><strong>Usuarios</strong><span>Altas, roles y contraseñas</span></a>
         <a class="admin-nav-card" href="${pageContext.request.contextPath}/AdminAsignacionesServlet"><strong>Asignaciones</strong><span>Profesor, materia y curso</span></a>
+        <a class="admin-nav-card" href="${pageContext.request.contextPath}/AdminIngresantesServlet"><strong>Ingresantes</strong><span>Carga de nuevos alumnos con meta de 28</span></a>
       </div>
     </section>
     <footer class="footer">

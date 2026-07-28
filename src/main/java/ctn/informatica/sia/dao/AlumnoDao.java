@@ -8,6 +8,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,45 @@ public class AlumnoDao extends conexion {
             }
         }
         return alumnos;
+    }
+
+    public int countByCursoId(int cursoId) throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM alumno WHERE curso_id = ?";
+        try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, cursoId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+        return 0;
+    }
+
+    public int create(String nombre, String apellido, int cursoId, Integer ci, String correoEncargado, String correoEncargado2) throws SQLException {
+        String sql = "INSERT INTO alumno (ci, nombre, apellido, curso_id, correo_encargado, correo_encargado2) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            if (ci == null) {
+                ps.setNull(1, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(1, ci);
+            }
+            ps.setString(2, nombre);
+            ps.setString(3, apellido);
+            ps.setInt(4, cursoId);
+            ps.setString(5, correoEncargado);
+            ps.setString(6, correoEncargado2);
+            int affected = ps.executeUpdate();
+            if (affected == 0) {
+                return 0;
+            }
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    return keys.getInt(1);
+                }
+            }
+            return 1;
+        }
     }
 
     public boolean updateGoogleIdentity(int alumnoId, String googleUserId, String googleEmail) throws SQLException {
