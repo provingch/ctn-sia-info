@@ -14,6 +14,48 @@ import java.util.List;
 
 public class AlumnoDao extends conexion {
 
+    public List<Alumno> findAll() throws SQLException {
+        String sql = "SELECT id, ci, nombre, apellido, curso_id, correo_encargado, correo_encargado2 FROM alumno ORDER BY apellido, nombre";
+        List<Alumno> alumnos = new ArrayList<>();
+        try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Alumno alumno = new Alumno();
+                    alumno.setId(rs.getInt("id"));
+                    alumno.setCi(rs.getObject("ci") == null ? null : rs.getInt("ci"));
+                    alumno.setNombre(rs.getString("nombre"));
+                    alumno.setApellido(rs.getString("apellido"));
+                    alumno.setCursoId(rs.getInt("curso_id"));
+                    alumno.setCorreoEncargado(rs.getString("correo_encargado"));
+                    alumno.setCorreoEncargado2(rs.getString("correo_encargado2"));
+                    alumnos.add(alumno);
+                }
+            }
+        }
+        return alumnos;
+    }
+
+    public Alumno findById(int id) throws SQLException {
+        String sql = "SELECT id, ci, nombre, apellido, curso_id, correo_encargado, correo_encargado2 FROM alumno WHERE id = ?";
+        try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Alumno alumno = new Alumno();
+                    alumno.setId(rs.getInt("id"));
+                    alumno.setCi(rs.getObject("ci") == null ? null : rs.getInt("ci"));
+                    alumno.setNombre(rs.getString("nombre"));
+                    alumno.setApellido(rs.getString("apellido"));
+                    alumno.setCursoId(rs.getInt("curso_id"));
+                    alumno.setCorreoEncargado(rs.getString("correo_encargado"));
+                    alumno.setCorreoEncargado2(rs.getString("correo_encargado2"));
+                    return alumno;
+                }
+            }
+        }
+        return null;
+    }
+
     public List<Alumno> findByCursoId(int cursoId) throws SQLException {
         String sql = "SELECT id, nombre, apellido, curso_id FROM alumno WHERE curso_id = ? ORDER BY apellido, nombre";
         List<Alumno> alumnos = new ArrayList<>();
@@ -92,6 +134,24 @@ public class AlumnoDao extends conexion {
                 }
             }
             return 1;
+        }
+    }
+
+    public boolean update(int alumnoId, String nombre, String apellido, int cursoId, Integer ci, String correoEncargado, String correoEncargado2) throws SQLException {
+        String sql = "UPDATE alumno SET ci = ?, nombre = ?, apellido = ?, curso_id = ?, correo_encargado = ?, correo_encargado2 = ? WHERE id = ?";
+        try (Connection con = getCon(); PreparedStatement ps = con.prepareStatement(sql)) {
+            if (ci == null) {
+                ps.setNull(1, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(1, ci);
+            }
+            ps.setString(2, nombre);
+            ps.setString(3, apellido);
+            ps.setInt(4, cursoId);
+            ps.setString(5, correoEncargado);
+            ps.setString(6, correoEncargado2);
+            ps.setInt(7, alumnoId);
+            return ps.executeUpdate() > 0;
         }
     }
 

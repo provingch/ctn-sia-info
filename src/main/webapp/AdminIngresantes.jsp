@@ -95,6 +95,49 @@
         </div>
         <button class="btn btn-primary" type="submit">Crear alumno</button>
       </form>
+
+      <div class="admin-card">
+        <h3>Alumnos existentes</h3>
+        <p class="muted">Podés editar nombre, apellido, CI, curso y correos directamente desde aquí.</p>
+        <div class="capacity-grid">
+          <c:forEach var="alumno" items="${alumnos}">
+            <form class="capacity-card" method="post" action="${pageContext.request.contextPath}/AdminIngresantesServlet">
+              <input type="hidden" name="action" value="editar" />
+              <input type="hidden" name="alumnoId" value="${alumno.id}" />
+              <div class="capacity-v">${alumno.apellido}, ${alumno.nombre}</div>
+              <div class="form-group">
+                <label>Nombre</label>
+                <input name="nombre" class="form-control" value="${alumno.nombre}" required />
+              </div>
+              <div class="form-group">
+                <label>Apellido</label>
+                <input name="apellido" class="form-control" value="${alumno.apellido}" required />
+              </div>
+              <div class="form-group">
+                <label>CI</label>
+                <input name="ci" class="form-control" value="${alumno.ci}" />
+              </div>
+              <div class="form-group">
+                <label>Curso / Sección</label>
+                <select name="cursoId" class="form-control" required>
+                  <c:forEach var="curso" items="${cursos}">
+                    <option value="${curso.id}" ${curso.id == alumno.cursoId ? 'selected' : ''}>${curso.especialidad} · ${curso.cursoOrdinal} · Sección ${curso.seccion}</option>
+                  </c:forEach>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Correo del encargado</label>
+                <input name="correoEncargado" class="form-control" value="${alumno.correoEncargado}" />
+              </div>
+              <div class="form-group">
+                <label>Correo alternativo</label>
+                <input name="correoEncargado2" class="form-control" value="${alumno.correoEncargado2}" />
+              </div>
+              <button class="btn btn-primary" type="submit">Guardar</button>
+            </form>
+          </c:forEach>
+        </div>
+      </div>
     </section>
   </main>
 </body>

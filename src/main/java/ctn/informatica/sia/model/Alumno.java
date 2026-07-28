@@ -2,9 +2,12 @@ package ctn.informatica.sia.model;
 
 public class Alumno {
     private int id;
+    private Integer ci;
     private String nombre;
     private String apellido;
     private int cursoId;
+    private String correoEncargado;
+    private String correoEncargado2;
     private String googleUserId;
     private String googleEmail;
 
@@ -14,6 +17,14 @@ public class Alumno {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Integer getCi() {
+        return ci;
+    }
+
+    public void setCi(Integer ci) {
+        this.ci = ci;
     }
 
     public String getNombre() {
@@ -38,6 +49,22 @@ public class Alumno {
 
     public void setCursoId(int cursoId) {
         this.cursoId = cursoId;
+    }
+
+    public String getCorreoEncargado() {
+        return correoEncargado;
+    }
+
+    public void setCorreoEncargado(String correoEncargado) {
+        this.correoEncargado = correoEncargado;
+    }
+
+    public String getCorreoEncargado2() {
+        return correoEncargado2;
+    }
+
+    public void setCorreoEncargado2(String correoEncargado2) {
+        this.correoEncargado2 = correoEncargado2;
     }
 
     public String getGoogleUserId() {

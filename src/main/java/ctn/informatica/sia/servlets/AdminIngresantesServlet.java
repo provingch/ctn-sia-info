@@ -3,6 +3,7 @@ package ctn.informatica.sia.servlets;
 import ctn.informatica.sia.dao.AlumnoDao;
 import ctn.informatica.sia.dao.CursoDao;
 import ctn.informatica.sia.dao.EspecialidadDao;
+import ctn.informatica.sia.model.Alumno;
 import ctn.informatica.sia.model.Curso;
 import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.User;
@@ -15,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +42,15 @@ public class AdminIngresantesServlet extends HttpServlet {
             req.setAttribute("especialidades", especialidades);
 
             AlumnoDao alumnoDao = new AlumnoDao();
+            List<Alumno> alumnos = alumnoDao.findAll();
+            req.setAttribute("alumnos", alumnos);
+
+            Map<Integer, String> courseLabels = new HashMap<>();
+            for (Curso curso : cursos) {
+                courseLabels.put(curso.getId(), curso.getEspecialidad() + " · " + curso.getCursoOrdinal() + " · Sección " + curso.getSeccion());
+            }
+            req.setAttribute("courseLabels", courseLabels);
+
             Map<Integer, Integer> countsByCurso = new HashMap<>();
             Map<Integer, String> statusByCurso = new HashMap<>();
             Map<Integer, String> messageByCurso = new HashMap<>();
@@ -113,6 +122,42 @@ public class AdminIngresantesServlet extends HttpServlet {
                     }
                 } else {
                     session.setAttribute("errors", List.of("No se pudo crear el alumno."));
+                }
+            } else if ("editar".equals(action)) {
+                String alumnoIdParam = req.getParameter("alumnoId");
+                String nombre = trim(req.getParameter("nombre"));
+                String apellido = trim(req.getParameter("apellido"));
+                String cursoIdParam = req.getParameter("cursoId");
+                String ciParam = req.getParameter("ci");
+                String correoEncargado = trim(req.getParameter("correoEncargado"));
+                String correoEncargado2 = trim(req.getParameter("correoEncargado2"));
+
+                if (alumnoIdParam == null || alumnoIdParam.isBlank() || nombre.isBlank() || apellido.isBlank() || cursoIdParam == null || cursoIdParam.isBlank()) {
+                    session.setAttribute("errors", List.of("Faltan datos obligatorios para actualizar el alumno."));
+                    resp.sendRedirect(req.getContextPath() + "/AdminIngresantesServlet");
+                    return;
+                }
+
+                int alumnoId = Integer.parseInt(alumnoIdParam);
+                int cursoId = Integer.parseInt(cursoIdParam);
+                Integer ci = null;
+                if (ciParam != null && !ciParam.isBlank()) {
+                    ci = Integer.valueOf(ciParam);
+                }
+
+                CursoDao cursoDao = new CursoDao();
+                if (cursoDao.findById(cursoId) == null) {
+                    session.setAttribute("errors", List.of("El curso seleccionado no existe."));
+                    resp.sendRedirect(req.getContextPath() + "/AdminIngresantesServlet");
+                    return;
+                }
+
+                AlumnoDao alumnoDao = new AlumnoDao();
+                boolean updated = alumnoDao.update(alumnoId, nombre, apellido, cursoId, ci, correoEncargado, correoEncargado2);
+                if (updated) {
+                    session.setAttribute("flashMessage", "Alumno actualizado correctamente.");
+                } else {
+                    session.setAttribute("errors", List.of("No se pudo actualizar el alumno."));
                 }
             }
         } catch (NumberFormatException ex) {
