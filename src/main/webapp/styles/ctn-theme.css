@@ -414,6 +414,71 @@ body.login-page .login-wrapper { display: flex; align-items: center; justify-con
 .login-error, .login-info { margin-bottom: 10px; color: var(--red); }
 .login-info { color: var(--muted); }
 
+.login-form .password-field {
+  position: relative;
+  display: block;
+  gap: 0;
+}
+
+.login-form .password-field .form-password {
+  padding-right: 48px;
+}
+
+.login-form .password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: color-mix(in srgb, var(--ink) 72%, var(--muted));
+  box-shadow: none;
+  transform: translateY(-50%);
+}
+
+.login-form .password-toggle:hover {
+  background: color-mix(in srgb, var(--paper) 74%, var(--line) 26%);
+  color: var(--ink);
+  box-shadow: none;
+  transform: translateY(-50%);
+}
+
+.login-form .password-toggle:active {
+  transform: translateY(-50%);
+}
+
+.login-form .password-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.password-toggle__icon {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.password-toggle__icon--show,
+.password-toggle.is-visible .password-toggle__icon--hide {
+  display: none;
+}
+
+.password-toggle.is-visible .password-toggle__icon--show {
+  display: block;
+}
+
 .planilla-hero, .top-section {
   background: var(--paper);
   border: 1px solid var(--line);

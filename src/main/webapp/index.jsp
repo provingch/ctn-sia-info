@@ -125,7 +125,7 @@
     <meta name="apple-mobile-web-app-title" content="CTN Portal">
     <link rel="apple-touch-icon" href="${pageContext.request.contextPath}/icons/pwa/apple-touch-icon.png">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=233">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=234">
     <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/ctn-logo.svg">
   </head>
 
@@ -171,8 +171,22 @@
               <div class="login-info">Inicia sesión para ver tus planillas y cursos. Si estás corrigiendo la vinculación de alumnos, entra con tu usuario de integración tras iniciar sesión.</div>
           </c:if>
           <form class="login-form" action="LoginServlet" method="post">
-            <input class="form-username" placeholder="Usuario" type="text" name="username">
-            <input class="form-password" placeholder="Contraseña" type="password" name="password">
+            <input class="form-username" placeholder="Usuario" type="text" name="username" autocomplete="username">
+            <div class="password-field">
+              <input class="form-password" id="loginPassword" placeholder="Contraseña" type="password" name="password" autocomplete="current-password">
+              <button class="password-toggle" id="passwordToggle" type="button"
+                      aria-controls="loginPassword" aria-pressed="false"
+                      aria-label="Mostrar contraseña" title="Mostrar contraseña">
+                <svg class="password-toggle__icon password-toggle__icon--show" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M2.25 12s3.5-6 9.75-6 9.75 6 9.75 6-3.5 6-9.75 6-9.75-6-9.75-6Z"></path>
+                  <circle cx="12" cy="12" r="2.75"></circle>
+                </svg>
+                <svg class="password-toggle__icon password-toggle__icon--hide" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 3l18 18"></path>
+                  <path d="M10.6 6.2A10.7 10.7 0 0 1 12 6c6.25 0 9.75 6 9.75 6a16.7 16.7 0 0 1-2.2 2.8M6.3 7.1C3.7 9 2.25 12 2.25 12s3.5 6 9.75 6a10.8 10.8 0 0 0 4.1-.8M9.8 9.8a3.1 3.1 0 0 0 4.4 4.4"></path>
+                </svg>
+              </button>
+            </div>
             <div class="login-remember">
               <label>
                 <input type="checkbox" name="rememberMe" value="true">
@@ -206,6 +220,23 @@
   <script src="${pageContext.request.contextPath}/vendor/flat-ui/js/flat-ui.js"></script>
   <script src="${pageContext.request.contextPath}/scripts/sia-theme.js?v=164"></script>
     <script src="${pageContext.request.contextPath}/scripts/cookie-consent.js?v=164"></script>
+  <script>
+    (function () {
+      const passwordInput = document.getElementById('loginPassword');
+      const passwordToggle = document.getElementById('passwordToggle');
+      if (!passwordInput || !passwordToggle) return;
+
+      passwordToggle.addEventListener('click', function () {
+        const showPassword = passwordInput.type === 'password';
+        passwordInput.type = showPassword ? 'text' : 'password';
+        passwordToggle.classList.toggle('is-visible', showPassword);
+        passwordToggle.setAttribute('aria-pressed', String(showPassword));
+        passwordToggle.setAttribute('aria-label', showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        passwordToggle.title = showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña';
+        passwordInput.focus({ preventScroll: true });
+      });
+    })();
+  </script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
