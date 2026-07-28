@@ -1,5 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html data-theme="light">
 <head>
@@ -7,7 +8,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/vendor/flat-ui/css/flat-ui.css" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=233" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/ctn-theme.css?v=235" />
   <style>
     .capacity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 16px 0 24px; }
     .capacity-card { border: 1px solid #dfe5ed; border-radius: 12px; padding: 12px 14px; background: #fff; }
@@ -19,6 +20,71 @@
     .filter-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 16px; }
     .filter-row .form-group { flex: 1 1 220px; margin-bottom: 0; }
     .student-card.hidden { display: none; }
+    .capacity-groups { display: grid; gap: 18px; margin: 18px 0 26px; }
+    .capacity-specialty {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper);
+    }
+    .capacity-specialty__header {
+      margin: 0;
+      padding: 12px 16px;
+      border-left: 4px solid var(--accent);
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--paper) 88%, var(--accent) 7%);
+      color: var(--ink);
+      font-size: 1.15rem;
+      font-weight: 900;
+    }
+    .capacity-course-group { padding: 14px 16px 16px; }
+    .capacity-course-group + .capacity-course-group { border-top: 1px solid var(--line); }
+    .capacity-course-group__title {
+      margin: 0 0 10px;
+      color: color-mix(in srgb, var(--ink) 82%, var(--muted));
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .capacity-section-grid {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+    }
+    .capacity-section-grid.sections-1 { grid-template-columns: minmax(0, 1fr); }
+    .capacity-section-grid.sections-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .capacity-section-grid.sections-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .capacity-section-grid .capacity-card {
+      min-width: 0;
+      height: 100%;
+      background: color-mix(in srgb, var(--paper) 94%, var(--line) 6%);
+      border-color: var(--line);
+      color: var(--ink);
+    }
+    .capacity-section-grid .capacity-card.ideal {
+      border-color: #1abc9c;
+      background: color-mix(in srgb, var(--paper) 91%, #1abc9c 9%);
+    }
+    .capacity-section-grid .capacity-card.warning {
+      border-color: #d9a441;
+      background: color-mix(in srgb, var(--paper) 91%, #f0c36d 9%);
+    }
+    .capacity-section-grid .capacity-card.over {
+      border-color: #e74c3c;
+      background: color-mix(in srgb, var(--paper) 91%, #e74c3c 9%);
+    }
+    .capacity-section-grid .capacity-v { color: var(--ink); line-height: 1.3; }
+    .capacity-section-grid .muted { color: var(--muted); }
+    @media (max-width: 820px) {
+      .capacity-section-grid.sections-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .capacity-section-grid.sections-2,
+      .capacity-section-grid.sections-3 { grid-template-columns: minmax(0, 1fr); }
+      .capacity-specialty__header,
+      .capacity-course-group { padding-right: 12px; padding-left: 12px; }
+    }
   </style>
 </head>
 <body class="admin-page">
@@ -54,14 +120,32 @@
         <c:remove var="warnings" scope="session" />
       </c:if>
 
-      <div class="capacity-grid">
-        <c:forEach var="curso" items="${cursos}">
-          <c:set var="status" value="${statusByCurso[curso.id]}" />
-          <div class="capacity-card ${status}">
-            <div class="capacity-v">${curso.especialidad} · ${curso.cursoOrdinal} · Sección ${curso.seccion}</div>
-            <div><strong>${countsByCurso[curso.id]}</strong> alumnos cargados</div>
-            <div class="muted">${messageByCurso[curso.id]}</div>
-          </div>
+      <div class="capacity-groups">
+        <c:forEach var="especialidadGroup" items="${cursosAgrupados}">
+          <section class="capacity-specialty">
+            <h2 class="capacity-specialty__header">
+              <c:out value="${especialidadGroup.key}" />
+            </h2>
+            <c:forEach var="cursoGroup" items="${especialidadGroup.value}">
+              <div class="capacity-course-group">
+                <h3 class="capacity-course-group__title"><c:out value="${cursoGroup.key}" /> curso</h3>
+                <div class="capacity-section-grid sections-${fn:length(cursoGroup.value) >= 3 ? '3' : fn:length(cursoGroup.value)}">
+                  <c:forEach var="curso" items="${cursoGroup.value}">
+                    <c:set var="status" value="${statusByCurso[curso.id]}" />
+                    <article class="capacity-card ${status}">
+                      <div class="capacity-v">
+                        <c:out value="${curso.especialidad}" /> ·
+                        <c:out value="${curso.cursoOrdinal}" /> ·
+                        Sección <c:out value="${curso.seccion}" />
+                      </div>
+                      <div><strong><c:out value="${countsByCurso[curso.id]}" /></strong> alumnos cargados</div>
+                      <div class="muted"><c:out value="${messageByCurso[curso.id]}" /></div>
+                    </article>
+                  </c:forEach>
+                </div>
+              </div>
+            </c:forEach>
+          </section>
         </c:forEach>
       </div>
 

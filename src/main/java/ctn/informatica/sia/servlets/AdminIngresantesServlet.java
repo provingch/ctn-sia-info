@@ -16,7 +16,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +38,18 @@ public class AdminIngresantesServlet extends HttpServlet {
             CursoDao cursoDao = new CursoDao();
             List<Curso> cursos = cursoDao.findAll();
             req.setAttribute("cursos", cursos);
+
+            Map<String, Map<String, List<Curso>>> cursosAgrupados = new LinkedHashMap<>();
+            for (Curso curso : cursos) {
+                String especialidad = curso.getEspecialidad() == null || curso.getEspecialidad().isBlank()
+                        ? "Sin especialidad"
+                        : curso.getEspecialidad();
+                cursosAgrupados
+                        .computeIfAbsent(especialidad, key -> new LinkedHashMap<>())
+                        .computeIfAbsent(curso.getCursoOrdinal(), key -> new ArrayList<>())
+                        .add(curso);
+            }
+            req.setAttribute("cursosAgrupados", cursosAgrupados);
 
             EspecialidadDao especialidadDao = new EspecialidadDao();
             List<Especialidad> especialidades = especialidadDao.findAll();
