@@ -5,12 +5,24 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato se basa en [Mantener un Registro de Cambios](https://keepachangelog.com/es/1.0.0/),
 y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-- Hola
+## [2.0.0] - 2026-07-27
 
-### En proceso
-- Consolidación del diseño visual bajo el sistema SIA.
-- Ajustes de documentación y limpieza general del repositorio.
+### Añadido
+- **Mejoras de perfil y seguridad**: se consolidó la experiencia del perfil con soporte para configuración de seguridad, autenticación de dos factores TOTP, estado de PWA y registro de actividad.
+- **Soporte PWA**: se integró la experiencia de aplicación instalable con manifest, icono y metadatos móviles para mejorar el uso desde navegador y dispositivo móvil.
+- **Exportación masiva de planillas**: ahora el flujo de exportación permite generar archivos Excel por especialidad, curso, sección y período con una estructura más consistente para el usuario.
+- **Mejoras de usabilidad en evaluación**: se incorporó un manejo más claro de los cursos y niveles de formación en la interfaz de evaluación.
+
+### Mejorado
+- **Etiquetas de cursos**: los niveles de curso ahora se muestran de forma uniforme como 1º, 2º y 3º en la interfaz y en el modelo de datos.
+- **Experiencia de perfil**: se ajustó la vista para evitar errores de renderizado y mejorar la lectura de los paneles de seguridad y configuración.
+- **Robustez del exportador**: se fortaleció la validación de parámetros de curso y promoción para evitar solicitudes inválidas o inconsistentes al generar planillas.
+- **Seguridad de credenciales**: se reforzó el manejo de contraseñas mediante hashing BCrypt, manteniendo compatibilidad con registros previos en texto plano.
+
+### Corregido
+- **Error de sintaxis en el perfil**: se corrigió un problema de renderizado en Profile.jsp que impedía interpretar correctamente parte del contenido dinámico.
+- **Flujo de exportación**: se evitó la generación de planillas para combinaciones de curso/promoción inválidas.
+- **Consistencia visual**: se ajustaron detalles de presentación y textos para mantener una experiencia más clara y coherente entre módulos.
 
 ## [1.7.1] - 2026-07-24
 
