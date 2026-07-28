@@ -2,10 +2,12 @@ package ctn.informatica.sia.servlets;
 
 import ctn.informatica.sia.dao.AsignacionDao;
 import ctn.informatica.sia.dao.CursoDao;
+import ctn.informatica.sia.dao.EspecialidadDao;
 import ctn.informatica.sia.dao.MateriaDao;
 import ctn.informatica.sia.dao.ProfesorDao;
 import ctn.informatica.sia.model.Asignacion;
 import ctn.informatica.sia.model.Curso;
+import ctn.informatica.sia.model.Especialidad;
 import ctn.informatica.sia.model.Materia;
 import ctn.informatica.sia.model.Profesor;
 import ctn.informatica.sia.model.User;
@@ -51,6 +53,10 @@ public class AdminAsignacionesServlet extends HttpServlet {
             CursoDao cDao = new CursoDao();
             List<Curso> cursos = cDao.findAll();
             req.setAttribute("cursos", cursos);
+
+            EspecialidadDao eDao = new EspecialidadDao();
+            List<Especialidad> especialidades = eDao.findAll();
+            req.setAttribute("especialidades", especialidades);
 
         } catch (Exception ex) {
             log("Error loading asignaciones admin", ex);

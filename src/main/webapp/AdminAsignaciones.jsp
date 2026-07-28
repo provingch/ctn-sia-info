@@ -156,10 +156,27 @@ const CURSOS = [];
 CURSOS.push({"id": ${cu.id}, "especialidad": "<c:out value='${cu.especialidad}'/>", "nivel": Number("<c:out value='${cu.nivel}'/>"), "seccion": "<c:out value='${cu.seccion}'/>"});
 </c:forEach>
 
+const ESPECIALIDADES = [];
+<c:forEach var="esp" items="${especialidades}">
+ESPECIALIDADES.push("<c:out value='${esp.nombre}'/>");
+</c:forEach>
+
 function uniqueEspecialidades() {
     const seen = new Set();
     const out = [];
-    CURSOS.forEach(c => { if (!seen.has(c.especialidad)) { seen.add(c.especialidad); out.push(c.especialidad); } });
+    ESPECIALIDADES.forEach(e => {
+        if (e && !seen.has(e)) {
+            seen.add(e);
+            out.push(e);
+        }
+    });
+    CURSOS.forEach(c => {
+        if (c.especialidad && !seen.has(c.especialidad)) {
+            seen.add(c.especialidad);
+            out.push(c.especialidad);
+        }
+    });
+    out.sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
     return out;
 }
 
